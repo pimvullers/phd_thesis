@@ -1,0 +1,175 @@
+\usepackage{amsmath,amsthm,amssymb,bbm}
+\usepackage{graphicx}
+\usepackage{msc}
+
+%% a few commands which automatically set the size of their surrounding boxes
+%% the vertical size of the boxes are a hack, because the msc's package
+%% seems to be centering the text in the predefined boxes rather than
+%% drawing boxes around the text.
+\newlength{\xtmpwidth}
+\newlength{\xtmpheight}
+\newcommand{\xaction}[2]{%
+  \setlength{\xtmpwidth}{\actionwidth}%
+  \setlength{\xtmpheight}{\actionheight}%
+  \settowidth{\actionwidth}{\ #1\ }%
+  \settoheight{\actionheight}{\rule{0pt}{\xtmpheight-1ex} #1\ }%
+  \addtolength{\actionheight}{1ex}
+  \action{#1}{#2}%
+  \setlength{\actionwidth}{\xtmpwidth}%
+  \setlength{\actionheight}{\xtmpheight}%
+}
+\newcommand{\xcondition}[2]{%
+  \setlength{\xtmpwidth}{\conditionoverlap}%
+  \setlength{\xtmpheight}{\conditionheight}%
+  \settowidth{\conditionoverlap}{#1}%
+  \setlength{\conditionoverlap}{.5\conditionoverlap}
+  \settoheight{\conditionheight}{\rule{0pt}{\xtmpheight-1ex} #1}%
+  \addtolength{\conditionheight}{1ex}
+  \condition{#1}{#2}%
+  \setlength{\conditionoverlap}{\xtmpwidth}%
+  \setlength{\conditionheight}{\xtmpheight}%
+}
+
+
+%We use the MSC package for drawing use cases.
+%General settings needed for our drawings
+\setmscvalues{large} % can be large, normal, small
+\setmsckeyword{}
+\drawframe{no}
+
+%%% Here are all the lengths we can set:
+\setlength{\actionheight}{1.5\actionheight}% height of action symbols
+\setlength{\actionwidth}{2.5\actionwidth}% width of action symbol (square box)
+% \setlength{\bottomfootdist}{1.5\bottomfootdist}% distance between bottom of foot symbol and frame
+\setlength{\msccommentdist}{1.5\msccommentdist}% distance of comment to its instance
+\setlength{\conditionheight}{1.5\conditionheight}% height of condition symbols (diamond box)
+\setlength{\conditionoverlap}{1.5\conditionoverlap}% overlap of condition symbol
+\setlength{\envinstdist}{\envinstdist}% distance between environments and nearest instance line
+\setlength{\firstlevelheight}{\firstlevelheight}% height of level just below head symbols
+\setlength{\hmscconditionheight}{1.5\hmscconditionheight}% height of hmsc condition symbol
+\setlength{\hmscconditionwidth}{1.5\hmscconditionwidth}% width of hmsc condition symbol
+\setlength{\hmscconnectionradius}{1.5\hmscconnectionradius}% radius of hmsc connection symbols
+% \setlength{\hmscreferenceheight}{1.5\hmscreferenceheight}% height of hmsc reference symbol
+\setlength{\hmscreferencewidth}{1.5\hmscreferencewidth}% width of hmsc reference symbol
+\setlength{\hmscstartsymbolwidth}{1.5\hmscstartsymbolwidth}% width of hmsc start symbol
+\setlength{\inlineoverlap}{1.5\inlineoverlap}% overlap of inline symbol
+\setlength{\instbarwidth}{1.5\instbarwidth}% default width of vertical instance bars
+\setlength{\instdist}{2.5\instdist}% distance between (vertical) instance lines
+\setlength{\instfootheight}{\instfootheight}% height of foot symbols
+\setlength{\instheadheight}{1.5\instheadheight}% height of head symbols
+\setlength{\instwidth}{1.5\instwidth}%  width of header and foot symbols
+\setlength{\labeldist}{1.5\labeldist}% distance between labels and message lines or head symbl boxes 
+\setlength{\lastlevelheight}{\lastlevelheight}% height of level just above foot symbols
+\setlength{\leftnamedist}{1.5\leftnamedist}% distance between left of frame and (top of) msc title
+\setlength{\levelheight}{1.5\levelheight}% height of a level
+\setlength{\lostsymbolradius}{1.5\lostsymbolradius}% radius of the lost and found symbols
+\setlength{\markdist}{1.5\markdist}% distance between mark and its instance
+\setlength{\measuredist}{1.5\measuredist}% user definable length for horizontal measure distance
+\setlength{\measuresymbolwidth}{1.5\measuresymbolwidth}% width of measure symbols
+\setlength{\mscdocreferenceheight}{1.5\mscdocreferenceheight}% minimal height of mscdoc reference
+\setlength{\mscdocreferencewidth}{1.5\mscdocreferencewidth}% minimal width of mscdoc reference
+\setlength{\referenceoverlap}{1.5\referenceoverlap}% overlap of reference symbol
+\setlength{\regionbarwidth}{1.5\regionbarwidth}% width of region bars
+\setlength{\selfmesswidth}{1.5\selfmesswidth}% length of horizontal arms of self messages
+\setlength{\stopwidth}{1.5\stopwidth}% width of the stop symbol
+\setlength{\timerwidth}{1.5\timerwidth}% width of the timer symbols
+\setlength{\topheaddist}{\topheaddist}% distance between top of head symbols and frame
+\setlength{\topnamedist}{\topnamedist}% distance between top of frame and (top of) msc title 
+
+%%% Here are the lengths we usually play with
+% \setlength{\actionwidth}{30ex}
+% \setlength{\instwidth}{20ex}
+% \setlength{\instdist}{60ex}
+% \setlength{\envinstdist}{20ex}
+% \setlength{\labeldist}{2ex}
+% \setlength{\levelheight}{0.5cm}
+% \setlength{\firstlevelheight}{0.6cm}
+% \setlength{\lastlevelheight}{.5cm}
+% \setlength{\topheaddist}{.5cm}
+%%Don't draw a frame around MSCs and don't put the msc-keyword
+
+\newcommand{\spitz}[1]{\langle #1\rangle}
+\newcommand{\isom}{\cong}  % or \simeq
+
+%% this is a strike through command
+\newlength{\var}
+\newcommand{\sout}[1]{\settowidth{\var}{#1}\makebox[0pt][l]{#1}\rule[.7ex]{\var}{1pt}}
+
+\newcommand{\boxtext}[1]{
+\lower 3pt \hbox{%
+  \vbox{%
+    \hrule
+    \hbox{\strut \vrule{} #1 \vrule}%
+    \hrule
+  }%
+  }%   \boxtext{Text}
+}
+
+\newlength{\leftprotobox}
+\setlength{\leftprotobox}{2cm}
+\newlength{\middleprotobox}
+\setlength{\middleprotobox}{5cm}
+\newlength{\rightprotobox}
+\setlength{\rightprotobox}{2cm}
+\newlength{\protoboxheight}
+\setlength{\protoboxheight}{16pt}
+
+\newcommand{\toleft}[3]{
+\par\smallskip
+\centerline{
+\hbox{%
+    \vbox{\vfil\hbox to \leftprotobox{\hfil #1\hfil}\vfil}
+    \vbox{\hbox to \middleprotobox{\hfil #2\hfil} \vskip -\protoboxheight \hbox to \middleprotobox{\leftarrowfill}}
+    \vbox{\vfil\hbox to \rightprotobox{\hfil #3 \hfil}\vfil}
+   }%
+  }
+\smallskip
+}
+
+\newcommand{\toright}[3]{
+\par\smallskip
+\centerline{
+\hbox{%
+    \vbox{\vfil\hbox to \leftprotobox{\hfil #1\hfil}\vfil}
+    \vbox{\hbox to \middleprotobox{\hfil #2\hfil} \vskip -\protoboxheight \hbox to \middleprotobox{\rightarrowfill}}
+    \vbox{\vfil\hbox to \rightprotobox{\hfil #3\hfil}\vfil}
+    }%
+   }
+\smallskip
+}
+
+\newcommand{\noarrow}[3]{
+\par\smallskip
+\centerline{
+\hbox{%
+    \vbox{\hbox to \leftprotobox{\hfil #1\hfil}}
+    \vbox{\hbox to \middleprotobox{\hfil#2\hfil}}
+    \vbox{\hbox to \rightprotobox{\hfil #3 \hfil}}
+           }%
+}
+\smallskip
+}
+
+
+%\newcounter{pzaehler}      
+\newenvironment{protokoll}[4]{%
+%\bigskip
+%\begin{figure}[!htp] 
+% \hrule\medskip
+#4
+\noarrow{\boxtext{\hfil \bf #1\hfil}}{}{\boxtext{\hfil\bf #2\hfil}}
+\def\tempprot{#3}
+}%
+{%
+%\bigskip
+%\addtocounter{pzaehler}{1}
+%\centerline{
+%\hrulefill
+%\bf 
+%\rm\normalsize \ Figure \thepzaehler: \tempprot\  
+%\rm\tiny \ \tempprot\  
+%\hrulefill
+%}
+%\end{figure}
+}
+

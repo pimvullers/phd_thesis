@@ -1,0 +1,190 @@
+\chapter{Self-Blindable Credentials}
+
+\section{Chaum-Pedersen Signature Scheme}
+
+This section presents the signature scheme~\cite{ChaumPedersen93} which will be
+used as the basis for the following schemes. The public key of the scheme is
+$(p, q, g, h)$, where $h \in G_q \setminus \{1\}$ and the corresponding secret key is
+$x = \log_g h$. Let $m \in G_q$, be a message. The signature on $m$ consists of
+$z = m^x$ plus a proof that $\log_g h = \log_m z$.
+
+Given $m$ and $z$, consider the following protocol:
+\begin{enumerate}
+  \item The prover chooses $s \in \Z$, at random and computes
+    $(a, b) = (g^s \mod p, m^s \mod p)$. This pair is sent to the verifier.
+  \item The verifier chooses a random challenge $c \in \Z$, and sends it to the
+    prover.
+  \item The prover sends back $r = s + cx \mod q$
+  \item The verifier accepts the proof if $g^r = ah^c$ and $m^r = bz^c$.
+\end{enumerate}
+
+\section{Boneh-Lynn-Shacham Signature Scheme}
+
+[independent work by both Verheul and BLS]
+
+Boneh, Lynn and Shacham~\cite{BonehLS01,BonehLS04} present a signature scheme
+that works on any Gap co-Diffie-Hellman group pair $(G_1, G_2)$. The scheme
+resembles the undeniable signature scheme proposed by Chaum and
+Pedersen~\cite{ChaumPedersen93}. Verheul~\cite{Verheul01} even refers to this
+scheme as a proofless variant of the Chaum-Pedersen scheme. Okamoto and
+Pointcheval~\cite{OkamotoPointCheval01} briefly note that gap problems can give
+rise to signature schemes. However, most gap problems will not lead to short
+signatures. Let $(G_1, G_2)$ be $(t, \epsilon)$-Gap co-Diffie-Hellman group
+pair where $|G_1| = |G_2| = p$. A signature $\sigma$ is an element of $G_1$.
+The signature scheme comprises three algorithms, KeyGen, Sign, and Verify.
+
+\begin{enumerate}
+  \item Key generation. Pick random $x \in_R \Z_p$ and compute
+    $v \gets g_2^x$. The public key is $v \in G_2$. The private key is $x$.
+  \item Signing. Given a private key $x \in \Z_p$, and a message
+    $M \in \{0, 1\}^∗$, compute $h \gets \mathcal{H}(M) \in G_1$ and
+    $\sigma \gets h^x$. The signature is $\sigma \in G_1$.
+  \item Verification. Given a public key $v \in G_2$, a message
+    $h \gets \mathcal{H}(M) \in G_1$ and verify that $(g_2, v, h, \sigma)$ is
+    a valid co-Diffie-Hellman tuple, that is $e(g_2, \sigma) = e(v, h)$. If
+    so, output valid; if not, output invalid.
+\end{enumerate}
+
+Verheul~\cite{Verheul01} points out a powerful aspect about these signatures,
+they are invariant under blinding. Thus, if a card chooses an arbitrary number
+$b$ as blinding factor, the resulting pair
+$(b\cdot P_{c}, \; b\cdot (s\cdot P_{c}))$ is again a signature, for the
+private-public key pair $(b\,k_{c}, \; b\cdot P_{c} = (b\,k_{c})\cdot P)$. Each
+time the card is used it can thus present a different (signed) public key, such
+that the different uses cannot be linked.
+
+\section{Verheul's Self-Blindable Certificates}
+
+Of course, when a card presents a reader with such a pair $P_c$, $R$
+the reader should not only check that $R$ is a proper signature on
+$P_c$, that is, $R$ is $s\cdot P_c$, but also that the card knows the private
+key corresponding to the public key $P_c$. This can be done via standard
+challenge-response exchange, for example using ECDSA.
+
+\subsection{Credential Pseudonymous Certificates}
+
+Credential pseudonymous certificates are digital certificates that bind
+credentials to users known by a pseudonym. Proof of credential possession is
+given by proving possession of the private key related to the public key
+referenced in the certificate.
+
+$\{P_U, [Sig(P_U, S_N), Cert(P_N, "Pseudonym Provider statement)]\}$
+
+Here, the public key $P_U$ of the user is signed using a private key $S_N$ of
+the pseudonym provider. The corresponding public key $P_N$ of the pseudonym
+provider is included in a (conventional PKI) certificate which contains the
+statement corresponding to this public key.
+
+When we consider only a single statement per public key, these certificates can
+be stored in public database and can be omitted from the credential, given that
+the corresponding public key can be identified.
+
+\section{Credential Issuance}
+
+[TODO: create issuance protocol diagram]
+
+To obtain a credential from a credential issuer the cardholder must provide the
+issuer with its public key and proof posession of the corresponding private key.
+This public key can be signed by an identity provider in order to increase the
+trust level of the system. When the credential issuer has verified the
+authenticity of the user he will verify eligibility for the requested attribute.
+Once this has been verified the issuer signs the user's public key using the
+private key corresponding to the requested attribute and send this signature to
+the user.
+
+\section{Credential Verification}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=.4]{mscs/textual_en}
+  \caption{Protocol for proving self-blindable attributes}\label{fig:textual_en}
+\end{figure}
+
+When the user wants to utilize an attribute stored in a credential it has to
+show the credential to the service provider. To prevent the service provider
+from tracing her based on the public key the user first blinds her key pair and
+the credential. Next it sends the results from this blinding operation to the
+service provider and proofs possession of the (blinded) private key. This last
+step is easily achieved by signing a challenge received from the service
+provider using this private key. The service provider can then verify this
+signature using the public key it received earlier.
+
+\section{Java Card Implementation}
+
+\subsection{Available ECC Operations}
+
+\subsubsection{EC Diffie-Hellman}
+
+This functionality is provided by the javacard.security.KeyAgreement class. This
+class can be instantiated using the getInstance(byte algorithm, boolean externalAccess)
+method which returns a KeyAgreement object that implements a certain algorithm.
+The generateSecret(byte[] publicData, short publicOffset, short publicLength, byte[] secret, short secretOffset)
+method can then be used to actually perform the Diffie-Hellman operation, in our
+case an elliptic curve multiplication.
+
+The standard Java Card API provides two algorithms~\cite{JavaCard-2.2.2_API_documentation}:
+\begin{description}
+  \item[ALG\_EC\_SVDP\_DH] Elliptic curve secret value derivation primitive, Diffie-Hellman version, as per [IEEE P1363].
+  \item[ALG\_EC\_SVDP\_DHC] Elliptic curve secret value derivation primitive, Diffie-Hellman version, with cofactor multiplication, as per [IEEE P1363].
+\end{description}
+
+Unfortunately for us, the implementation of these algorithms has two drawbacks:
+\begin{enumerate}
+  \item According to the IEEE P1363~\cite{IEEE_P1363} standard the shared secret computation by means of ECSVDP-DH and ECSVDP-DHC only returns the $x$-coordinate of the computed point.
+  \item The Java Card implementation of these algorithms computes the SHA-1 message digest of the output of the derivation primitive to yeild a 20 byte result~\cite{JavaCard-2.2.2_API_documentation}.
+\end{enumerate}
+
+Especially this last transformation of the result prevents it from being useful for any further computation, other than using it as a secret key.
+
+\paragraph{JCOP Extension}
+
+Luckily the JCOP platform contains some extensions to the standard Java Card API.
+In particular this extension provides the KeyAgreementX.ALG\_EC\_SVDP\_DH\_PLAIN algorithm:
+
+\begin{lstlisting}
+  /**
+	 * KeyAgreement algorithm ALG_EC_SVDP_DH_PLAIN is the same as ALG_EC_SVDP_DH
+	 * but without SHA1 postcomputation.
+	 */
+\end{lstlisting}
+
+com.nxp.id.jcopx.KeyAgreementX
+KeyAgreementX.getInstance(KeyAgreementX.ALG\_EC\_SVDP\_DH\_PLAIN, false);
+
+This removes the second drawback as mentioned before and only leaves us with the
+$x$-coordinate of the result instead of a point. However, the point can be reconstructed
+from this coordinate using the elliptic curve formula. By inputting the $x$ value
+we can compute the $y$ value. The only unknown is the sign of the $y$-coordinate,
+hence we end up with two candidate points for the multiplication result.
+
+\subsection{Public Key and Credential Blinding}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=.4]{mscs/basic}
+  \caption{Protocol for proving self-blindable attributes}\label{fig:basic}
+\end{figure}
+
+\subsection{Proof of Possession of the Private Key}
+
+\begin{figure}
+  \centering
+  \includegraphics[scale=.4]{mscs/optimised}
+  \caption{Protocol for proving self-blindable attributes}\label{fig:optimised}
+\end{figure}
+
+\subsubsection{Using the ECDSA Signature Scheme}
+
+This approach depends on the NatLib library developed by Hendrik
+Tews~\cite{TewsJacobs09}. This library is used to blind the secret key before
+it can be used in the ECDSA algorithm to sign the challenge received from the
+terminal.
+
+\subsubsection{Using the BLS Signature Scheme}
+
+This approach exploits the KeyGeneration functionality provided by the Java Card
+API. This functionality is used to generate the blinding factor and blind the
+received challenge at the same time, This allows us to simply sign the blinded
+challenge with the private key using the BLS signature scheme.
+
+\section{Performance results}

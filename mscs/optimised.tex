@@ -1,0 +1,28 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{c}{$k_c$,\, $P_{c}=k_{c} \cdot P$,\, $a$,\, $C_{a} = s_{a} \cdot P_c$}{Card}
+\declinst{t}{$P$,\, $Q$,\, ($a,\,Q_a$)}{Terminal}
+
+\action*{random nonce $n$}{t}
+\nextlevel[2.3]
+
+\mess{getAttribute\&Signature($n \cdot P$)}{t}{c}
+\nextlevel[.5]
+
+\action*{fresh blinding $b$}{c}
+\nextlevel[2.3]
+
+\mess{$b \cdot k_c \cdot (n \cdot P)$,\quad $b \cdot P_c$,\quad $b \cdot C_a$,\quad $a$}{c}{t}
+\nextlevel[.5]
+
+\action*{verify $n \cdot (b \cdot P_c) = b \cdot k_c  \cdot (n \cdot P)$ \\
+         verify $e(\: b \cdot P_c,\: Q_a \:) = e(\: b \cdot C_a,\: Q \:)$}{t}
+\nextlevel[2.5]
+
+\end{msc}

@@ -1,0 +1,9 @@
+% Fix using \o in math environments
+\let\origo\o
+\renewcommand*{\o}{\text{\origo}}
+
+% Shorthand for math notation
+\newcommand{\F}[1]{\mathbb{F}_{#1}}
+\newcommand{\G}[1]{\mathbb{G}_{#1}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}

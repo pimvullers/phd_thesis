@@ -1,0 +1,37 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{c}{$k_c$,\, $P_{c}=k_{c} \cdot P$,\, $a$,\, $C_{a} = s_{a} \cdot P_c$}{Card}
+\declinst{t}{$Q$,\, ($a,\,Q_a$)}{Terminal}
+
+\mess{getAttribute}{t}{c}
+\nextlevel[.5]
+
+\action*{fresh blinding $b$}{c}
+\nextlevel[2.3]
+
+\mess{$b \cdot P_c$,\quad $b \cdot C_a$,\quad $a$}{c}{t}
+\nextlevel[.5]
+
+\action*{if $e$($\: b \cdot P_c,\: Q_a \:$) = $e$($\: b \cdot C_a,\: Q \:$) \\
+         then random nonce $n$}{t}
+\nextlevel[3]
+
+\mess{getSignature($n$)}{t}{c}
+\nextlevel[.5]
+
+\action*{($r,\; s$) = signECDSA($\: n,\; b \, k_c \:$)}{c}
+\nextlevel[2.3]
+
+\mess{($r,\; s$)}{c}{t}
+\nextlevel[.5]
+
+\action*{verifyECDSA($\: r,\; s,\; b \cdot P_c \:$)}{t}
+\nextlevel[1.2]
+
+\end{msc}

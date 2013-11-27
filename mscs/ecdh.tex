@@ -1,0 +1,25 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{a}{$\mathbb{F}_q$, $E$, $n$, $h$, $G$}{$A$}
+\declinst{b}{$\mathbb{F}_q$, $E$, $n$, $h$, $G$}{$B$}
+
+\action*{random secret $x$}{a}
+\action*{random secret $y$}{b}
+\nextlevel[2]
+
+\mess{$x \cdot G$}{a}{b}
+\nextlevel[1]
+
+\mess{$y \cdot G$}{b}{a}
+\nextlevel[.5]
+
+\action*{key $k = x \cdot (y \cdot G)$}{a}
+\action*{key $k = y \cdot (x \cdot G)$}{b}
+\nextlevel[1.2] 
+
+\end{msc}

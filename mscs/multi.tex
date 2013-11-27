@@ -1,0 +1,52 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\newcommand{\AtEx}{\textit{AE}}
+\newcommand{\sig}[2]{\textsf{sig}_{#1}(#2)}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{2.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{t}{$Q$, $s\cdot Q$, $a_{1},\ldots, a_{n}$}{Terminal}
+\declinst{c}{$k_C$, $a_{1},\ldots,a_{n}$, $\AtEx_{C}$, $s\cdot\AtEx_{C}$}{Card}
+
+\mess{getAttributes}{t}{c}
+\nextlevel[.5]
+
+\action*{fresh blinding $b$}{c}
+\nextlevel[2.3]
+
+\mess{$b \cdot \AtEx_C$, $b \cdot (s\cdot \AtEx_{C})$, 
+   $a_{1}, \ldots, a_{n}$, $b\cdot P_{C}$}{c}{t}
+\nextlevel[.5]
+
+\action*{if $e(\: b \cdot \AtEx_{C},\: s\cdot Q \:) = 
+   e(\: b \cdot (s\cdot \AtEx_{C}),\: Q \:)$ \\
+         then random nonce $n$}{t}
+\nextlevel[3]
+
+\mess{$n$}{t}{c}
+\nextlevel[0.5]
+
+\action*{$\begin{array}{rcl}
+           (r_{0}, s_{0}) 
+             & := & 
+            \text{\sf signECDSA}_{P_0}(\: n, bk_C \:) \\
+           (r, s) 
+            & := &
+            \text{\sf signECDSA}_{P}(\: n,\; b \:) \\
+           \rlap{\quad where $P = \AtEx_{C} - P_{C}$} &&
+           \end{array}$}{c}
+\nextlevel[4.2]
+
+\mess{$(r_{0}, s_{0}), (r,s)$}{c}{t}
+\nextlevel[.5]
+
+\action*{verifyECDSA$(\: r_{0}, s_{0}, b \cdot P_C \:)$ \\
+         verifyECDSA$(\: r, s, P' \:)$ \\
+         where $P' = b\cdot \AtEx_{C} - b\cdot P_{C}$}{t}
+\nextlevel[3.0]
+
+\end{msc}

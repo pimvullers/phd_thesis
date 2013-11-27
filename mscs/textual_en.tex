@@ -1,0 +1,39 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.7\instdist}
+\setlength{\envinstdist}{2\envinstdist}
+
+\declinst{c}{keys $K_{private}$ and $K_{public}$, attribute $A$, certificate $C$}{Card}
+\declinst{t}{key $K_{certificate}$}{Terminal}
+
+\nextlevel[.3]
+
+\mess{show attribute}{t}{c}
+\nextlevel[.5]
+
+\action*{blind ($\#$) $K_{public}$, $K_{private}$ and $C$}{c}
+\nextlevel[2.5]
+
+\mess{$\#\!\!\!\!K_{public}$, $\#\!\!\!\!C$, $A$}{c}{t}
+\nextlevel[.5]
+
+\action*{verify $\#\!\!\!\!C$ using $K_{certificate}$ and $\#\!\!\!\!K_{public}$ \\
+         generate a random number $N$}{t}
+\nextlevel[3.1]
+
+\mess{sign $N$}{t}{c}
+\nextlevel[.5]
+
+\action*{sign ($*$) $N$ using $\#\!\!\!\!K_{private}$}{c}
+\nextlevel[2.0]
+
+\mess{$*\!\!N$}{c}{t}
+\nextlevel[.5]
+
+\action*{verify $*\!\!N$ using $\#\!\!\!\!K_{public}$}{t}
+\nextlevel[1.3]
+
+\end{msc}
