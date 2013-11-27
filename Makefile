@@ -1,19 +1,25 @@
-all: compact_thesis thesis
+SOURCE_DIR=$(shell pwd)
+BUILD_DIR=.build
 
-compact_thesis: mscs
-	pdflatex compact_thesis
-	bibtex compact_thesis
-	pdflatex compact_thesis
-	pdflatex compact_thesis
+all: compact thesis
 
-thesis: mscs 
-	pdflatex thesis
-	bibtex thesis
-	pdflatex thesis
-	pdflatex thesis
+compact: compact_thesis.pdf
 
-mscs: mscs/*.tex
+thesis: thesis.pdf
+
+%.pdf: %.tex mscs *.tex *.bib
+	@mkdir -p ${BUILD_DIR}
+	pdflatex -output-directory=${BUILD_DIR} ${<}
+	@sed -i 's#{references}#{${SOURCE_DIR}/references}#' .build/bibliography.aux
+	(cd ${BUILD_DIR}; bibtex `basename ${<} .tex`)
+	pdflatex -output-directory=${BUILD_DIR} ${<}
+	pdflatex -output-directory=${BUILD_DIR} ${<}
+	mv ${BUILD_DIR}/${@} ./
+
+mscs:
 	${MAKE} -C mscs
 
 clean:
 	rm *.aux *.bbl *.blg *.log *.out *.pdf *.toc *.dvi *.ps *.eps
+
+.PHONY: all clean mscs compact thesis
