@@ -1,0 +1,26 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{c}{$k_c$,\, $P_c = k_c \cdot P$}{Card}
+\declinst{t}{$Q$,\, ($a, s_a$)}{Issuer}
+
+\mess{$P_c$}{c}{t}
+\nextlevel[.5]
+
+\referencestart{p}{Proof of possession of $k_c$}{c}{t}
+\nextlevel
+\referenceend{p}
+\nextlevel
+
+\action*{$C_a \gets s_a \cdot P_U$}{c}
+\nextlevel[2.3]
+
+\mess{$a, C_a$}{t}{c}
+\nextlevel[.5]
+
+\end{msc}
