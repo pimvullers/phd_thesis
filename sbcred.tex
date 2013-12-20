@@ -171,7 +171,7 @@ known by a public key. Proof of credential possession is given by proving
 possession of the private key related to the public key referenced in the
 certificate.
 
-$\{P_U, [Sig(P_U, s_C), Cert(P_C, "Credential Issuer statement)]\}$
+$$\{P_U, [Sig(P_U, s_C), Cert(P_C, \text{"Credential Issuer statement"})]\}$$
 
 Here, the public key $P_U$ of the user is signed using a private key $s_C$ of
 the credential issuer. The corresponding public key $P_C$ of the credential
@@ -198,15 +198,16 @@ The database will then contain
   \item the credential statement.
 \end{itemize}
 
-\noindent [TODO: switch to smart card context, this context should be described in the
-introduction, and this should mainly be a reference]
+\noindent [TODO: switch to smart card context, this context should be described
+in the introduction, and this should mainly be a reference]
 
 \section{Credential Issuance}
 
-\begin{figure}
+\begin{figure}[ht]
   \centering
   \includegraphics[scale=.4]{mscs/sbc_issuance}
-  \caption{Issuance of self-blindable credential certificates.}\label{fig:SBC-issuance}
+  \caption{Issuance of self-blindable credential certificates.}
+  \label{fig:SBC-issuance}
 \end{figure}
 
 To obtain a credential from a credential issuer the cardholder must provide the
@@ -216,356 +217,275 @@ trust level of the system. When the credential issuer has verified the
 authenticity of the user he will verify eligibility for the requested attribute.
 Once this has been verified the issuer signs the user's public key using the
 private key corresponding to the requested attribute and send this signature to
-the user.
+the user as depicted in Figure~\ref{fig:SBC-issuance}.
 
 \section{Credential Verification}
 
-\begin{figure}
+\begin{figure}[ht]
   \centering
   \includegraphics[scale=.4]{mscs/sbc_verification}
-  \caption{Protocol for proving self-blindable attributes}\label{fig:textual_en}
+  \caption{Verification of self-blindable credential certificates.}
+  \label{fig:SBC-verification}
 \end{figure}
 
-When the user wants to utilize an attribute stored in a credential it has to
+When the user wants to utilise an attribute stored in a credential it has to
 show the credential to the service provider. To prevent the service provider
 from tracing her based on the public key the user first blinds her key pair and
-the credential. Next it sends the results from this blinding operation to the
-service provider and proofs possession of the (blinded) private key. This last
-step is easily achieved by signing a challenge received from the service
-provider using this private key. The service provider can then verify this
-signature using the public key it received earlier.
+the credential as shown in Figure~\ref{fig:SBC-verification}. Next she sends
+the results from this blinding operation to the service provider and proofs
+possession of the (blinded) private key. This last step is easily achieved by
+signing a challenge received from the service provider using this private key.
+The service provider can then verify this signature using the public key it
+received earlier.
 
+\section{Smart Card Implementation}
 
-Of course, when a card presents a reader with such a pair $P_c$, $R$
-the reader should not only check that $R$ is a proper signature on
-$P_c$, that is, $R$ is $s\cdot P_c$, but also that the card knows the private
-key corresponding to the public key $P_c$. This can be done via standard
-challenge-response exchange, for example using ECDSA.
-
-\section{Java Card Implementation}
-
-To understand practical limitations and estimate performance of our protocols,
-we implemented the protocol from \figurename~\ref{fig:basic} in Java
-(terminal-side application) and Java Card (card-side application).
+To understand the practical limitations and estimate the performance of our
+protocols, we implemented the protocol from Figure~\ref{fig:SBC-verification}
+in Java (terminal-side application) and Java Card (card-side application).
 Our implementation involves the following components:
 \begin{description}
-\item[Bouncy Castle Library with Extension for Pairings] The Bouncy
-  Castle (BC) library\footnote{\texttt{http://www.bouncycastle.org}} is a
-  collection of cryptographic APIs for Java and C\# programming
-  languages. Bouncy Castle provides full support for ECC and an
-  interface to the common Java Cryptography Extension API. However, it
-  does not implement pairings or elliptic curves over fields other
-  than $\mathbb{F}_p$ and $\mathbb{F}_{2^m}$. Thus we have added our
-  own implementations of $\mathbb{F}_{p^2}$ and $\mathbb{F}_{p^{12}}$,
-  and the Tate, ate, and R-ate pairings.
-This work greatly benefited
-  from an ate pairing in Java that Paulo Barreto kindly made
-  available, and algorithms Hankerson et al. published
-  in~\cite{HankersonMS09}.
-  To minimise maintenance overhead we strived
-  to keep our extensions purely \emph{on top} of the Bouncy Castle
-  library, that is, we did not change anything in the original
-  library. In future we plan to contact the BC development team to
-  incorporate our extensions into the official BC tree.
-\item[Smart Card IO Library] Since version 6.0 the standard Java Development Kit
-  includes support for communication with smart cards by providing the
-  \texttt{javax.smartcardio} package. We used it to talk to a Java Card smart card
-  on which our client applet was installed.
-\item[A Java Card with the Client Applet] The protocol on the card-side is
-  implemented as a Java Card~\cite{Chen00} applet and loaded onto
-  a development Java Card.
+  \item[Java Card Applet] The protocol on the card-side is implemented as a
+    Java Card~\cite{Chen00} applet and loaded onto a development Java Card.
+    This implementation will be explained in more detail below.
+  \item[Bouncy Castle Library with an extension for Pairings] The Bouncy Castle
+    library\footnote{\texttt{http://www.bouncycastle.org/}} is a collection of
+    cryptographic APIs for the Java and C\# programming languages. It provides
+    full support for ECC and an interface to the common Java Cryptography
+    Extension API. However, it does not implement pairings or elliptic curves
+    over fields other than $\mathbb{F}_p$ and $\mathbb{F}_{2^m}$. Thus we have
+    added our own implementations of $\mathbb{F}_{p^2}$ and
+    $\mathbb{F}_{p^{12}}$, and the Tate, ate, and R-ate pairings.
+
+    This work greatly benefited from an ate pairing in Java that Paulo Barreto
+    kindly made available, and algorithms published by Hankerson et
+    al.~\cite{HankersonMS09}. To minimise maintenance overhead we strived to
+    keep our extensions purely \emph{on top} of the Bouncy Castle library, that
+    is, we did not change anything in the original library. This allows for easy
+    integration in newer library releases.
+  \item[Smart Card IO Library] The standard Java Development
+    Kit\footnote{Since version 6.0.} includes support for communication with
+    smart cards by providing the \texttt{javax.smartcardio} package. We used it
+    to talk to a Java Card smart card on which our client applet was installed.
 \end{description}
 
+\subsection{Available ECC Operations on Java Card}
 
-\subsection{Available ECC Operations}
+In order to implement the verification protocol on Java Card we need support for
+elliptic curve cryptography. In this section we summarise the available
+operations and how they can be used to implement the protocol.
 
-\subsubsection{EC Diffie-Hellman}
+\subsubsection{EC Diffie-Hellman}\label{sec:ecdh-api}
 
-This functionality is provided by the javacard.security.KeyAgreement class. This
-class can be instantiated using the getInstance(byte algorithm, boolean externalAccess)
-method which returns a KeyAgreement object that implements a certain algorithm.
-The generateSecret(byte[] publicData, short publicOffset, short publicLength, byte[] secret, short secretOffset)
-method can then be used to actually perform the Diffie-Hellman operation, in our
-case an elliptic curve multiplication.
+This functionality is provided by the \texttt{javacard.security.KeyAgreement}
+class. This class can be instantiated using the \texttt{getInstance()} method
+which returns a KeyAgreement object that implements a certain algorithm. The
+\texttt{generateSecret()} method can then be used to actually perform the
+Diffie-Hellman operation, in our case an elliptic curve multiplication.
 
 The standard Java Card API provides two algorithms~\cite{JavaCard-2.2.2_API_documentation}:
-\begin{description}
-  \item[ALG\_EC\_SVDP\_DH] Elliptic curve secret value derivation primitive, Diffie-Hellman version, as per [IEEE P1363].
-  \item[ALG\_EC\_SVDP\_DHC] Elliptic curve secret value derivation primitive, Diffie-Hellman version, with cofactor multiplication, as per [IEEE P1363].
-\end{description}
-
+\begin{itemize}
+  \item \texttt{ALG\_EC\_SVDP\_DH}: Elliptic curve secret value derivation
+    primitive, Diffie-Hellman version, as per~\cite{IEEE_P1363}.
+  \item \texttt{ALG\_EC\_SVDP\_DHC}: Elliptic curve secret value derivation
+    primitive, Diffie-Hellman version, with cofactor multiplication, as
+    per~\cite{IEEE_P1363}.
+\end{itemize}
 Unfortunately for us, the implementation of these algorithms has two drawbacks:
 \begin{enumerate}
-  \item According to the IEEE P1363~\cite{IEEE_P1363} standard the shared secret computation by means of ECSVDP-DH and ECSVDP-DHC only returns the $x$-coordinate of the computed point.
-  \item The Java Card implementation of these algorithms computes the SHA-1 message digest of the output of the derivation primitive to yeild a 20 byte result~\cite{JavaCard-2.2.2_API_documentation}.
+  \item According to the IEEE P1363~\cite{IEEE_P1363} standard the shared
+    secret computation by means of ECSVDP-DH and ECSVDP-DHC only returns the
+    $x$-coordinate of the computed point.
+  \item The Java Card implementation of these algorithms computes the SHA-1
+    message digest of the output of the derivation primitive to yield a 20 byte
+    result~\cite{JavaCard-2.2.2_API_documentation}.
 \end{enumerate}
 
-Especially this last transformation of the result prevents it from being useful for any further computation, other than using it as a secret key.
+Especially this last transformation of the result prevents it from being useful
+for any further computation, other than using it as a secret key.
 
 \paragraph{JCOP Extension}
 
-Luckily the JCOP platform contains some extensions to the standard Java Card API.
-In particular this extension provides the KeyAgreementX.ALG\_EC\_SVDP\_DH\_PLAIN algorithm:
-
-\begin{lstlisting}
-  /**
-	 * KeyAgreement algorithm ALG_EC_SVDP_DH_PLAIN is the same as ALG_EC_SVDP_DH
-	 * but without SHA1 postcomputation.
-	 */
-\end{lstlisting}
-
-com.nxp.id.jcopx.KeyAgreementX
-KeyAgreementX.getInstance(KeyAgreementX.ALG\_EC\_SVDP\_DH\_PLAIN, false);
-
+Luckily the NXP JCOP platform contains some extensions to the standard Java Card
+API. In particular this extension provides an additional algorithm:
+\begin{itemize}
+  \item \texttt{ALG\_EC\_SVDP\_DH\_PLAIN}: the same as
+    \texttt{ALG\_EC\_SVDP\_DH} but without SHA1 post-computation.
+\end{itemize}
 This removes the second drawback as mentioned before and only leaves us with the
-$x$-coordinate of the result instead of a point. However, the point can be reconstructed
-from this coordinate using the elliptic curve formula. By inputting the $x$ value
-we can compute the $y$ value. The only unknown is the sign of the $y$-coordinate,
-hence we end up with two candidate points for the multiplication result.
+$x$-coordinate of the result instead of a point. However, the point can be
+reconstructed from this coordinate using the elliptic curve formula. By putting
+the $x$ value we can compute the corresponding $y$ value. The only unknown is
+the sign of the $y$-coordinate, hence we end up with two candidate points for
+the multiplication result.
 
 \subsection{Public Key and Credential Blinding}
 
-\begin{figure}
-  \centering
-  \includegraphics[scale=.4]{mscs/basic}
-  \caption{Protocol for proving self-blindable attributes}\label{fig:basic}
-\end{figure}
+The first step of the protocol is fairly straightforward. The card has to
+select the correct credential for the attribute to reveal and blind it together
+with the public key. As described in Algorithm~\ref{alg:SBC-blind} this can be
+done by calling the Diffie-Hellman operation once for each value. The resulting
+blinded values $P_b$ and $C_b$ are then returned to the terminal.
+
+\begin{algorithm}
+  \caption{Public Key and Credential Blinding.}
+  \label{alg:SBC-blind}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{SBC-blind}{$b, P_c, C_a$}
+      \State $P_b \gets \Call{generateSecret}{P_c, b}$
+      \State $C_b \gets \Call{generateSecret}{C_a, b}$
+
+      \Return $P_b, C_b$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 \subsection{Proof of Possession of the Private Key}
 
-\begin{figure}
-  \centering
-  \includegraphics[scale=.4]{mscs/optimised}
-  \caption{Protocol for proving self-blindable attributes}\label{fig:optimised}
-\end{figure}
+Of course, when a card presents a terminal with such a pair $P_b$, $C_b$ it
+should not only check that $C_b$ is a proper signature on $P_b$, but also that
+the card knows the private key corresponding to the public key $P_b$. This can
+be done via standard challenge-response exchange, for example using ECDSA.
 
 \subsubsection{Using the ECDSA Signature Scheme}
 
-This approach depends on the NatLib library developed by Hendrik
-Tews~\cite{TewsJacobs09}. This library is used to blind the secret key before
-it can be used in the ECDSA algorithm to sign the challenge received from the
-terminal.
+As the ECDSA digital signature algorithm is supported by the Java Card API, it
+has been our first choice for implementing the challenge-response protocol to
+establish proof of possession. As input for this algorithm we need the blinded
+private key $k_b = b \cdot k_c$.
 
-\subsubsection{Using the BLS Signature Scheme}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=.4]{mscs/sbc_proof_ecdsa}
+  \caption{Proof of possession of $k_b$ using ECDSA.}
+  \label{fig:SBC-proof-ECDSA}
+\end{figure}
 
-This approach exploits the KeyGeneration functionality provided by the Java Card
-API. This functionality is used to generate the blinding factor and blind the
-received challenge at the same time, This allows us to simply sign the blinded
-challenge with the private key using the BLS signature scheme.
+Since modular multiplication is not provided by the Java Card API we used the
+NatLib library developed by Hendrik Tews~\cite{TewsJacobs09}. This library
+implements modular arithmetic on Java Card using byte operations and the
+available RSA operations. The resulting proof of possession protocol is depicted
+in Figure~\ref{fig:SBC-proof-ECDSA} and the implementation is described by
+Batina et al.~\cite{BatinaHJMV10}. Unfortunately the use of the NatLib library
+has an impact on the performance of the application which made us look into
+other alternatives for this protocol.
 
-\paragraph{Java Card Applet}\label{sec:applet}
+\subsubsection{Using a minimal variant of the Boneh-Lynn-Shacham Signature Scheme}
 
-In~\cite{BatinaHJMV10} the practical limitations of Java Cards have
-been described that have to be taken into account while programming
-the card. The actual operations that the card needs to perform are
-scalar multiplication of points. In the end the applet performs the
-required steps of the protocol in the following way.
+Our search led us to a minimal variant of the Boneh-Lynn-Shacham signature
+scheme. Since it consists of only a single point multiplication using the
+private key the workload on the card is minimal. We can also exploit the
+structure of the message to be signed to reduce the verification algorithm to a
+single point multiplication as well. The resulting proof of possession protocol
+is depicted in Figure~\ref{fig:SBC-proof-BLS}.
 
-The difficulty in the Java Card applet is the blinding of the private
-key. This problem has been circumvented by (ab)using the EC key
-generation operation to generate the blinding factor. This function
-generates a random number which it multiplies with the generator point
-of the elliptic curve. By setting the nonce, received from the
-terminal, as the generator this function produces a private key (the
-blinding factor $b$) and a public key (the blinded nonce ($b\cdot
-(n\cdot P)$) which we can use for the remaining calculations.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=.4]{mscs/sbc_proof_bls}
+  \caption{Proof of possession of $k_b$ using BLS.}
+  \label{fig:SBC-proof-BLS}
+\end{figure}
 
-Two EC Diffie-Hellman (ECDH) key agreement operations (effectively two scalar
-point
-multiplications) are performed with this generated private key to
-calculate the blinded public key, and the blinded certificate. A third
-ECDH key agreement is performed using the generated public key, the blinded
-nonce, together with the cards private key to generate the signature.
+This approach requires us to compute $b \cdot k_c \cdot N$. This can be split
+up in two ways, in a modular multiplication and a point multiplication or in two
+point multiplications. Since the modular multiplication caused a slow-down in
+the previous approach we perform the point multiplications. For this we exploit
+the KeyGeneration functionality\footnote{Using the Diffie-Hellman operation
+twice is not an option due to the first drawback mentioned in
+Section~\ref{sec:ecdh-api}: the function does not return a point that can be used
+for another point multiplication.} provided by the Java Card API. This
+functionality is used to generate the blinding factor and blind the received
+challenge at the same time. This allows us to simply sign the blinded challenge
+with the private key using the Diffie-Hellman operation.
 
-Both operations, key generation and key agreement, use the
-cryptographic coprocessor to perform the necessary calculations. This
-improves performance since there are no longer calculations which have
-to be done in software, which was the drawback from the original
-implementation.
-
-\paragraph{Terminal Application}\label{sec:application}
+\subsection{Terminal Application}
 
 The terminal application needs to cope with the shortcomings of the Java Card
 applet. This comes down to the fact that the terminal has to reconstruct the
-points received from the card, $b\cdot P_c$ and $b\cdot C_a$, before they can
-be processed any further.
+points received from the card, $P_b$, $C_b$ and $R$, before they can be
+processed any further.
 
 If we know the $x$-coordinate of a point on the curve, the square of the
 corresponding $y$-coordinate is known, namely as $y^{2} = x^{3} + ax + b$.
 By taking the square root of $x^{3} + ax + b$ we find either $y$ or $-y$.
-This forms the basis of ``point compression'', for compact representation
-of points.  This is important for the implementation, because Diffie-Hellman
-on a Java smart card only produces the $x$-coordinate of a multiplication,
-as mentioned in Section~\ref{sec:applet}.
 
-This reconstruction is a simple guess work, trying different signs for
-the two $y$-coordinates. For the ECDSA signature verification this is not a
-real issue since this verification is reasonably fast, although this is of
-course not optimal. For the pairing signature verification simple guessing
-is not desirable. Therefore we exploit the bilinearity of the pairing to
-avoid computing more than two pairings, as would be the case without point
-reconstruction.
+This reconstruction is a simple guess work, trying different signs for the
+$y$-coordinates of the points. For the proof of possession verification this is
+not a real issue since this verification is only a single point multiplication,
+although this is of course not optimal. For the pairing signature verification
+simple guessing is not desirable. Therefore we exploit the bilinearity of the
+pairing to avoid computing more than two pairings, as would be the case without
+point reconstruction.
 
-First we calculate $e_1 = e(b\cdot P_c,\, Q_a)$ and $e_2 = e(b\cdot C_a,\, Q)$
-where we take any sign for the $y$-coordinate of $b\cdot C_a$. If $e_1 = e_2$,
-which happens if we have two right, or two wrong, signs in the first
-parameters of the pairing, the verification succeeds. In the remaining case,
-which means we took one right and one wrong sign, we check whether
-$e_1\, e_2 = 1$ holds. If it holds, the verification also succeeds. This is
-true because of the following. If $e_1 \neq e_2$, the error is caused by the
-wrong sign resulting in one pairing being the inverse of the other, that is,
-$e_2 = e_1^{-1}$. Here we can use that $e_1\, e_2 = e_1 (e_1^{-1}) = 1$ to
-avoid an extra pairing calculation for the negated point of $b\cdot C_a$.
-
-
-The implementation of the terminal application is not significantly
-different from the original version. It only contains minor
-modifications to incorporate the integration of the challenge-response
-part in the first messages and the new signature check.
+First we calculate $e_1 = e(P_b, Q_a)$ and $e_2 = e(C_b, Q)$ where we take any
+sign for the $y$-coordinate of $C_b$. If $e_1 = e_2$, which happens if we have
+two right, or two wrong, signs in the first parameters of the pairing, the
+verification succeeds. In the remaining case, which means we took one right and
+one wrong sign, we check whether $e_1 \cdot e_2 = 1$ holds. If it holds, the
+verification also succeeds. This is true because of the following. If
+$e_1 \neq e_2$, the error is caused by the wrong sign resulting in one pairing
+being the inverse of the other, that is, $e_2 = e_1^{-1}$. Here we can use that
+$e_1 \cdot e_2 = e_1 \cdot e_1^{-1} = 1$ to avoid an extra pairing calculation
+for the negated point of $C_b$.
 
 \section{Performance results}
 
-\subsection{ECDSA using BigNat library}
-
-The results of our tests are summarised in Table~\ref{tab:results_basic}. These
-values are the average of ten test runs for each configuration, that is, for
-each combination of key and blinding length.
+The results of our tests are summarised in Table~\ref{tab:sbc-results}. These
+values are the average of ten test runs for each configuration. The table shows
+the (accumulated) duration (in milliseconds) of the requests to the card.
 
 \begin{table}
   \centering
-  \caption{Test results of the original protocol for various key and blinding
-lengths}\label{tab:results_basic}
+  \caption{Test results for various key lengths}
+  \label{tab:sbc-results}
   \renewcommand{\tabcolsep}{1.25mm}
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabular}{| c | c | c | c | c | c | c |}\hline
-
-  key & blinding & attribute \& signature & verification & protocol &
-communication \\
-  (bits) & (bits) & (ms) & (ms) & (ms) & (bytes) \\\hline
-  \hline
-
-      & 192 & 2748 & 143 & 2891 & \\\cline{2-5}
-  192 &  96 & 1884 & 136 & 2020 & 168 \\\cline{2-5}
-      &  48 & 1451 & 130 & 1582 & \\\hline
-  \hline
-
-      & 160 & 1860 & 126 & 1987 & \\\cline{2-5}
-  160 &  80 & 1355 & 133 & 1489 & 152 \\\cline{2-5}
-      &  40 & 1113 & 127 & 1240 & \\\hline
-  \hline
-
-      & 128 & 1599 & 91 & 1691 & \\\cline{2-5}
-  128 &  64 & 1143 & 93 & 1237 & 136 \\\cline{2-5}
-      &  32 &  927 & 86 & 1014 & \\\hline
+  \begin{tabular}{| c || c | c || c |}\hline
+    key length & ECDSA & minimal BLS & communication \\
+    (bits) & (ms) & (ms) & (bytes) \\\hline\hline
+    192 & 2748 & 787 & 155 \\\hline
+    160 & 1860 & 645 & 135 \\\hline
+    128 & 1599 & 535 & 115 \\\hline
   \end{tabular}
 \end{table}
 
+When we compare the two implementations it can be seen that the duration of the
+ECDSA is significantly larger than the minimal BLS solution. This contrast can
+be explained by the available support from the cryptographic coprocessor. For
+the blinding operations in the latter the applet only uses EC primitives
+provided by the coprocessor to perform the required point multiplications. The
+blinding in the latter, which requires a modular multiplication, has to be
+calculated \emph{without} the help of the coprocessor.
 
-The table shows the duration (in milliseconds) of the \textsf{getAttribute}
-and \textsf{getSignature} requests to the card. The total amount of time
-spent by the card, which is the sum of the durations of the requests, is
-shown in the `card total' column. For the terminal we measured the duration
-of the signature verifications, summarised in the `verification' column.
-Finally the total duration of the protocol execution is shown in the
-`protocol' column.
+In theory it is possible to abuse the RSA cipher (and hence use the coprocessor)
+to do large part of the modulo multiplication by using the fact that
+$4ab = (a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. The squares in
+this equation can be performed by doing an RSA encryption\slash exponentiation
+with a suitable RSA public key, that is, one with the exponent 2 and the
+required modulus. The numbers $a+b$ and $a-b$ are then just messages to be
+encrypted using the RSA cipher, which is provided by the Java Card API.
 
-\subsection{Analysis}\label{sec:analysis}
-
-We first look at the part of the protocol executed on the smart card. From the
-results given in Table~\ref{tab:results_basic} it can be seen that the duration of
-the \textsf{getAttribute} request depends only on the length of the key. This is in
-strong contrast with the \textsf{getSignature} request which also depends heavily
-on the blinding size.
-
-This contrast can be explained by the available support from the
-cryptographic coprocessor. For the blinding in the
-\textsf{getAttribute} request the applet uses the ECDH primitive
-provided by the coprocessor to perform the required two point
-multiplications. The blinding in the \textsf{getSignature} request,
-which requires a modular multiplication, has to be calculated
-\emph{without} the help of the coprocessor.  In theory it is possible
-to abuse the RSA cipher (and hence use the coprocessor) to do large
-part of the modulo multiplication by using the fact that $4ab =
-(a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. The squares in this
-equation can be performed by
-doing an RSA encryption\slash exponentiation with a suitable RSA public
-key, that is, one with the exponent 2 and the required modulus. The
-numbers $a+b$ and $a-b$ are then just messages to be encrypted using
-the RSA cipher, which is provided by the Java Card API.
-
-We tried this approach, but with no success. The main obstacle is that
-the RSA cipher on the card operates only within valid bit lengths for
-RSA keys, starting with 512 bit keys. Although the number to be
-multiplied (the message) can be any value, the number of non-zero bits
-in the modulus has to be at least 488 bits for 512 bit keys according
-to our tests. Since our modulus is only 192 bit long the card refused
-to perform RSA encryption with such short modulus value. However, we
-believe that a more flexible RSA implementation on the card would
+We tried this approach, but with no success. The main obstacle is that the RSA
+cipher on the card operates only within valid bit lengths for RSA keys, starting
+with 512 bit keys. Although the number to be multiplied (the message) can be any
+value, the number of non-zero bits in the modulus has to be at least 488 bits
+for 512 bit keys according to our tests. Since our modulus is only 192 bit long
+the card refused to perform RSA encryption with such short modulus value.
+However, we believe that a more flexible RSA implementation on the card would
 allow this optimisation.
 
-The performance of the terminal application is good, taking less than
-a tenth of running time on the smart card. The drawback on this side is
-caused by the use of the ECDH primitive to calculate the blinded value. This
-results in the problem that the card only responds with the $x$-coordinates
-of the blinded values. Therefore the terminal has to reconstruct the actual
-point from these values as mentioned above. If the card could respond with
-the actual points, either in compressed or uncompressed format, instead of
-just the $x$-coordinate, the duration of the verification phase could be
-shortened.
-
-A large benefit of our use of ECC is the small amount of data that needs to be
-exchanged between the terminal and the card. For key lengths of 192, 160 and 128
-bits the total amount of bytes exchanged is 168, 152 and 136 respectively. This
-would allow an implementation to use a \emph{single} APDU pair (command and
-response) for all communication. This is in strong contrast with RSA-based
-protocols~\cite{Sterckx09,TewsJacobs09} which already require multiple APDUs to
-transfer a single command.
-
-
-\subsection{BLS using key generation}
-
-Using the same parameters as Batina et al.~\cite{BatinaHJMV10} we have
-tested the performance of our optimised version of the protocol. The
-results of these tests can be found in Table~\ref{tab:results_optimised}. The results of
-the original protocol have been included, for comparison, in
-Table~\ref{tab:results_basic}. Note
-that we no longer use different blinding lengths since we now use the
-key generator for this, which just uses the elliptic curve parameters.
+To get some more information about how the running time of the improved
+implementation is spent on the card we measured how long it takes to perform the
+individual operations. The results of these measurements can be found in
+Table~\ref{tab:primitives}. The columns indicate the time needed to perform a
+single operation. The processing overhead is determined by subtracting one key
+generation and three key agreements from the protocol duration.
 
 \begin{table}
   \centering
-  \caption{Test results of the optimised protocol for various key
-    lengths}\label{tab:results_optimised}
-  \renewcommand{\tabcolsep}{1.25mm}
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabular}{| c || c | c | c | c |}\hline
-    key length & attribute \& signature & verification & protocol total &
-      communication \\
-    (bits) & (ms) & (ms) & (ms) & (bytes) \\\hline
-    \hline
-    192 & 787 & 116 & 904 & 155 \\\hline
-    160 & 645 & 102 & 747 & 135 \\\hline
-    128 & 535 &  82 & 617 & 115 \\\hline
-  \end{tabular}
-\end{table}
-
-It can be seen that there is a significant increase in performance with respect
-to the running times on the card from the original implementation. The smaller
-amount of data which has to be exchanged during communication allowed us to
-combine the protocol in a single command-response APDU pair, thus reducing the
-amount of messages sent which also has a positive effect on the processing
-overhead.
-
-To get some more information about how the running time is spent on the card we
-measured how long it takes to perform the individual operations. The results of
-these measurements can be found in Table~\ref{tab:primitives}. The columns
-indicate the time needed to perform a single operation. The processing overhead
-is determined by subtracting one key generation and three key agreements from
-the running time on the card.
-
-\begin{table}
-  \centering
-  \caption{Test results for the API primitives}\label{tab:primitives}
+  \caption{Test results for the API primitives}
+  \label{tab:primitives}
   \renewcommand{\tabcolsep}{1.25mm}
   \renewcommand{\arraystretch}{1.25}
   \begin{tabular}{| c || c | c | c |}\hline
@@ -586,11 +506,21 @@ longer than just the multiplication. A possible explanation is a different
 calculation which explains the fact that a key generation can return a complete
 point, whereas a key agreement can only return the $x$-coordinate.
 
+A large benefit of our use of ECC is the small amount of data that needs to be
+exchanged between the terminal and the card. For key lengths of 192, 160 and 128
+bits the total amount of bytes exchanged is 155, 135 and 115 respectively. This
+would allow an implementation to use a \emph{single} APDU pair (command and
+response) for all communication. This is in strong contrast with RSA-based
+protocols~\cite{Sterckx09,TewsJacobs09} which already require multiple APDUs to
+transfer a single command.
+
 \section{MULTOS implementation??}
 
-On the MULTOS platform the ECC API is also limited to ECDH, ECDSA and key generation.
-We can, however, use the same trick as in the Java Card implementation to get the
-BLS version to work. Furthermore the MULTOS API does provide ModularMultiplication
-functionality which allows us to efficiently implement the ECDSA approach.
+On the MULTOS platform the ECC API is also limited to ECDH, ECDSA and key
+generation. We can, however, use the same trick as in the Java Card
+implementation to get the minimal BLS version to work. Furthermore the MULTOS
+API does provide \texttt{ModularMultiplication} operation which allows us to
+efficiently blind the private key, such that we can drop the time consuming key
+generation operation.
 
 [Unfortunately the code does not run.]

@@ -1,0 +1,39 @@
+\begin{msc}{}
+
+\setlength{\instwidth}{1.5\instwidth}
+
+\declinst{P}{$h = g_1^{x_1} g_2^{x_2}$}{Prover}
+\declinst{V}{$g_1$, $g_2$, $h$}{Verifier}
+
+\action*{%
+  $u_1, u_2 \in_R \mathbb{Z}_p$\\ 
+  $a \leftarrow g_1^{u_1} g_2^{u_2}$%
+}{P}
+\nextlevel[2.2]
+
+\mess{$a$}{P}{V}
+\nextlevel[.5]
+
+\action*{%
+  $c \in_R \mathbb{Z}_p$%
+}{V}
+\nextlevel[1.5]
+
+\mess{$c$}{V}{P}
+\nextlevel[.5]
+
+\action*{%
+  $r_1 \leftarrow_p u_1 + cx_1$\\ 
+  $r_2 \leftarrow_n u_2 + cx_2$%
+}{P}
+\nextlevel[2.2]
+
+\mess{$r_1, r_2$}{P}{V}
+\nextlevel[.5]
+
+\action*{%
+  $g_1^{r_1} g_2^{r_2} \stackrel{?}{=} ah^c$%
+}{V}
+\nextlevel[1.5]
+
+\end{msc}

@@ -1,0 +1,38 @@
+\begin{msc}{}
+
+\setlength{\instwidth}{1.5\instwidth}
+
+\declinst{P}{$h = g^x$}{Prover}
+\declinst{V}{$g$, $h$}{Verifier}
+
+\action*{%
+  $u \in_R \{0,1\}^{l_n + l_c + l_\varnothing}$\\
+  $a \leftarrow g^u$%
+}{P}
+\nextlevel[2.2]
+
+\mess{$a$}{P}{V}
+\nextlevel[.5]
+
+\action*{%
+  $c \in_R \{0,1\}^{l_c}$%
+}{V}
+\nextlevel[1.5]
+
+\mess{$c$}{V}{P}
+\nextlevel[.5]
+
+\action*{%
+  $r \leftarrow u + cx$%
+}{P}
+\nextlevel[1.5]
+
+\mess{$r$}{P}{V}
+\nextlevel[.5]
+
+\action*{%
+  $g^r \stackrel{?}{\equiv} a h^c \mod n$%
+}{V}
+\nextlevel[1.5]
+
+\end{msc}

@@ -25,6 +25,7 @@ ${MSC_PDF}: ${MSC_SRC}
 	${MAKE} -C mscs
 
 clean:
-	rm *.aux *.bbl *.blg *.log *.out *.pdf *.toc *.dvi *.ps *.eps
+	rm -r ${BUILD_DIR}
+	rm *.pdf
 
 .PHONY: all clean mscs compact thesis

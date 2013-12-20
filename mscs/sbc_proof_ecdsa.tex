@@ -1,0 +1,27 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{c}{$k_c, b$}{Card}
+\declinst{t}{$P_b$}{Terminal}
+
+\action*{fresh nonce $n$}{t}
+\nextlevel[2.5]
+
+\mess{$n$}{t}{c}
+\nextlevel
+
+\action*{$k_b \gets b \cdot k_c$ \\ $r \gets \textsc{ECDSA-sign}(n, k_b)$}{c}
+\nextlevel[3.3]
+
+\mess{$r$}{c}{t}
+\nextlevel
+
+\action*{\textsc{ECDSA-verify}($n, r, P_b$)}{t}
+\nextlevel[1.8]
+
+\end{msc}

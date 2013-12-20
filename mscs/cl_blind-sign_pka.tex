@@ -1,0 +1,43 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instdist}{14cm}
+\setlength{\envinstdist}{2\envinstdist}
+\setlength{\referenceoverlap}{6cm}
+
+\declinst{R}{}{Receiver}
+\declinst{S}{}{Signer}
+
+\action*{%
+  $u \in_R \mathbb{Z}_{p'q'}^*$\\ 
+  $a \leftarrow \left(\dfrac{Z}{U S^{v''}\prod_{i=L'+1}^{L} R_i^{m_i}} \right)^u$%
+}{R}
+\nextlevel[3.8]
+
+\mess{$a$}{R}{S}
+\nextlevel[.5]
+
+\action*{%
+  $c \in_R \mathbb{Z}_n$
+}{S}
+\nextlevel[1.8]
+
+\mess{$c$}{S}{R}
+\nextlevel[.5]
+
+\action*{%
+  $r \leftarrow_{p'q'} u + c (1/e)$%
+}{R}
+\nextlevel[1.8]
+
+\mess{$r$}{R}{S}
+\nextlevel[.5]
+
+\action*{%
+  $\left(\dfrac{Z}{U S^{v''}\prod_{i=L'+1}^{L} R_i^{m_i}} \right)^r \stackrel{?}{\equiv} a A^c \mod n$
+}{S}
+\nextlevel[2.5]
+
+\end{msc}

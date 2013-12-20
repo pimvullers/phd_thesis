@@ -1,0 +1,45 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instdist}{14cm}
+\setlength{\envinstdist}{2\envinstdist}
+\setlength{\referenceoverlap}{6cm}
+
+\declinst{R}{}{Receiver}
+\declinst{S}{}{Signer}
+
+\action*{%
+  $u \in_R \{0,1\}^{l_m+l_\varnothing+1}$\\ 
+  $v_i \in_R \{0,1\}^{l_n+2l_\varnothing}$ for $1 \leq i \leq L'$\\  
+  $a \leftarrow S^{u} \prod_{i=1}^{L'} R_i^{v_i} \mod n$%
+}{R}
+\nextlevel[3.5]
+
+\mess{$a$}{R}{S}
+\nextlevel[.5]
+
+\action*{%
+  $c \in_R [2^{l_e-1} + 1, 2^{l_e} -1]$
+}{S}
+\nextlevel[1.8]
+
+\mess{$c$}{S}{R}
+\nextlevel[.5]
+
+\action*{%
+  $r \leftarrow u + c v'$\\
+  $s_i \leftarrow v_i + c m_i$ for $1 \leq i \leq L'$%
+}{R}
+\nextlevel[2.5]
+
+\mess{$r, s_1, \dots, s_{L'}$}{R}{S}
+\nextlevel[.5]
+
+\action*{%
+  $S^r \prod_{i=0}^{L'} R_i^{s_i} \stackrel{?}{\equiv} a U^c \mod n$
+}{S}
+\nextlevel[1.5]
+
+\end{msc}

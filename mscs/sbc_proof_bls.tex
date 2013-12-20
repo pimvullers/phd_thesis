@@ -1,0 +1,27 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{2\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{c}{$k_c, b$}{Card}
+\declinst{t}{$P_b, P$}{Terminal}
+
+\action*{fresh nonce $n$ \\ $N \gets n \cdot P$}{t}
+\nextlevel[2.3]
+
+\mess{$N$}{t}{c}
+\nextlevel
+
+\action*{$R \gets b \cdot k_c \cdot N$}{c}
+\nextlevel[2.3]
+
+\mess{$R$}{c}{t}
+\nextlevel
+
+\action*{verify $R \stackrel{?}{=} n \cdot P_b$}{t}
+\nextlevel[1.8]
+
+\end{msc}

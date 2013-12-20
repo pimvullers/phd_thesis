@@ -1768,13 +1768,13 @@
 \def\action{\@ifstar{\msc@actionstar}{\msc@actionnostar}}
 
 \def\msc@actionstar#1#2{
-  \savebox{\tmp@box}{#1}
+  \savebox{\tmp@box}{\parbox{\widthof{\begin{tabular}{@{}l@{}}#1\end{tabular}}}{#1}}
 
   % save values for actionwidth and actionheight
   \setlength{\tmp@Xd}{\actionwidth}
   \setlength{\tmp@Yd}{\actionheight}
 
-  \setlength{\tmp@Xc}{\wd\tmp@box+\labeldist}%
+  \setlength{\tmp@Xc}{\wd\tmp@box + 2\labeldist}%
   \setlength{\tmp@Yc}{\ht\tmp@box + \dp\tmp@box +2\labeldist}%
   
   % Increase the actionwidth if necessary
@@ -1904,7 +1904,7 @@
 \def\condition{\@ifstar{\msc@conditionstar}{\msc@conditionnostar}}
 
 \def\msc@conditionstar#1#2{
-   \savebox{\tmp@box}{#1}
+   \savebox{\tmp@box}{\parbox{\widthof{\begin{tabular}{@{}l@{}}#1\end{tabular}}}{#1}}
 
    % Save original values of conditionoverlap and conditionheight
    \setlength{\tmp@Xc}{\conditionoverlap}%

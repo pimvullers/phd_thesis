@@ -6,21 +6,25 @@
 \setlength{\instdist}{1.5\instdist}
 \setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{c}{$k_c$,\, $P_c = k_c \cdot P$}{Card}
-\declinst{t}{$Q$,\, ($a, s_a$)}{Issuer}
-
-\mess{$P_c$}{c}{t}
+\declinst{c}{$k_c$,\, $P_c = k_c \cdot P$,\, $a$,\, $C_a = s_a \cdot P_c$}{Card}
+\declinst{t}{$P$,\, $Q$,\, ($a,\,Q_a = s_a \cdot Q$)}{Terminal}
 \nextlevel[.5]
 
-\referencestart{p}{Proof of possession of $k_c$}{c}{t}
+\mess{\textsc{revealAttribute}}{t}{c}
 \nextlevel
+
+\action*{fresh blinding $b$ \\ $C_b \gets b \cdot C_a$ \\ $P_b \gets b \cdot P_c$}{c}
+\nextlevel[3.5]
+
+\mess{$a, C_b, P_b$}{c}{t}
+\nextlevel
+
+\action*{verify $e(P_b, Q_a) \stackrel{?}{=} e(C_b, Q)$}{t}
+\nextlevel[2.2]
+
+\referencestart{p}{Proof of possession of $k_b = b \cdot k_c$}{c}{t}
+\nextlevel[2]
 \referenceend{p}
-\nextlevel
-
-\action*{$C_a \gets s_a \cdot P_U$}{c}
-\nextlevel[2.3]
-
-\mess{$a, C_a$}{t}{c}
 \nextlevel[.5]
 
 \end{msc}

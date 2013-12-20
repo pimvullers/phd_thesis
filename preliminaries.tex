@@ -1,5 +1,71 @@
 \chapter{Preliminaries}
 
+\section{Cryptography}
+
+\subsection{Hard Problems}
+
+\subsubsection{Discrete Log}~\\
+
+Given $h \in G = \langle g \rangle$, determine $x$ such that $h = g^x$.
+
+\subsubsection{Diffie-Hellman}~\\
+
+Given $h_1 = g^x$ and $h_2 = g^y$, determine $h$ such that $h = g^z$ where $z = xy$.
+
+\subsubsection{Factoring}~\\
+
+Given $n \in \mathbb{N}$, determine primes $p_i$ and exponents $e_i$ such that $n = \prod_i p_i^{e_i}$.
+
+\subsubsection{RSA}~\\
+
+Given $n = pq$, $e$ and $c$ where $p, q$ primes, determine $m$ such that $c = m^e \mod n$.
+
+\subsubsection{Strong RSA}~\\
+
+Given $n = pq, c$ where $p, q$ primes, determine $m, e \geq 3$ such that $c = m^e \mod n$.
+
+
+\section{Zero-knowledge proofs}
+
+\subsection{Zero-knowledge protocols}
+
+\begin{figure}
+  \centering
+  \subfloat[$PK\{(\alpha) : h = g^\alpha \}$\label{msc:schnorr}]{\includegraphics[scale=.45]{mscs/schnorr}}
+  \quad
+  \subfloat[$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$\label{msc:schnorr_mod}]{\includegraphics[scale=.45]{mscs/schnorr_mod}}
+  \caption{Schnorr's zero-knowledge protocol~\cite{Schnorr1991} for prime order groups (a) and for groups modulo a composite (b).}
+  \label{fig:schnorr}
+\end{figure}
+
+Schnorr
+
+\subsection{Zero-knowledge proofs}
+
+The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a zero-knowledge protocol into a non-interactive zero-knowledge proof. To achieve this the challenge $c$ is not retrieved from the verifier but computed as follows: $$c \leftarrow H(m,a)$$ where $H$ is a cryptographic hash function, $m$ is some message to be included (to be signed) and $a$ is the commitment. Both the commitment $a$ and the response $r$ are calculated as usual. The result is a signature $(c,r)$ on $m$. This can be verified by checking whether $$c = H(m, g^r h^{-c})$$ holds. It should hold since $g^r h^{-c} = g^{u + cx} h^{-c} = g^{u + cx} (g^x)^{-c} = g^u = a$.
+
+\subsection{Composition of zero-knowledge proofs}
+
+\subsubsection{Combining}
+
+Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ do not share any variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$.
+
+\subsubsection{Equality}
+
+\begin{figure}
+  \subfloat[$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$\label{msc:okamoto}]{\includegraphics[scale=.45]{mscs/okamoto}}
+  \quad
+  \subfloat[$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$\label{msc:equality}]{\includegraphics[scale=.45]{mscs/equality}}
+  \caption{Okamoto's zero-knowledge protocol~\cite{Okamoto1993} for multi-exponents (a) and an adaption for equality (of the first exponent) composition (b).}
+  \label{fig:okamoto}
+\end{figure}
+
+Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ share variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$ and \emph{using the same randoms and responses} $u_i$ and $r_i$.
+
+
+\subsubsection{OR} ...
+
+
 \section{Elliptic Curve Cryptography}
 
 \subsection{Elliptic Curves}
@@ -18,6 +84,13 @@
   \end{equation*}
   where $\infty$ is a special point called the \emph{point at infinity}.
 \end{definition}
+
+If we know the $x$-coordinate of a point on the curve, the square of the
+corresponding $y$-coordinate is known, namely as $y^{2} = x^{3} + ax + b$.
+By taking the square root of $x^{3} + ax + b$ we find either $y$ or $-y$.
+This forms the basis of ``point compression'', for compact representation
+of points.  This is important for the implementation, because Diffie-Hellman
+on a Java smart card only produces the $x$-coordinate of a multiplication.
 
 \subsubsection{Operations}
 
@@ -54,10 +127,10 @@
 
 \begin{algorithm}
   \caption{Elliptic curve point negation: $R = -P$}
-  \label{alg:ec_point_addition}
+  \label{alg:ec_point_negation}
 
   \begin{algorithmic}[1]
-    \Function{ECPointAddition}{$P$, $Q$}
+    \Function{ECPointNegation}{$P$}
       \If{$P = \infty$}
         \Return $\infty$
       \Else
@@ -199,7 +272,7 @@ $p$ is prime. The order of a BN curve is a prime $n$ where
 $n = n(u) = 36 u^4 + 36 u^3 + 18 u^2 + 6 u + 1$. Hence, a BN curve is
 constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
 numbers. The embedding degree of BN curves is 12 and we detail the parameters
-for our case in Section~\ref{sec:params}.
+for our case when they are used.
 
 Here we use pairings of the form $e: E(\F{p}) \times E(\F{p^k}) \to \F{p^k}$,
 obtained by taking $\G{1} = \G{2} = \F{p^k}$ and using the obvious inclusion
