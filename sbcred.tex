@@ -2,9 +2,9 @@
 
 The drawback of using regular public-key certificates, like X.509
 certificates~\cite{ISO9594-8}, is that they are inherently traceable. This is
-caused by the public key and signature that are contained in the certificate.
-The public key can be used as a unique identifier for the user and is included
-in the signature, making that identifying as well.
+caused by the fixed public key and signature that are contained in the
+certificate. The public key can be used as a unique identifier for the user and
+is included in the signature, making that identifying as well.
 
 To circumvent this problem Verheul~\cite{Verheul01} proposes a
 variant~\cite{BonehLS01,BonehLS04} of the Chaum-Pedersen signature
@@ -19,19 +19,21 @@ system as well as our implementations~\cite{BatinaHJMV10,HoepmanJV10}.
 
 \section{Self-Blindable Signatures}
 
+[TODO: brief intro]
 
 \subsection{Chaum-Pedersen Signature Scheme}
 
 Chaum and Pedersen~\cite{ChaumPedersen93} describe a basic signature scheme
 which is intended to be used in combination with smart cards. This scheme works
-in the DL setting and will be used as the basis for the following schemes.
+in the discrete logarithm setting and will be used as the basis for the
+following schemes.
 
 The public key is a value $h$ together with a description of the prime-order
 group in which the computations take place. As an example we use $(p, q, g)$,
-which denotes a subgroup of $\Z*_p$ of prime-order $q$ with generator $g$. The
-corresponding secret key is $x = \log_g h$.
+which denotes a subgroup of $\Z^*_p$ of prime-order $q$ with generator $g$. The
+corresponding private key is $x = \log_g h$.
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \caption{Generate a Chaum-Pedersen signature.}
   \label{alg:CP-sign}
   \addtolength{\baselineskip}{1mm}
@@ -59,7 +61,7 @@ Algorithm~\ref{alg:CP-verify}. When the proof is correct, the verifier is
 assured that the message is signed using the private key corresponding to the
 public key used for verification.
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \caption{Verify a Chaum-Pedersen signature.}
   \label{alg:CP-verify}
   \addtolength{\baselineskip}{1mm}
@@ -82,30 +84,33 @@ public key used for verification.
 
 \subsection{Boneh-Lynn-Shacham Signature Scheme}
 
-Since the signature scheme of Chaum and Pedersen operates in the DL setting it
-can also be used with elliptic curve cryptography. Boneh, Lynn and
-Shacham~\cite{BonehLS01,BonehLS04} present a signature scheme that works on
-elliptic curves with pairings and resembles the scheme by Chaum and Pedersen,
-but omits the equality proof in order to achieve short signatures.
+Since the signature scheme of Chaum and Pedersen operates in the discrete
+logarithm setting it can also be used with elliptic curve cryptography. Boneh,
+Lynn and Shacham~\cite{BonehLS01,BonehLS04} present a signature scheme that
+works on elliptic curves with bilinear pairings and resembles the scheme by
+Chaum and Pedersen, but omits the equality proof in order to achieve short
+signatures.
 
 At the same time Verheul~\cite{Verheul01} gives a similar description of this
-proofless variant of the Chaum-Pedersen scheme for groups in which the DDH
-problem is easy while the DH and DL problems are hard. Elliptic curves with
-pairings provide such groups. The proof of equality can in this case be
-substituted by a pairing equation to be checked by the verifier.
+proofless variant of the Chaum-Pedersen scheme for groups in which the
+decisional Diffie-Hellman problem is easy while the computational Diffie-Hellman
+and discrete logarithm problems are hard. Elliptic curves with bilinear pairings
+provide such groups. The proof of equality can in this case be substituted by a
+pairing equation to be checked by the verifier.
 
-The public key is a point $Q = x \cdot P_1$ on the curve together with a
-description of the elliptic curve. The private key is the scalar value $x$. To
-sign a message $m$ the signer transforms this into a point $P_m$ which is simply
-multiplied with the private key as described in Algorithm~\ref{alg:BLS-sign}.
+The public key is a point $Q = x \cdot P_2$ on an elliptic curve $E_2$ together
+with a description of that curve. The private key is the scalar value $x$. To
+sign a message $m$ the signer transforms this into a point $P_m$ on the curve
+$E_1$ which is simply multiplied with the private key as described in
+Algorithm~\ref{alg:BLS-sign}.
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \caption{Generate a Boneh-Lynn-Shacham signature.}
   \label{alg:BLS-sign}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{BLS-sign}{$m, E, x$}
-      \State $P_m \gets \Call{HashToPoint}{E, m}$
+    \Function{BLS-sign}{$m, E_1, x$}
+      \State $P_m \gets \Call{HashToPoint}{E_1, m}$
       \State $Z \gets x \cdot P_m$
 
       \Return $Z$
@@ -113,21 +118,23 @@ multiplied with the private key as described in Algorithm~\ref{alg:BLS-sign}.
   \end{algorithmic}
 \end{algorithm}
 
-To verify the signature the verifier has to perform the same check as with the
-Chaum-Pedersen scheme, that is, whether the private key used to generate the
-signature corresponds to the public key. This can be done using the following
-equation:
+To verify the signature (Algorithm~\ref{BLS-verify}) the verifier has to perform
+the same check as with the Chaum-Pedersen scheme, that is, whether the private
+key used to generate the signature corresponds to the public key. This can be
+achieved by checking the following equation:
 \begin{equation}\label{eqn:BLS-verify}
   e(P_m, Q) = e(P_m, x \cdot P_2) = e(x \cdot P_m, P_2) = e(Z, P_2)
 \end{equation}
+where $e: E_1 \times E_2 \to G$ is a bilinear pairing as described in
+Section~\ref{sec:pairing}.
 
-\begin{algorithm}
+\begin{algorithm}[t]
   \caption{Verify a Boneh-Lynn-Shacham signature.}
   \label{alg:BLS-verify}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{BLS-verify}{$m, Z, E, Q$}
-      \State $P_m \gets \Call{HashToPoint}{E, m}$
+    \Function{BLS-verify}{$m, Z, E_1, Q$}
+      \State $P_m \gets \Call{HashToPoint}{E_1, m}$
       \If{$e(P_m, Q) \neq e(Z, P_2)$}
       \Return \Call{Invalid}{}
       \EndIf
@@ -153,7 +160,7 @@ by itself Verheul calls these signatures \emph{self-blindable}.
 \section{Verheul's Self-Blindable Certificates}
 
 Verheul proposes to use the self-blindable signatures to construct public-key
-certificates which allow the users to randomise their public key pair and the
+certificates which allow the user to randomise its public key pair and the
 corresponding certificate. Such certificates can be used to circumvent
 traceability based on the public key and signature. A certificate of a user
 public key $P_U$ from an identity provider with public verification key $P_{ID}$
@@ -181,7 +188,7 @@ statement corresponding to this public key.
 When we consider only a single statement per public key, these certificates can
 be stored in a public database and can be omitted from the credential, given
 that the corresponding public key can be identified. This allows the credentials
-to be compact which is beneficial for device with limited storage capacities,
+to be compact which is beneficial for devices with limited storage capacities,
 like smart cards.
 
 To summarise, a credential certificate will consist of
@@ -269,6 +276,8 @@ Our implementation involves the following components:
     to talk to a Java Card smart card on which our client applet was installed.
 \end{description}
 
+[TODO: add references to source code]
+
 \subsection{Available ECC Operations on Java Card}
 
 In order to implement the verification protocol on Java Card we need support for
@@ -343,10 +352,10 @@ blinded values $P_b$ and $C_b$ are then returned to the terminal.
 
 \subsection{Proof of Possession of the Private Key}
 
-Of course, when a card presents a terminal with such a pair $P_b$, $C_b$ it
-should not only check that $C_b$ is a proper signature on $P_b$, but also that
-the card knows the private key corresponding to the public key $P_b$. This can
-be done via standard challenge-response exchange, for example using ECDSA.
+Of course, when a terminal receives such a pair $P_b$, $C_b$ it should not only
+check that $C_b$ is a proper signature on $P_b$, but also that the card knows
+the private key corresponding to the public key $P_b$. This can be done via
+standard challenge-response exchange, for example using ECDSA.
 
 \subsubsection{Using the ECDSA Signature Scheme}
 
@@ -372,6 +381,8 @@ has an impact on the performance of the application which made us look into
 other alternatives for this protocol.
 
 \subsubsection{Using a minimal variant of the Boneh-Lynn-Shacham Signature Scheme}
+
+[TODO: explain 'minimal' and that it is our name, not something from literature.]
 
 Our search led us to a minimal variant of the Boneh-Lynn-Shacham signature
 scheme. Since it consists of only a single point multiplication using the
