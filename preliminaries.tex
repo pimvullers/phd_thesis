@@ -31,9 +31,17 @@ Given $n = pq, c$ where $p, q$ primes, determine $m, e \geq 3$ such that $c = m^
 
 \begin{figure}
   \centering
-  \subfloat[$PK\{(\alpha) : h = g^\alpha \}$\label{msc:schnorr}]{\includegraphics[scale=.45]{mscs/schnorr}}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/schnorr}
+    \caption{$PK\{(\alpha) : h = g^\alpha \}$}
+    \label{msc:schnorr}
+  \end{subfigure}
   \quad
-  \subfloat[$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$\label{msc:schnorr_mod}]{\includegraphics[scale=.45]{mscs/schnorr_mod}}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/schnorr_mod}
+    \caption{$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$}
+    \label{msc:schnorr_mod}
+  \end{subfigure}
   \caption{Schnorr's zero-knowledge protocol~\cite{Schnorr1991} for prime order groups (a) and for groups modulo a composite (b).}
   \label{fig:schnorr}
 \end{figure}
@@ -53,9 +61,18 @@ Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P
 \subsubsection{Equality}
 
 \begin{figure}
-  \subfloat[$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$\label{msc:okamoto}]{\includegraphics[scale=.45]{mscs/okamoto}}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/okamoto}
+    \caption{$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$}
+    \label{msc:okamoto}
+  \end{subfigure}
   \quad
-  \subfloat[$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$\label{msc:equality}]{\includegraphics[scale=.45]{mscs/equality}}
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/equality}
+    \caption{$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$}
+    \label{msc:equality}
+  \end{subfigure}
   \caption{Okamoto's zero-knowledge protocol~\cite{Okamoto1993} for multi-exponents (a) and an adaption for equality (of the first exponent) composition (b).}
   \label{fig:okamoto}
 \end{figure}
@@ -388,3 +405,74 @@ In order to verify $A$'s signature on $m$, $B$ performs the following steps:
     $v = x_0 \bmod n$.
   \item Accept the signature if and only if $v = r$.
 \end{enumerate}
+
+
+\section{Smart Cards}
+
+Regardless of the software platform operating the card, all smart cards provide
+the same external functionality. A smart card is an embedded device that
+communicates with the environment through Application Protocol Data Units
+(APDUs) -- byte arrays formatted according to the ISO7816
+specification~\cite{ISO7816_4}. Most notably, the APDUs constrain the
+communication payload to roughly 256 bytes in each direction for a single APDU
+exchange. The permanent storage of the card (EEPROM memory) is considered
+highly secure, accessible only through the APDU commands offered by the
+application, which in turn are subject to any authentication and secure
+messaging requirements that the card application may impose.
+
+\subsection{The MULTOS Platform}
+
+The goal of the MULTOS platform is to provide a secure hardware independent
+execution platform for smart cards. To this end, they developed a specification
+for the execution and memory models, explained in more detail below, that all
+MULTOS implementations must provide. Besides this mandatory part of the
+specification there are also a number of optional elements, mostly concerning
+cryptographic functionality that may or may not be available on a specific
+hardware platform. An overview of which functionality is provided by which card
+can be found in the MULTOS Implementation Reference~\cite{MIR2012}\footnote{Our
+card has an M3 generic (ML3-36K-R1) implementation by Multos International.}.
+
+\subsubsection{Execution Model}
+
+Applications on a MULTOS card are executed in a virtual machine, called the
+Application Abstract Machine (AAM). The functionality of this virtual machine
+is defined by the MULTOS specification to assure that applications are
+portable, that is, independent of the actual chip used\footnote{Application
+portability can be limited due to specific memory requirements or dependencies
+on optional parts of the MULTOS specification.}. The AAM is a stack machine
+that interprets instructions from the MULTOS Executable Language (MEL).
+
+\subsubsection{Memory Model}
+
+The AAM virtual machine provides each application with its own memory space.
+Within an application the code space, residing on non-volatile EEPROM storage,
+and data space, divided over EEPROM (for persistent storage) and volatile RAM,
+are handled independently of each other. Code is executed while data is
+manipulated. The memory of an application is protected by a strong firewall.
+This means that applications can not access each others memory. The data of an
+application is divided over three distinct memory areas, listed below.
+
+\paragraph{Static memory} is the non-volatile storage for an application. It is
+private to the application and cannot be accessed by the terminal or any other
+application. MULTOS offers mechanisms to avoid corruption of the static memory
+area such that this data remains consistent.
+
+\paragraph{Public memory} is the volatile input/output buffer for an
+application. Incoming command APDUs are held in public memory and outgoing
+response APDUs are placed here. This buffer is also used to pass information
+from one application to another when delegation is used. MULTOS guarantees that
+data in this memory remains private to the running application until it exits
+or delegates to another application. This means that it can be used as
+temporary workspace.
+
+\paragraph{Dynamic memory} is the volatile storage for an application. It is
+used to store session data, if any. The size of the session data area is fixed
+when an application is loaded onto a card and it depends on the amount of
+variables declared. Furthermore, the dynamic memory contains the stack, which
+is the application's work area. As mentioned before, the AAM operates as a
+stack machine, which means that this memory area is used to perform many
+functions (and provide input for these functions). The maximum size of the
+stack is fixed by the amount of dynamic memory available. Therefore,
+applications will need to ensure that their use of dynamic memory does not
+exceed the limit imposed by the chip~\cite{MIR2012} on which the application
+will reside.

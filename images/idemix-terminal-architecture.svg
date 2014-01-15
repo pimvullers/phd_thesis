@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg4197"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="terminal-architecture.svg">
+  <defs
+     id="defs4199" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.02"
+     inkscape:cx="254.69925"
+     inkscape:cy="562.85714"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="753"
+     inkscape:window-x="0"
+     inkscape:window-y="26"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4202">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.85141146;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect2985-9"
+       width="364"
+       height="268"
+       x="-8.1434088"
+       y="369.71646"
+       ry="32" />
+    <rect
+       style="fill:#666666;stroke:#000000;stroke-width:1.66922342999999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+       id="rect3755-5"
+       width="89.820869"
+       height="228.06345"
+       x="10.192795"
+       y="390.26413"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-504.3764"
+       y="44.365921"
+       id="text3757-7"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3759-5"
+         x="-504.3764"
+         y="44.365921">Java</tspan><tspan
+         sodipodi:role="line"
+         x="-504.3764"
+         y="81.865921"
+         id="tspan3761-8">platform</tspan></text>
+    <rect
+       style="fill:#666666;stroke:#000000;stroke-width:1.80234253000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+       id="rect3763-7"
+       width="221.41039"
+       height="229.40063"
+       x="115.19515"
+       y="389.55841" />
+    <rect
+       style="fill:#cccccc;stroke:#000000;stroke-width:1.67087793000000007;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+       id="rect3765-1"
+       width="119.11612"
+       height="90.428139"
+       x="202.09056"
+       y="405.61642" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-505.92255"
+       y="148.99055"
+       id="text3769-1"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3771-1"
+         x="-505.92255"
+         y="148.99055">Idemix</tspan><tspan
+         sodipodi:role="line"
+         x="-505.92255"
+         y="186.49055"
+         id="tspan3773-5">application</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="262.61053"
+       y="442.08246"
+       id="text3775-9"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3777-9"
+         x="262.61053"
+         y="442.08246"
+         style="font-size:20px">Terminal</tspan><tspan
+         sodipodi:role="line"
+         x="262.61053"
+         y="467.08246"
+         id="tspan3779-2"
+         style="font-size:20px">service</tspan></text>
+    <rect
+       style="fill:#cccccc;stroke:#000000;stroke-width:1.67095291999999995;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
+       id="rect3765-2-3"
+       width="119.12692"
+       height="90.428062"
+       x="202.08517"
+       y="512.4729" />
+    <text
+       xml:space="preserve"
+       style="font-size:24px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="260.99432"
+       y="549.80804"
+       id="text3781-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3783-9"
+         x="260.99432"
+         y="549.80804"
+         style="font-size:20px">Idemix</tspan><tspan
+         sodipodi:role="line"
+         x="260.99432"
+         y="574.80804"
+         id="tspan3785-1"
+         style="font-size:20px">library</tspan></text>
+  </g>
+</svg>
