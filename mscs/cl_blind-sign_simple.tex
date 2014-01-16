@@ -10,43 +10,33 @@
 \declinst{R}{}{Receiver}
 \declinst{S}{}{Signer}
 
-\action*{%
-  random $v'$\\ 
-  $U \leftarrow S^{v'} \prod_{i \in I_s} R_i^{m_i} \mod n$%
-}{R}
-\nextlevel[3.2]
+\action*{\textsc{CL-blind-prepare}}{R}
+\nextlevel[2]
 
 \mess{$U$}{R}{S}
-\nextlevel[.5]
+\nextlevel[1]
 
-\referencestart{PK}{%
-  $PK\{(\nu', \{\mu_i : i \in I_s\}) : U \equiv S^{\nu'} \prod_{i \in I_s} R_i^{\mu_i} \mod n \}$%
+\referencestart{pkU}{%
+  $PK\{(\nu', \{\mu_i : i \in [1, \dots, L']\}) : U \equiv S^{\nu'} \prod_{i \in [1, \dots, L']} R_i^{\mu_i} \mod n \}$%
 }{R}{S}
-\nextlevel[1.8]
-\referenceend{PK}
-\nextlevel[.5]
+\nextlevel[2]
+\referenceend{pkU}
+\nextlevel[1]
 
-\action*{%
-  random prime $e$\\
-  random $v''$\\
-  $A \leftarrow \left(\dfrac{Z}{U S^{v''}\prod_{i \in I_p} R_i^{m_i}} \right)^{1/e} \mod n$%
-}{S}
-\nextlevel[4.8]
+\action*{\textsc{CL-blind-sign}}{S}
+\nextlevel[2]
 
-\mess{$(e, v'', A)$}{S}{R}
-\nextlevel[.5]
+\mess{$(A, e, v'')$}{S}{R}
+\nextlevel[1]
 
-\referencestart{PK2}{%
-  $PK\{(\delta) : A \equiv \left(\dfrac{Z}{U S^{v''} \prod_{i \in I_p} R_i^{m_i}} \right)^{\delta} \mod n \}$%
+\referencestart{pkA}{%
+  $PK\{(\delta) : A \equiv \left(\dfrac{Z}{U S^{v''} \prod_{i \in [L' + 1, \dots, L]} R_i^{m_i}} \right)^{\delta} \mod n \}$%
 }{R}{S}
 \nextlevel[2.8]
-\referenceend{PK2}
-\nextlevel[.5]
+\referenceend{pkA}
+\nextlevel[1]
 
-\action*{%
-  verify $e$ is prime\\
-  $v \leftarrow v' + v''$%
-}{R}
-\nextlevel[2]
+\action*{\textsc{CL-blind-finish}}{R}
+\nextlevel[1.5]
 
 \end{msc}
