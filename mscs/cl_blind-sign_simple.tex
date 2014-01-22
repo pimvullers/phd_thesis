@@ -4,39 +4,38 @@
 
 \setlength{\instwidth}{1.5\instwidth}
 \setlength{\instdist}{14cm}
-\setlength{\envinstdist}{2\envinstdist}
-\setlength{\referenceoverlap}{6cm}
 
 \declinst{R}{}{Receiver}
 \declinst{S}{}{Signer}
 
-\action*{\textsc{CL-blind-prepare}}{R}
+\action*{\textsc{CL-blind-prepare} \textit{(Alg. 3.5)}}{R}
 \nextlevel[2]
 
 \mess{$U$}{R}{S}
 \nextlevel[1]
 
 \referencestart{pkU}{%
-  $PK\{(\nu', \{\mu_i : i \in [1, \dots, L']\}) : U \equiv S^{\nu'} \prod_{i \in [1, \dots, L']} R_i^{\mu_i} \mod n \}$%
+  $PK\{(\nu, \mu_{i \in \M_H}) :
+    U = S^{\nu} \cdot \textstyle\prod_{i \in \M_H} R_i^{\mu_i} \mod n\}$%
 }{R}{S}
 \nextlevel[2]
 \referenceend{pkU}
 \nextlevel[1]
 
-\action*{\textsc{CL-blind-sign}}{S}
+\action*{\textsc{CL-blind-sign} \textit{(Alg. 3.8)}}{S}
 \nextlevel[2]
 
 \mess{$(A, e, v'')$}{S}{R}
 \nextlevel[1]
 
 \referencestart{pkA}{%
-  $PK\{(\delta) : A \equiv \left(\dfrac{Z}{U S^{v''} \prod_{i \in [L' + 1, \dots, L]} R_i^{m_i}} \right)^{\delta} \mod n \}$%
+  $  PK\{(\delta) : A = \left(\dfrac{Z}{U \cdot S^{v''} \cdot \prod_{i \in \M_K} R_i^{m_i}} \right)^{\delta} \mod n \}$%
 }{R}{S}
 \nextlevel[2.8]
 \referenceend{pkA}
 \nextlevel[1]
 
-\action*{\textsc{CL-blind-finish}}{R}
+\action*{\textsc{CL-blind-finish} \textit{(Alg. 3.11)}}{R}
 \nextlevel[1.5]
 
 \end{msc}
