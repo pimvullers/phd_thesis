@@ -55,7 +55,7 @@ $\M$ is the set of message indices supported by this key.
 
 In order to guarantee that such a public key has been constructed correctly,
 that is, all values are elements of $\langle S \rangle$, a proof of
-correctness can be constructed (Algorithm~\ref{alg:CL-proof-key}, based
+correctness can be constructed (Algorithm~\ref{alg:CL-prove-key}, based
 on~\cite[Appendix A]{BrickellCC2004}):
 \begin{equation*}
   SPK \{ (\alpha_z, \alpha_{i \in \M}) : Z = S^{\alpha_z} \mod n \:\land\:
@@ -84,10 +84,10 @@ identifies a bit from the output of the hash function.
 
 \begin{algorithm}
   \caption{Proof correctness of a Camenisch-Lysyanskaya public key.}
-  \label{alg:CL-proof-key}
+  \label{alg:CL-prove-key}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-proof-key}{$(n, S, Z, R_{i \in \M})$}
+    \Function{CL-prove-key}{$(n, S, Z, R_{i \in \M})$}
       \ForAll{$j \in \mathcal{H}$}
         \State $u_j \gets \Call{Random}{~}$
         \State $Z'_j = S^{u_j} \mod n$
@@ -130,7 +130,7 @@ reconstructed because:
   = R'_{(i,j)} \mod n \text{.}
 \end{equation*}
 
-\begin{algorithm}[t]
+\begin{algorithm}
   \caption{Verify correctness of a Camenisch-Lysyanskaya public key.}
   \label{alg:CL-verify-key}
   \addtolength{\baselineskip}{1mm}
@@ -192,14 +192,14 @@ $m_{i \in \M}$ is the tuple $(A, e, v)$ (see Algorithm~\ref{alg:CL-sign}).
 To verify this Camenisch-Lysyanskaya signature the RSA signature over the
 aggregated messages has to be verified, that is, the following equation has to
 be checked:
-\begin{equation*}
+\begin{equation}\label{eqn:CL-verify}
   A^e = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
-\end{equation*}
+\end{equation}
 This is equivalent to checking the following equation, as used in
 Algorithm~\ref{alg:CL-verify}:
-\begin{equation*}
+\begin{equation}\label{eqn:CL-verify-Z}
   Z = A^e \cdot S^v \cdot \textstyle\prod_{i \in \M} R_i^{m_i} \mod n
-\end{equation*}
+\end{equation}
 
 \begin{algorithm}
   \caption{Verify a basic Camenisch-Lysyanskaya signature.}
@@ -256,35 +256,56 @@ hidden by the blinding value $v'$.
 \end{algorithm}
 
 In order to prove to the signer that the recipient of the signature actually
-knows the hidden messages the following proof of knowledge has to generated.
+knows the hidden messages the following proof of knowledge has to be generated.
 \begin{equation*}
   PK\{(\nu, \mu_{i \in \M_H}) :
     U = S^{\nu} \cdot \textstyle\prod_{i \in \M_H} R_i^{\mu_i} \mod n\}
 \end{equation*}
-This can be implemented as an interactive zero-knowledge protocol or using
-Algorithms~\ref{alg:CL-proof-U} and~\ref{alg:CL-verify-U} which, respectively,
-construct and verify a non-interactive proof of knowledge with a nonce $n_U$ to
-guarantee the freshness of this proof.
+This proof not only proves that the recipient knows the hidden messages, but
+also that the value $U$ has been computed correctly by the recipient. This can
+be implemented as an interactive zero-knowledge protocol or using
+Algorithms~\ref{alg:CL-prove-U} and~\ref{alg:CL-verify-U} which, respectively,
+construct and verify a non-interactive proof of knowledge. The freshness of this
+proof is guaranteed by a nonce $n_U$ provided by the signer. The verification
+succeeds if the signer can successfully reconstruct the commitment $\tilde{U}$
+on $U$. This reconstruction works because of the following equation.
+\begin{align*}
+  \hat{U}
+  & = S^{\hat{v}'} \cdot \textstyle \prod_{i \in \M_H} R_i^{\hat{m}_i}
+    \cdot U^{-c}
+    = S^{\tilde{v}' + c \cdot v'} \cdot
+    \textstyle\prod_{i \in \M_H} R_i^{\tilde{m}_i + c \cdot m_i}
+    \cdot U^{-c} \\
+  & = S^{\tilde{v}'} \cdot S^{c \cdot v'}
+    \cdot \textstyle\prod_{i \in \M_H} R_i^{\tilde{m}_i}
+    \cdot \textstyle\prod_{i \in \M_H} R_i^{c \cdot m_i}
+    \cdot U^{-c}  \\
+  & = S^{\tilde{v}'}
+    \cdot \textstyle\prod_{i \in \M_H} R_i^{\tilde{m}_i}
+    \cdot U^c \cdot U^{-c}
+    = S^{\tilde{v}'} \cdot \textstyle\prod_{i \in \M_H} R_i^{\tilde{m}_i} \\
+  & = \tilde{U} \mod n
+\end{align*}
 
 \begin{algorithm}
   \caption{Generate a proof of correctness for $U$.}
-  \label{alg:CL-proof-U}
+  \label{alg:CL-prove-U}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-proof-U}{$(U, v'), n_U, m_{i \in \M_H}, (n, S, Z, R_{i \in \M}))$}
-      \State $u \gets \Call{Random}{~}$
-      \State $a \gets S^u \mod n$
+    \Function{CL-prove-U}{$(U, v'), n_U, m_{i \in \M_H}, (n, S, Z, R_{i \in \M}))$}
+      \State $\tilde{v}' \gets \Call{Random}{~}$
+      \State $\tilde{U} \gets S^{\tilde{v}'} \mod n$
       \ForAll{$i \in \M_H$}
-        \State $v_i \gets \Call{Random}{~}$
-        \State $a \gets a \cdot R_i^{v_i} \mod n$
+        \State $\tilde{m}_i \gets \Call{Random}{~}$
+        \State $\tilde{U} \gets \tilde{U} \cdot R_i^{\tilde{m}_i} \mod n$
       \EndFor
-      \State $c \gets \Call{Hash}{U, a, n_U}$
-      \State $r \gets u + c \cdot v'$
+      \State $c \gets \Call{Hash}{U, \tilde{U}, n_U}$
+      \State $\hat{v}' \gets \tilde{v}' + c \cdot v'$
       \ForAll{$i \in \M_H$}
-        \State $s_i \gets v_i + c \cdot m_i$
+        \State $\hat{m}_i \gets \tilde{m}_i + c \cdot m_i$
       \EndFor
 
-      \Return $(a, r, s_{i \in \M_H})$
+      \Return $(c, \hat{v}', \hat{m}_{i \in \M_H})$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
@@ -295,13 +316,12 @@ guarantee the freshness of this proof.
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
 
-    \Function{CL-verify-U}{$U, (a, r, s_{i \in \M_H}), n_U, (n, S, Z, R_{i \in \M})$}
-      \State $c \gets \Call{Hash}{U, a, n_U}$
-      \State $U' \gets S^r \mod n$
+    \Function{CL-verify-U}{$U, (c, \hat{v}', \hat{m}_{i \in \M_H}), n_U, (n, S, Z, R_{i \in \M})$}
+      \State $\hat{U} \gets U^{-c} \cdot S^{\hat{v}'} \mod n$
       \ForAll{$i \in \M_H$}
-        \State $U' \gets U' \cdot R_i^{s_i} \mod n$
+        \State $\hat{U} \gets \hat{U} \cdot R_i^{\hat{m}_i} \mod n$
       \EndFor
-      \If{$U' \neq a \cdot U^c \mod n$}
+      \If{$c \neq \Call{Hash}{U, \hat{U}, n_U}$}
         \Return \Call{Invalid}{}
       \EndIf
 
@@ -311,8 +331,8 @@ guarantee the freshness of this proof.
 \end{algorithm}
 
 The next step is the actual signing process. In this step the hidden messages,
-aggregated in $U$ are combined with the known messages $m_{i \in \M_K}$, where
-$\M_K = \M \setminus \M_H$, that will be included in the signature. This
+aggregated in $U$, are combined with the remaining known messages
+$m_{i \in \M \setminus \M_H}$ that will be included in the signature. This
 process is very similar to the basic signature operation as given in
 Algorithm~\ref{alg:CL-sign}. The main difference in
 Algorithm~\ref{alg:CL-blind-sign} is the inclusion of the value $U$ received
@@ -324,10 +344,10 @@ from the recipient in the message aggregation step.
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
 
-    \Function{CL-blind-sign}{$U, m_{i \in \M_K}, (n, S, Z, R_{i \in \M}), (p', q')$}
+    \Function{CL-blind-sign}{$U, m_{i \in \M \setminus \M_H}, (n, S, Z, R_{i \in \M}), (p', q')$}
       \State $v'' \gets \Call{Random}{~}$
       \State $U \gets U \cdot S^{v''} \mod n$
-      \ForAll{$i \in \M_K$}
+      \ForAll{$i \in \M \setminus \M_H$}
         \State $U \gets U \cdot R_i^{m_i} \mod n$
       \EndFor
       \State $Q \gets Z \cdot U^{-1} \mod n$
@@ -341,22 +361,43 @@ from the recipient in the message aggregation step.
   \end{algorithmic}
 \end{algorithm}
 
+Furthermore, the signer provides the following proof of knowledge to show the
+recipient that the signature has been constructed correctly.
 \begin{equation*}
-  PK\{(\delta) : A = \left(\dfrac{Z}{U \cdot S^{v''} \cdot \prod_{i \in \M_K} R_i^{m_i}} \right)^{\delta} \mod n \}
+  PK\{(\delta) : A = \left(\dfrac{Z}{U \cdot S^{v''} \cdot
+    \prod_{i \in \M \setminus \M_H} R_i^{m_i}} \right)^{\delta} \mod n \}
+\end{equation*}
+Again, this can be implemented as an interactive zero-knowledge protocol or as
+an non-interactive proof of knowledge. Algorithms~\ref{alg:CL-prove-A}
+and~\ref{alg:CL-verify-A}, respectively, construct and verify such a
+non-interactive proof with a nonce $n_A$ to guarantee the freshness. The
+commitment $\tilde{A}$ can be reconstructed to verify the proof according to
+the following equation\footnote{Note that in version~2.3.3 of the specification
+of the Identity Mixer cryptographic library~\cite{IdemixCrypto2011}, the
+reconstructed value $\hat{A}$ is incorrect, after reporting this to the authors
+it has been corrected in version~2.3.4~\cite{IdemixCrypto2012}.}.
+\begin{equation*}
+  \hat{A}
+   = A^{c + \hat{d} \cdot e}
+   = Q^{e^{-1} \cdot (c + \hat{d} \cdot e)}
+   = Q^{c \cdot e^{-1} + \hat{d}}
+   = Q^{c \cdot e^{-1} + \tilde{d} - c \cdot e^{-1}}
+   = Q^{\tilde{d}}
+   = \tilde{A} \mod n
 \end{equation*}
 
 \begin{algorithm}
   \caption{Generate a proof of correctness or $A$.}
-  \label{alg:CL-proof-A}
+  \label{alg:CL-prove-A}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-proof-A}{$(A, e, v), n_A, (n, S, Z, R_{i \in \M}), (p', q')$}
-      \State $u \gets \Call{Random}{~}$
-      \State $a \gets Q^u \mod n$
-      \State $c \gets \Call{Hash}{A, a, n_A}$
-      \State $r \gets u - c \cdot e^{-1} \mod (p' \cdot q')$
+    \Function{CL-prove-A}{$(A, e, v''), n_A, (n, S, Z, R_{i \in \M}), (p', q')$}
+      \State $\tilde{d} \gets \Call{Random}{~}$
+      \State $\tilde{A} \gets Q^{\tilde{d}} \mod n$
+      \State $c \gets \Call{Hash}{Q, A, \tilde{A}, n_A}$
+      \State $\hat{d} \gets \tilde{d} - c \cdot e^{-1} \mod (p' \cdot q')$
 
-      \Return $(c, r)$
+      \Return $(c, \hat{d})$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
@@ -366,8 +407,11 @@ from the recipient in the message aggregation step.
   \label{alg:CL-verify-A}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-verify-A}{$v', (A, e, v'')$}
-      \If{}
+    \Function{CL-verify-A}{$(A, e, v''), (c, \hat{d}), n_A, (n, S, Z, R_{i \in \M})$}
+      \State $Q \gets A^e \mod n$
+      \State $\hat{A} \gets A^{c + \hat{d} \cdot e} \mod n$
+
+      \If{$c \neq \Call{Hash}{Q, A, \hat{A}, n_A}$}
         \Return \Call{Invalid}{}
       \EndIf
 
@@ -375,6 +419,14 @@ from the recipient in the message aggregation step.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+
+Finally, the recipient has to finish the signature according to
+Algorithm~\ref{alg:CL-blind-finish} which combines the blinding values of the
+recipient and signer, $v'$ and $v''$ respectively, to become the randomisation
+value $v$ of the Camenisch-Lysyanskaya signature $(A, e, v)$. This signature can
+now be verified using the verification procedure from the basic signature scheme
+(Algorithm~\ref{alg:CL-verify}) or it can be used to prove knowledge of this
+signature as described in the following section.
 
 \begin{algorithm}
   \caption{Finish a blind Camenisch-Lysyanskaya signature.}
@@ -389,203 +441,135 @@ from the recipient in the message aggregation step.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Signature proving}\label{sec:cl_proof}
+\subsection{Proving Knowledge of a Signature}\label{sec:cl_proof}
 
-The signature is randomised to prevent linkability based on the signature values
-$A, e, v$. First a random blinding value $r_A$ is generated to randomise $A$.
-Next the values $e$ and $v$ are adjusted such that the signature remains valid.
+While blind signatures hide (a number of) the messages during signature
+generation, the goal of proving knowledge of a signature is to keep them hidden
+during signature verification. This allows the user to prove that she has a
+signature over one or more (possibly hidden) messages while not revealing the
+actual signature.
 
-\begin{algorithm}[ht]
-  \caption{Randomise the signature}
+To this end the Camenisch-Lysyanskaya signature is randomised, using
+Algorithm~\ref{alg:CL-randomise}, to hide the signature and prevent linkability
+based on the signature values $A$, $e$, and $v$. First a random blinding value
+$r$ is generated to randomise $A$. Next the value $v$ is adjusted such that the
+signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}).
+
+\begin{algorithm}
+  \caption{Randomise a Camenisch-Lysyanskaya signature.}
+  \label{alg:CL-randomise}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-randomise}{$(A, e, v)$}
-      \State $r_A \gets \Call{Random}{~}$
-      \State $A' \gets A \cdot S^{r_A} \mod n$
-      \State $e' \gets e - 2^{\ell_{e} - 1}$
-      \State $v' \gets v - e \cdot r_A$
+    \Function{CL-randomise}{$(A, e, v), (n, S, Z, R_{i \in \M})$}
+      \State $r \gets \Call{Random}{~}$
+      \State $A' \gets A \cdot S^{r} \mod n$
+      \State $v' \gets v - e \cdot r$
 
-      \State \Return $A', e', v'$
+      \Return $(A', e, v')$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
 
-Note that this randomisation operation only effectively randomises the $A$ value
-of the signature. Hence it is required to hide the $e'$ and $v'$ using a
-zero-knowledge proof when revealing this randomised signature.
+This randomisation operation only effectively randomises the $A$ value of the
+signature. Hence it is required to hide the $e$ and $v'$ values using a
+zero-knowledge proof when revealing this randomised signature and the disclosed
+messages $m_i \in \M_D$. Furthermore the following proof hides the messages
+$m_i \in \M \setminus \M_D$ that the use does not wish to disclose to the
+verifier.
+\begin{equation*}
+  PK\{(\epsilon, \nu, \mu_{i \in \M \setminus \M_D}) :
+    Z = A'^{\epsilon} \cdot S^{\nu}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\mu_i}
+    \cdot \textstyle\prod_{i \in \M_D} R_i^{m_i} \mod n \}
+\end{equation*}
 
 \begin{algorithm}
-  \caption{Prove the attributes}
-  \label{alg:cl_proof}
+  \caption{Prove knowledge of a Camenisch-Lysyanskaya signature and undisclosed messages.}
+  \label{alg:CL-prove-D}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{GenerateProof}{}
-      \State $A', e', v' \gets \Call{CL-randomise}{A, e, v}$
-
+    \Function{CL-prove-D}{$m_{i \in \M}, (A', e, v'), n_D, (n, S, Z, R_{i \in \M})$}
       \State $\tilde{e} \gets \Call{Random}{~}$
       \State $\tilde{v} \gets \Call{Random}{~}$
-      \ForAll{$i \in \M_D$}
-        \State $\tilde{m}_i \gets \Call{Random}{~}$
-      \EndFor
-
       \State $\tilde{Z} \gets {A'}^{\tilde{e}} \cdot S^{\tilde{v}} \mod n$
-      \ForAll{$i \in \{1, \dots, L'\}$}
+
+      \ForAll{$i \in \M \setminus \M_D$}
+        \State $\tilde{m}_i \gets \Call{Random}{~}$
         \State $\tilde{Z} \gets \tilde{Z} \cdot R_i^{\tilde{m}_i} \mod n$
       \EndFor
 
-      \State $c \gets \Call{Hash}{A' || \tilde{Z} || \mathtt{nonce}}$
+      \State $c \gets \Call{Hash}{A', \tilde{Z}, n_D}$
 
-      \State $\hat{e} \gets \tilde{e} + c \cdot e'$
+      \State $\hat{e} \gets \tilde{e} + c \cdot e$
       \State $\hat{v} \gets \tilde{v} + c \cdot v'$
-      \ForAll{$i \in \{1, \dots, L'\}$}
+      \ForAll{$i \in \M \setminus \M_D$}
         \State $\hat{m}_i \gets \tilde{m}_i + c \cdot m_i$
       \EndFor
 
-      \Return $c, A', \hat{e}, \hat{v}, \hat{m}_{i \in \{1, \dots, L'\}}, m_{i \in \{L' + 1, \dots, L\}}$
+      \Return $(c, A', \hat{e}, \hat{v}, \hat{m}_{i \in \M \setminus \M_D}, m_{i \in \M_D})$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
 
-Algorithm~\ref{alg:proof} describes the operations that have to be performed to
-generate a selective disclosure proof, including pseudonym and revocation. The
-first step in this algorithm is to generate the pseudonym and revocation values
-as well as to randomise the signature. The next step is the zero-knowledge proof
-which hides the undisclosed attributes and the $e'$ and $v'$ values from the
-randomised signature. Furthermore this proof binds the pseudonym and revocation
-values to the signature to guarantee authenticity and correctness of the
-generated values.
-
-The zero-knowledge proof is constructed in four steps. First a bunch of blinding
-values is generated to hide all values that are not revealed in this proof. The
-next step is to commit to these blinding values by calculating the commitments.
-These commitments are then used to generate the challenge which is the input to
-the final step, the calculation of the responses. Finally the proof, the
-challenge and the responses, together with the revealed values are returned.
-
+Algorithm~\ref{alg:CL-prove-D} describes the operations that have to be
+performed to generate a proof of knowledge of a signature and the hidden
+messages. This proof can then be verified to check the correctness of the
+signature over the disclosed messages using Algorithm~\ref{alg:CL-verify-D}.
+Similar to the previous proofs in this scheme the verification relies on the
+reconstruction of the commitments, which in this case is possible because of the
+following equation.
+\begin{align*}
+  \hat{Z}
+  & = Z^{-c} \cdot A'^{\hat{e}} \cdot S^{\hat{v}}
+    \cdot (\textstyle\prod_{i \in \M_D} R_i^{m_i})^c
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\hat{m}_i} \\
+  & = Z^{-c} \cdot A'^{\tilde{e} + c \cdot e} \cdot S^{\tilde{v} + c \cdot v'}
+    \cdot \textstyle\prod_{i \in \M_D} R_i^{c \cdot m_i}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\tilde{m}_i + c \cdot m_i} \\
+  & = Z^{-c} \cdot A'^{\tilde{e}} \cdot A'^{c \cdot e}
+    \cdot S^{\tilde{v}'} \cdot S^{c \cdot v'}
+    \cdot \textstyle\prod_{i \in \M_D} R_i^{c \cdot m_i}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\tilde{m}_i}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{c \cdot m_i} \\
+  & = Z^{-c}
+    \cdot (A'^{e} \cdot S^{v'} \cdot \textstyle\prod_{i \in \M} R_i^{m_i})^c
+    \cdot A'^{\tilde{e}} \cdot S^{\tilde{v}'}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\tilde{m}_i} \\
+  & = (A'^{e} \cdot S^{v'} \cdot \textstyle\prod_{i \in \M} R_i^{m_i})^{-c}
+    \cdot (A'^{e} \cdot S^{v'} \cdot \textstyle\prod_{i \in \M} R_i^{m_i})^c
+    \cdot A'^{\tilde{e}} \cdot S^{\tilde{v}'}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\tilde{m}_i} \\
+  & = A'^{\tilde{e}} \cdot S^{\tilde{v}'}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\tilde{m}_i} \\
+  & = \tilde{Z} \mod n
+\end{align*}
+Note that this equation uses (\ref{eqn:CL-verify-Z}) and hence depends on the
+validity of the signature used to generate this proof. If the tuple $(A, e, v)$
+is not a valid signature, that is (\ref{eqn:CL-verify-Z}) does not hold, the
+proof will fail.
 
 \begin{algorithm}
   \caption{Verify the attributes}
-  \label{alg:verify}
+  \label{alg:CL-verify-D}
   \addtolength{\baselineskip}{1.5mm}
 
   \begin{algorithmic}[1]
-    \Function{VerifyProof}{}
-      \State $\hat{Z} \gets (A')^{2^{\ell_e - 1}} \mod n$
-      \ForAll{$i \in \{L' + 1, \dots L\}$}
-        \State $\hat{Z} \gets \hat{Z} \cdot R_i^{m_i} \mod n$
+    \Function{CL-verify-D}{$(c, A', \hat{e}, \hat{v}, \hat{m}_{i \in \M \setminus \M_D}, m_{i \in \M_D}), n_D, (n, S, Z, R_{i \in \M})$}
+      \State $\hat{Z} \gets Z^{-c} \cdot A'^{\hat{e}} \cdot S^{\hat{v}} \mod n$
+      \ForAll{$i \in \M_D$}
+        \State $\hat{Z} \gets \hat{Z} \cdot R_i^{c \cdot m_i} \mod n$
       \EndFor
-      \State $\hat{Z} \gets \hat{Z}^c \cdot Z^{-c} \cdot (A')^{\hat{e}} \cdot S^{\hat{v}} \mod n$
-      \ForAll{$i \in \{1, \dots, L'\}$}
+      \ForAll{$i \in \M \setminus \M_D$}
         \State $\hat{Z} \gets \hat{Z} \cdot R_i^{\hat{m}_i} \mod n$
       \EndFor
 
-      \State $\hat{c} \gets \Call{Hash}{A' || \hat{Z} || \mathtt{nonce}}$
-
-      \If{$c \neq \hat{c}$}
+      \If{$c \neq \Call{Hash}{A', \hat{Z}, n_D}$}
         \Return \Call{Invalid}{}
       \EndIf
       \Return \Call{Valid}{}
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-
-\subsection{Selective disclosure \& Zero-knowledge proof}
-
-We can distinguish two types of credentials. A root credential which contains the special attributes $a_\mathtt{nym}$ and $a_\mathtt{rev}$, and regular credentials which do not contain these values. The root credential is used when a pseudonym and/or revocation check is required, whereas regular credentials are used to reveal attributes. This can also be combined, either by including attributes in the root credential, or using additional credentials besides the root credential.
-
-All credentials contain the device master secret $s$ which binds the credential to the device. This secret should be stored in a protected manner to prevent cloning of the credentials to other devices. Furthermore, an attribute $a_\mathtt{exp}$ containing expiry information (general enough to prevent identification based on this value) is contained in each credential such that the validity of the credential can be verified. Therefore $a_\mathtt{exp}$ is always revealed during a selective disclosure proof. In contrast, the secret $s$ and attributes $a_\mathtt{nym}$ and $a_\mathtt{rev}$ are never revealed. Any other attributes contained by a credential are denoted as $a_1, \dots, a_l$, where $l$ is the number of attributes. The signature over the credential containing these attributes is the triplet $(A, e, v)$.
-
-We assume that a (secure) session has been established and that any information relevant to this session is captured in the $\mathtt{context}$ variable. When a service provider needs a pseudonym and/or attributes a request is sent containing an attribute disclosure selection $\mathcal{D}$ to indicate which attributes should be revealed and a fresh $\mathtt{nonce}$ to ensure a freshly generated proof.
-
-\begin{algorithm}
-  \caption{Prove the attributes}
-  \label{alg:proof}
-  \addtolength{\baselineskip}{1mm}
-  \begin{algorithmic}[1]
-
-    \item[\textbf{Card}] $s$
-    \item[\textbf{Credential}] $a_\mathtt{exp}, a_{1 \dots l}, (n, S, Z, R_{s, \mathtt{exp}, 1 \dots l}), (A, e, v)$
-    \item[\textbf{Session}] $\mathtt{context}$
-    \item[\textbf{Request}] $\mathcal{D}, \mathtt{nonce}$
-
-    \Statex
-    \Function{GenerateProof}{}
-      \State $A', e', v' \gets \Call{RandomiseSignature}{A, e, v}$
-
-      \Statex \Comment{Generate all blinding values}
-      \State $\tilde{e} \gets \Call{RandomBits}{\ell_{e'} + \ell_{\text{\o}} + \ell_{H}}$
-      \State $\tilde{v} \gets \Call{RandomBits}{\ell_{v} + \ell_{\o} + \ell_{H}}$
-      \State $\tilde{s} \gets \Call{RandomBits}{\ell_{m} + \ell_{\o} + \ell_{H}}$
-      \ForAll{$i \notin \mathcal{D}$} \Comment{undisclosed attributes}
-        \State $\tilde{a}_i \gets \Call{RandomBits}{\ell_{m} + \ell_{\o} + \ell_{H}}$
-      \EndFor
-
-      \Statex \Comment{Compute the commitment}
-      \State $\tilde{Z} \gets {A'}^{\tilde{e}} \cdot S^{\tilde{v}} \cdot R_0^{\tilde{s}} \mod n$
-      \ForAll{$i \notin \mathcal{D}$} \Comment{undisclosed attributes}
-        \State $\tilde{Z} \gets \tilde{Z} \cdot R_i^{\tilde{a}_i} \mod n$
-      \EndFor
-
-      \Statex \Comment{Generate the challenge}
-      \State $c \gets \Call{Hash}{\mathtt{context} || A' || \mathtt{ID_{nym}} || \mathtt{ID_{rev}} ||
-        \tilde{Z} || \mathtt{nonce}}$
-
-      \Statex \Comment{Compute the responses}
-      \State $\hat{e} \gets \tilde{e} + c \cdot e'$
-      \State $\hat{v} \gets \tilde{v} + c \cdot v'$
-      \State $\hat{s} \gets \tilde{s} + c \cdot s$
-      \ForAll{$i \notin \mathcal{D}$} \Comment{undisclosed attributes}
-        \State $\hat{a}_i \gets \tilde{a}_i + c \cdot a_i$
-      \EndFor
-
-      \Statex
-      \Return $c, A', \hat{e}, \hat{v}, \hat{s}, \hat{a}_\mathtt{nym}, \hat{a}_\mathtt{rev}, \hat{a}_{i \notin \mathcal{D}}, a_\mathtt{exp}, a_{i \in \mathcal{D}}$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-\subsection{Verification}
-
-Once a service provider receives the attributes $a_{i \in \mathcal{D}}$, the pseudonym $\mathtt{ID_{nym}}$ and device revocation value $\mathtt{ID_{rev}}$ it can just use those to provide its service. However, the proper solution is to first verify the proof generated by the card to assess the validity of these values.
-
-The verification procedure is given in Algorithm~\ref{alg:verify}. This procedure starts with reconstructing the commitments using the responses (and the received challenge). Using these commitments the challenge can be reconstructed which can then be verified with the challenge value received from the card. If these challenges match, the proof is valid, otherwise it is invalid and the received values should not be used for any further processing (except perhaps for reporting this incident). Finally, the service provider should check the $a_{\mathtt{exp}}$ value to determine whether or not the credential has expired.
-
-\begin{algorithm}
-  \caption{Verify the attributes}
-  \label{alg:verify}
-  \addtolength{\baselineskip}{1.5mm}
-
-  \begin{algorithmic}[1]
-    \item[\textbf{Session}] $\mathtt{context}$
-    \item[\textbf{Request}] $\mathcal{D}, \mathtt{nonce}$
-    \item[\textbf{Response}] $c, A', \hat{e}, \hat{v}, \hat{s}, \hat{a}_\mathtt{nym}, \hat{a}_\mathtt{rev}, \hat{a}_{i \notin \mathcal{D}}, a_\mathtt{exp}, a_{i \in \mathcal{D}}$
-
-    \Statex
-    \Function{VerifyProof}{}
-      \Statex \Comment{Reconstruct the commitments}
-      \State $\hat{Z} \gets (A')^{2^{\ell_e - 1}} \cdot R_\mathtt{exp}^{a_\mathtt{exp}} \mod n$
-      \ForAll{$i \in \mathcal{D}$} \Comment{disclosed attributes}
-        \State $\hat{Z} \gets \hat{Z} \cdot R_i^{a_i} \mod n$
-      \EndFor
-      \State $\hat{Z} \gets \hat{Z}^c \cdot Z^{-c} \cdot (A')^{\hat{e}} \cdot S^{\hat{v}} \mod n$
-      \ForAll{$i \notin \mathcal{D}$} \Comment{undisclosed attributes}
-        \State $\hat{Z} \gets \hat{Z} \cdot R_i^{\hat{a}_i} \mod n$
-      \EndFor
-      \Statex \Comment{Reconstruct the challenge}
-      \State $\hat{c} \gets \Call{Hash}{\mathtt{context} || A' || \mathtt{ID_{nym}} || \mathtt{ID_{rev}} ||
-        \hat{Z} || \mathtt{nonce}}$
-      \Statex \Comment{Verify the challenge}
-      \If{$c = \hat{c}$}
-        \Return \Call{Valid}{}
-      \Else
-        \Return \Call{Invalid}{}
-      \EndIf
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-
 
 \section{Idemix on Smart Cards}
 
