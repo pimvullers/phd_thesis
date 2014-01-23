@@ -4,7 +4,7 @@ Identity Mixer~\cite{IdemixCrypto2012,CamenischH02} is an attribute-based
 credential system developed at IBM Research. The core of this system is the
 Camenisch-Lysyanskaya signature scheme~\cite{CamenischLysyanskaya2002,Lysyanskaya2002}.
 This scheme is an ideal building block for privacy-preserving technologies as
-Camensich and Lysyanskaya also provide protocols for
+Camenisch and Lysyanskaya also provide protocols for
 \begin{enumerate}
   \item issuing signatures on committed values (such that the signer has no
     information about the signed value), that is, blind
@@ -165,7 +165,7 @@ Next a random prime $e$ is generated which is used as an ephemeral RSA public
 key for this signature. Finally, $A = Q^d \mod n$ is an RSA signature over the
 aggregated messages where $d = e^{-1} \mod (p' \cdot q')$ is the RSA private
 key corresponding to $e$. As a result the signature over the messages
-$m_{i \in \M}$ is the tuple $(A, e, v)$ (see Algorithm~\ref{alg:CL-sign}).
+$m_{i \in \M}$ is the triple $(A, e, v)$ (see Algorithm~\ref{alg:CL-sign}).
 
 \begin{algorithm}
   \caption{Generate a basic Camenisch-Lysyanskaya signature.}
@@ -484,7 +484,7 @@ verifier.
 \end{equation*}
 
 \begin{algorithm}
-  \caption{Prove knowledge of a Camenisch-Lysyanskaya signature and undisclosed messages.}
+  \caption{Prove knowledge of a Camenisch-Lysyanskaya signature.}
   \label{alg:CL-prove-D}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
@@ -544,12 +544,12 @@ following equation.
   & = \tilde{Z} \mod n
 \end{align*}
 Note that this equation uses (\ref{eqn:CL-verify-Z}) and hence depends on the
-validity of the signature used to generate this proof. If the tuple $(A, e, v)$
+validity of the signature used to generate this proof. If the triple $(A, e, v)$
 is not a valid signature, that is (\ref{eqn:CL-verify-Z}) does not hold, the
 proof will fail.
 
 \begin{algorithm}
-  \caption{Verify the attributes}
+  \caption{Verify the signature proof of knowledge.}
   \label{alg:CL-verify-D}
   \addtolength{\baselineskip}{1.5mm}
 
@@ -571,24 +571,34 @@ proof will fail.
   \end{algorithmic}
 \end{algorithm}
 
-\section{Idemix on Smart Cards}
+\section{Identity Mixer Credentials}
 
-The main objective of our research is to assess how well privacy-friendly
-protocols perform when run on a smart card. Hence implementing our prototypes
-requires an open smart card platform that also provides the necessary
-cryptographic hardware support. Previous
-research~\cite{TewsJacobs09,MostowskiVullers11} clearly shows that purely
-software based prototypes do not offer sufficient performance for realistic
-use, while proper hardware support makes the prototypes practically usable. In
-this case we used an Infineon SLE78 chip\footnote{This is the successor to the
-Infineon SLE66 chip used by Mostowski and Vullers~\cite{MostowskiVullers11}.}
-running the MULTOS platform. This platform offers an API which exposes the
-(hardware supported) modular arithmetic operations required to implement
-technologies like Idemix and U-Prove.
+The Identity Mixer technology is tightly built upon the Camenisch-Lysyanskaya
+signature scheme and its protocols. The blind signature scheme provides the
+issuance protocol where the messages become the contents of the credential.
 
-\subsection{System Architecture}
+An Identity Mixer credential contains a master secret $s$, which belongs to the
+user and is never revealed, and a number of attributes $a_{i \in \mathcal{A}}$,
+where $\mathcal{A}$ is the set of attribute indices. Hence, the sets of message
+indices for issuance become $\M = \{s\} \cup \mathcal{A}$ and $\M_H = \{s\}$.
+As a result of the issuance protocol the user obtains a signature $(A, e, v)$
+over these values which completes the credential.
 
-\begin{figure}[t]
+This credential can now be used with the protocol for proving knowledge of a
+signature to selectively disclose the attributes to a verifier. In this case the
+set of disclosed messages $\M_D \subset \mathcal{A}$ is a selection of the
+attributes contained in the credential. Using Algorithm~\ref{alg:CL-prove-D} the
+user can now generate a proof of knowledge that can be send to the verifier in
+order to reveal the attributes and prove that they are signed by the issuer.
+
+This is the core of the Identity Mixer system that we have implemented on a
+smart card, for extensions of this proof which provide more features we refer
+the reader to the specification of the Identity Mixer
+technology~\cite{IdemixCrypto2012}.
+
+\section{Identity Mixer on Smart Cards}
+
+\begin{figure}[h]
   \centering
   \begin{subfigure}{0.45\textwidth}
     \includegraphics[scale=.45]{images/idemix-terminal-architecture}
@@ -606,41 +616,46 @@ technologies like Idemix and U-Prove.
 \end{figure}
 
 Our system consists of two parts, depicted in Figure~\ref{fig:architecture}, a
-terminal~\subref{fig:terminal-architecture} which interacts with a
-card~\subref{fig:card-architecture} using APDUs. The terminal application is
-written in Java and uses the Idemix cryptographic library\footnote{Available
-for download at \url{https://prime.inf.tu-dresden.de/idemix/}} provided by IBM
-Research. We created an extension to this library, the terminal service, which
-takes care of all smart card specifics. The service implements the user roles
-of the Idemix issuance and verification protocols, described by the
+terminal~(\subref{fig:terminal-architecture}) which interacts with a
+card~(\subref{fig:card-architecture}) using APDUs. The terminal application is
+written in Java and uses the Identity Mixer cryptographic library\footnote{The
+library is available for download at \url{https://prime.inf.tu-dresden.de/idemix/}
+while our patches can be found at \url{https://github.com/credentials/idemix_library}.}
+provided by IBM Research. Thanks to Patrick Bichsel, version 2.3.4 of this
+library provides interfaces for the various roles in the protocols such that we
+could create an extension to this library, the terminal service\footnote{
+Available at \url{https://github.com/credentials/idemix_terminal}}, which takes
+care of all smart card specifics. The service implements the user roles of the
+Identity Mixer issuance and verification protocols, described by the
 \texttt{Recipient} and \texttt{Prover} interfaces respectively. These
 interfaces are implemented by translating all Java method calls from the
 library into the corresponding APDU commands and converting the Java data types
 to raw byte arrays, suitable for APDU communication.
 
-The Idemix application on the card takes care of handling the incoming APDUs
-and storing the values into the internal data structures. While handling the
-communication with the terminal is the largest part of the application, the main
-part is the implementation of the cryptographic operations for the Idemix
-protocols. This allows the card to perform the user roles without depending on
-the terminal for any computations or proof generation. The only thing the
-terminal is responsible for is providing the data in the correct format.
+The Identity Mixer application on the card takes care of handling the incoming
+APDUs and storing the values into the internal data structures. While handling
+the communication with the terminal is the largest part of the application, the
+main part is the implementation of the cryptographic operations for the Identity
+Mixer protocols. This allows the card to perform the user roles without
+depending on the terminal for any computations or proof generation. The only
+thing the terminal is responsible for is providing the data in the correct
+format.
 
 \subsection{Smart Card Implementation}
 
-Just as Mostowski and Vullers~\cite{MostowskiVullers11} with their U-Prove
-implementation, we have chosen to use the MULTOS C interface to do our
-prototype implementation of Idemix. The programming environment is convenient
-for smart card programming and allows us some more flexibility for memory
-management. It will be explained below why this is crucial.
+Just as with the U-Prove implementation, we have chosen to use the MULTOS C
+interface to do our prototype implementation of Identity Mixer. The programming
+environment is convenient for smart card programming and allows us some more
+flexibility for memory management. It will be explained below why this is
+crucial.
 
-Implementing the Idemix specification did not turn out to be that hard in the
-beginning, the available API makes it easy to implement the cryptographic
+Implementing the Identity Mixer specification did not turn out to be that hard
+in the beginning, the available API makes it easy to implement the cryptographic
 protocol. In principle, it is a direct translation from the mathematical
 description to API calls. The only API restriction we came across was that the
 \texttt{ModularExponentiation} function does not accept exponents larger than
-the modulus size. For Idemix this only involves exponentiations with base $S$
-(see details in Section~\ref{sec:specIdemixTheory}). Hence we added a function
+the modulus size. In our case this only involves exponentiations with base $S$
+(see details in Section~\ref{sec:IdemixCrypto2012}). Hence we added a function
 \texttt{SpecialModularExponentiation} which implements the same method as used
 by Bichsel et al.~\cite{BichselCGS2009}, that is, splitting one exponentiation
 up into two\footnote{This method actually requires three exponentiations, but
@@ -686,27 +701,24 @@ again in the next operation. By doing this we could reduce the amount of memory
 required for intermediate values which in the end allowed us to get all
 necessary variables in RAM.
 
-The resulting code can be found in the \verb!idemix_multos! GitHub repository at
-\url{https://github.com/credentials/}. The repositories listed at this page are
-used within the IRMA project (\url{https://irmacard.org/}) which aims to develop
-an infrastructure for using attribute-based credentials on smart cards. A pilot,
-with government support, will be launched early 2013.
-
-\section{Results and Comparison}
-
-We mainly compare our results with the U-Prove implementation by Mostowski and
-Vullers~\cite{MostowskiVullers11} as this implementation offers similar
-functionality using the same modulus size (1024 bits) and the same platform.
-During initial development we even used the same SLE66-based cards, but in the
-end we managed to get newer SLE78-based cards which we currently use. For the
-conclusions this makes no difference since already with our SLE66 optimised
-prototype we got similar results, the SLE78 implementation only improved the
-running times.
+\section{Performance Results}
 
 There are two important performance measures: the time it takes to issue a new
 credential to the card, and the running time of the verification protocol.
 
+For these performance tests we've used the same test vectors as with the U-Prove
+implementation in order to get comparable results (see
+Chapter~\ref{chp:comparison} for a detailed comparison). Furthermore, our
+implementation uses a modulus size of 1024~bits, which provides a minimal level
+of security, but an acceptable performance. Given this size of the modulus, and
+hence the size of all group elements, we can support at most 5 attributes in our
+implementation.
+
 \subsection{Credential Issuance}
+
+For issuance, we measured the running time of the protocol and determined how
+much time was actually spent on computations and which part was used to transfer
+and store the values (marked as overhead; see Figure~\ref{fig:issuance}).
 
 \begin{figure}[b]
   \centering
@@ -719,40 +731,40 @@ credential to the card, and the running time of the verification protocol.
   \label{fig:issuance}
 \end{figure}
 
-For issuance, we measured the running time of the protocol and determined how
-much time was actually spent on computations and which part was used to transfer
-and store the values (marked as overhead; see Figure~\ref{fig:issuance}). These
-values offer a clear improvement over the U-Prove issuance times
-from~\cite{MostowskiVullers11}, which take 3623 and 5489 ms for 2 and 5
-attributes respectively. Not only are the absolute values better, the additional
-time it takes to issue more attributes is less than with the U-Prove
-implementation.
-
 Sterckx et al.~\cite{Sterckx09} implement the Direct Anonymous Attestation (DAA)
-protocol, which is derived from the Idemix protocols on a Java~Card. With a
-1024 bits modulus they achieve a running time of 2.4 seconds of which 19\% is
-overhead, which gives a computation time of approximately 1.9 seconds. This is
-good, but unfortunately the DAA protocol does not support any attributes as it
-is just targeted at anonymous authentication and hence only uses a secret key.
+protocol, which is derived from the Identity Mixer protocols, on a Java~Card.
+With a 1024~bits modulus they achieve a running time of 2.4~seconds of which
+19\% is overhead, which gives a computation time of approximately 1.9~seconds.
+This is good, but unfortunately the DAA protocol does not support any attributes
+as it is just targeted at anonymous authentication and hence only uses a secret
+key.
 
-Bichsel et al.~\cite{BichselCGS2009} from the Idemix team at IBM Research
-Z\"urch also implemented a variant of the DAA protocol on a Java~Card. They
-report a running time of 7.4 seconds for a modulus size of 1280 bits, which is
-larger than the 1024 bits we used. It is unclear, however, which transaction
-time they measured. But again, this implementation does not include any
-attributes.
+Bichsel et al.~\cite{BichselCGS2009} from IBM Research Z\"urch also implemented
+a variant of the DAA protocol on a Java~Card. They report a running time of
+7.4~seconds for a modulus size of 1280~bits, which is larger than the 1024~bits
+we used. It is unclear, however, which transaction time they measured. But
+again, this implementation does not include any attributes.
 
 \subsection{Selective Disclosure of Attributes}
 
 For selective disclosure, we measured the running times of four configurations
 (see Figure~\ref{fig:proving}). These configurations have been chosen because
 two is the smallest number of attributes for which selective disclosure makes
-sense and five is the largest number of attributes used in our pilot project.
-By comparing these graphs, it is clear that each attribute that is not disclosed
-adds roughly 100ms of computation time, whereas the amount of work per
-undisclosed attribute remains the same.
+sense and five is the largest number of attributes that we can currently keep in
+memory while not using EEPROM. By comparing these graphs, it is clear that each
+attribute that is not disclosed adds roughly 100 milliseconds of computation
+time, whereas the amount of work per undisclosed attribute remains the same.
 
-\begin{figure}
+Comparing these measurements with those from the U-Prove
+implementation~\cite{MostowskiVullers11}, it is clear that U-Prove is more
+efficient with total running times below 900ms and less. At this point the
+multi-show unlinkability property of the Identity Mixer technology has an effect
+on the performance. To achieve this property, the issuer signature is partly
+randomised and for the remaining part proved using a zero-knowledge proof. This
+clearly has its drawback compared to U-Prove that only requires computation to
+hide the undisclosed attributes.
+
+\begin{figure}[ht]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics{images/idemix-graphs1.mps}
@@ -775,6 +787,7 @@ undisclosed attribute remains the same.
     \caption{5 stored attributes}
     \label{fig:5attr-sle78}
   \end{subfigure}
+
   \caption[Attribute proving times.]{
     Attribute proving times
     (\raisebox{-.8\dp\strutbox}{\includegraphics{images/idemix-graphs8.mps}}:~computation,
@@ -782,24 +795,12 @@ undisclosed attribute remains the same.
   \label{fig:proving}
 \end{figure}
 
-Comparing these measurements with those from the U-Prove
-implementation~\cite{MostowskiVullers11}, it is clear that U-Prove is more
-efficient with total running times below 900ms and less. At this point the
-multi-show unlinkability property of the Idemix technology has an effect on the
-performance. To achieve this property, the issuer signature is partly randomised
-and for the remaining part proved using a zero-knowledge proof. This clearly has
-its drawback compared to U-Prove that only requires computation to hide the
-undisclosed attributes.
-
 While the multi-show unlinkability property has a negative effect on the running
-time for Idemix, it requires less storage on the card then U-Prove. This is due
-to the fact that the card has to store multiple U-Prove tokens to achieve
+time for Identity Mixer, it requires less storage on the card then U-Prove. This
+is due to the fact that the card has to store multiple U-Prove tokens to achieve
 multi-show unlinkability. Given that storage space is rather limited on smart
 cards\footnote{A typical smart card only has 36 to 144 KB of EEPROM available
-for storing application data.}, this is a huge benefit of the Idemix technology.
-In the end this integrated multi-show unlinkability property also settled our
-debate for using Idemix in favour of U-Prove as the technology to be used within
-the IRMA project.
+for storing application data.}, this is a huge benefit of for this technology.
 
 Comparing our work with the DAA implementations by Sterckx et
 al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes no real
@@ -808,39 +809,3 @@ however, clear that our implementation provides a performance improvement over
 these implementations since we can even hide the secret key and two attributes
 in 1.1 seconds whereas Sterckx et al. already need 4.2 seconds to hide only the
 secret key.
-
-
-\section{Final Remarks}
-
-In this paper we demonstrated that Idemix's selective disclosure can be
-efficiently implemented on a smart card. Although the running time of the
-issuing and verification protocols restricts the range of use cases, we can be
-optimistic already about these results.
-\begin{itemize}
-  \item Additional attributes only increases the running time with a small
-    factor.
-  \item A single credential is sufficient to preserve both unlinkability
-    properties.
-\end{itemize}
-
-Our implementation only offers a 1024 bits security level. We have chosen this
-modulus size since it is lowest acceptable level security wise, whereas it is
-the highest acceptable level performance wise. Mostowski and
-Vullers~\cite{MostowskiVullers11} already showed that using a 2048 bits modulus
-more than doubles the computation time for the primitive operations. This is
-not even taking the shortage of RAM, due to larger values, into account.
-
-To the best of our knowledge the only other smart card implementation of
-attribute-based credentials besides what was already mentioned is by Batina et
-al.~\cite{BatinaHJMV10} who implement Verheul's self-blindable
-credentials~\cite{Verheul01}. Their implementation is faster than our Idemix
-implementation and also offers multi-show unlinkability. However, their
-credentials only contain a single binary attribute as explained in
-Section~\ref{unlinkApproaches}, and hence do not provide selective disclosure
-similar to Idemix or U-Prove.
-
-Due to the multi-show unlinkability feature of the Idemix protocol this
-implementation has been selected to be used in a pilot project. The goal of this
-project is to gain more experience in actually using these kinds of
-privacy-preserving technology and the usability of such technologies on a smart
-card.
