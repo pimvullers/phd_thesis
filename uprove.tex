@@ -32,7 +32,48 @@ Microsoft.
 
 \section{Schnorr Signature Scheme}
 
+\cite{Schnorr1989}
+
+\begin{algorithm}
+  \caption{Generate a Schnorr signature.}
+  \label{alg:Schnorr-sign}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-sign}{$m, (p, q, g), x$}
+      \State $u \gets \Call{Random}{~}$
+      \State $a \gets g^u \mod p$
+      \State $c \gets \Call{Hash}{a, m}$
+      \State $r \gets u - c \cdot x \mod q$
+
+      \Return $(c, r)$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Verify a Schnorr signature.}
+  \label{alg:Schnorr-verify}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-verify}{$(c, r), m, (p, q, g), h$}
+      \State $a' \gets g^r \cdot h^c \mod p$
+
+      \If{$c \neq \Call{Hash}{a', m}$}
+        \Return \Call{Invalid}{}
+      \EndIf
+
+      \Return \Call{Valid}{}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{equation*}
+  a' = g^r \cdot h^c = g^{u - c  \cdot x} \cdot g^{c \cdot x} = g^u = a \mod p
+\end{equation*}
+
 \subsection{Blind Signatures}
+\cite{PointchevalStern1996}
+
 
 \section{U-Prove Credentials}
 
