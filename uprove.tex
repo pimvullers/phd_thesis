@@ -4,7 +4,7 @@ Stefan Brands provided the first integral description of the U-Prove
 technology in his thesis~\cite{Brands2000} in 2000, after which he founded
 the company Credentica in 2002 to implement and sell this technology.
 Microsoft acquired Credentica in 2008 and published the U-Prove protocol
-specification~\cite{U-Prove_Crypto2010} in 2010 under the Open
+specification~\cite{U-Prove_Crypto2013} in 2010 under the Open
 Specification
 Promise\footnote{\url{http://www.microsoft.com/interop/osp/}} together with
 open source reference software development kits (SDKs) in C\# and Java.
@@ -43,7 +43,7 @@ Microsoft.
       \State $u \gets \Call{Random}{~}$
       \State $a \gets g^u \mod p$
       \State $c \gets \Call{Hash}{a, m}$
-      \State $r \gets u - c \cdot x \mod q$
+      \State $r \gets u + c \cdot x \mod q$
 
       \Return $(c, r)$
     \EndFunction
@@ -56,9 +56,9 @@ Microsoft.
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
     \Function{Schnorr-verify}{$(c, r), m, (p, q, g), h$}
-      \State $a' \gets g^r \cdot h^c \mod p$
+      \State $\hat{a} \gets g^r \cdot h^{-c} \mod p$
 
-      \If{$c \neq \Call{Hash}{a', m}$}
+      \If{$c \neq \Call{Hash}{\hat{a}, m}$}
         \Return \Call{Invalid}{}
       \EndIf
 
@@ -68,27 +68,296 @@ Microsoft.
 \end{algorithm}
 
 \begin{equation*}
-  a' = g^r \cdot h^c = g^{u - c  \cdot x} \cdot g^{c \cdot x} = g^u = a \mod p
+  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot g^{-c \cdot x} = g^u = a \mod p
 \end{equation*}
 
 \subsection{Blind Signatures}
-\cite{PointchevalStern1996}
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=.45]{mscs/schnorr_blind-sign}
+  \caption{Protocol for generating blind signatures.}
+  \label{msc:schnorr_blind-sign}
+\end{figure}
+
+Figure~\ref{msc:schnorr_blind-sign} depicts the protocol for generating blind
+signatures~\cite{PointchevalStern1996}. The steps executed by the signer,
+Algorithms~\ref{alg:Schnorr-prepare} and~\ref{alg:Schnorr-blind-sign}, are
+similar to the original signing protocol. The difference lies in the
+construction of the $c$ value (Algorithm~\ref{alg:Schnorr-commit}) and the final
+signature $(c', r')$ (Algorithm~\ref{alg:Schnorr-finish}).
+
+\begin{algorithm}
+  \caption{Prepare for a blind Schnorr signature.}
+  \label{alg:Schnorr-prepare}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-prepare}{$(p, q, g)$}
+      \State $u \gets \Call{Random}{~}$
+      \State $a \gets g^u \mod p$
+
+      \Return $a, u$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Commit to the message for a blind Schnorr signature.}
+  \label{alg:Schnorr-commit}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-commit}{$m, a, (p, q, g)$}
+      \State $v \gets \Call{Random}{~}$
+      \State $w \gets \Call{Random}{~}$
+      \State $a' \gets a \cdot g^v \cdot h^w \mod p$
+      \State $c' \gets \Call{Hash}{a', m}$
+      \State $c \gets c' + w \mod q$
+      \Return $c, c', v$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Generate a blind Schnorr signature.}
+  \label{alg:Schnorr-blind-sign}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-blind-sign}{$c, u, (p, q, g), x$}
+      \State $r \gets u + c \cdot x \mod q$
+
+      \Return $r$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Finish a blind Schnorr signature.}
+  \label{alg:Schnorr-finish}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{Schnorr-finish}{$r, a, c, c', v, (p, q, g), h$}
+      \State $a' \gets g^r \cdot h^{-c} \mod p$
+      \If{$a \neq a'$}
+        \Return \Call{Invalid}{}
+      \EndIf
+
+      \State $r' \gets r + v \mod q$
+
+      \Return $(c', r')$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+The resulting signature $(c', r')$ can then be verified using the regular
+verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
+\begin{align*}
+  \hat{a}
+  & = g^{r'} \cdot h^{-c'}
+  = g^{r + v} \cdot g^{-c' \cdot x}
+  = g^{u + c \cdot x + v} \cdot g^{-c' \cdot x}
+  = g^{u + (c' + w) \cdot x + v} \cdot g^{-c' \cdot x} \\
+  & = g^u \cdot g^v \cdot g^{c' \cdot x} \cdot g^{w \cdot x} \cdot g^{-c' \cdot x}
+  = g^u \cdot g^v \cdot g^{x \cdot w}
+  = a \cdot g^v \cdot h^w
+  = a' \mod p
+\end{align*}
 
 \section{U-Prove Credentials}
 
 \section{Credential Issuance}
 
+\begin{algorithm}
+  \caption{Prepare for U-Prove issuance.}
+  \label{alg:UP-issuance-prepare}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-issuance-prepare}{$(p, q, g)$}
+      \State $z \gets h'^x \mod p$
+
+      \State $u \gets \Call{Random}{~}$
+      \State $a \gets g^u \mod p$
+      \State $b \gets h'^u \mod p$
+      
+      \Return $z, a, b, u$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Commit to the attributes for U-Prove issuance.}
+  \label{alg:UP-issuance-commit}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-issuance-commit}{$h', z, a, b, (p, q, g)$}
+      \State $s \gets \Call{Random}{~}$
+      \State $s' \gets s^{-1} \mod q$
+      \State $h \gets h'^s \mod p$
+      \State $z' \gets z^s \mod p$
+      
+      \State $v \gets \Call{Random}{~}$
+      \State $w \gets \Call{Random}{~}$
+      \State $a' \gets a \cdot g^v \cdot g_0^w \mod p$
+      \State $b' \gets b^s \cdot h^v \cdot z'^w \mod p$
+      
+      \State $c' \gets \Call{Hash}{h, z', a', b'} \mod q$
+      \State $c \gets c' + w \mod q$
+      
+      \Return $z', a', b', c, c', v, s'$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Sign the attributes for U-Prove issuance.}
+  \label{alg:UP-issuance-blind-sign}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-issuance-blind-sign}{$c, u, (p, q, g), x$}
+      \State $r \gets u + c \cdot x \mod q$
+
+      \Return $r$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Finish U-Prove issuance.}
+  \label{alg:UP-issuance-finish}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-issuance-finish}{$a', c', z', v, r, (p, q, g), h$}
+      \State $r' \gets r + v \mod q$
+      
+      \If{$a' \cdot b' \neq (g \cdot h)^{r'} \cdot (g_0 \cdot z')^{-c'}$}
+        \Return \Call{Invalid}{}
+      \EndIf
+
+      \Return $(z', c', r')$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{Verify a U-Prove token signature.}
+  \label{alg:UP-verify-token}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-verify-token}{$h, (z', c', r'), (p, q, g)$}
+      \State $\hat{a} \gets g^{r'} \cdot g_0^{-c'} \mod p$
+      \State $\hat{b} \gets h^{r'} \cdot z'^{-c'} \mod q$
+      \If{$c' \neq \Call{Hash}{h, z', \hat{a}, \hat{b}}$}
+        \Return \Call{Invalid}{}
+      \EndIf
+
+      \Return $\Call{Valid}{}$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{align*}
+  \hat{a}
+  & = g^{r'} \cdot g_0^{-c'}
+  = g^{r + v} \cdot g^{-c' \cdot x}
+  = g^{u + c \cdot x + v} \cdot g^{-c' \cdot x}
+  = g^{u + (c' + w) \cdot x + v} \cdot g^{-c' \cdot x} \\
+  & = g^u \cdot g^{c' \cdot x} \cdot g^{w \cdot x} \cdot g^v \cdot g^{-c' \cdot x}
+  = g^u \cdot g^{w \cdot x} \cdot g^v
+  = g^u \cdot g^v \cdot g_0^w
+  = a \cdot g^v \cdot g_0^w \\
+  & = a' \mod p
+\end{align*}
+
+\begin{align*}
+  \hat{b}
+  & = h^{r'} \cdot z'^{-c'}
+  = h^{u + c \cdot x + v} \cdot z^{-c' \cdot s}
+  = h^{u + (c' + w) \cdot x + v} \cdot h'^{-c' \cdot s \cdot x} \\
+  & = h^u \cdot h^{c' \cdot x} \cdot h^{w \cdot x} \cdot h^v \cdot h^{-c' \cdot x}
+  = h^u \cdot h^v \cdot h'^{s \cdot w \cdot x}
+  = h'^{u \cdot s} \cdot h^v \cdot z^{s \cdot w}
+  = b^s \cdot h^v \cdot z'^w \\
+  & = b' \mod p
+\end{align*}
+
 \section{Credential Verification}
+
+\begin{algorithm}
+  \caption{U-Prove selective disclosure.}
+  \label{alg:UP-selective-disclosure}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-selective-disclosure}{$h, (z', c', r'), s', n_D, (p, q, g)$}
+      \State $\tilde{s} \gets \Call{Random}{~}$
+      \State $a \gets h^{\tilde{s}} \mod p$
+      \ForAll{$i \in \A \setminus \A_D$}
+        \State $\tilde{a}_i \gets \Call{Random}{~}$
+        \State $a \gets a \cdot g_i^{\tilde{a}_i} \mod p$
+      \EndFor
+      \State $c' \gets \Call{Hash}{a}$
+      
+      \State $c \gets \Call{Hash}{c, a_{i \in \A_D}, n_D} \mod q$
+      
+      \State $\hat{s} \gets \tilde{s} + c \cdot s' \mod q$
+      \ForAll{$i \in \A \setminus \A_D$}
+        \State $\hat{a}_i \gets \tilde{a}_i - c \cdot a_i \mod q$
+      \EndFor
+      
+      \Return $a_{i \in \A_D}, \hat{a}_{i \in \A \setminus \A_D}, c', \hat{s}$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+  \caption{U-Prove proof verification.}
+  \label{alg:UP-verify-proof}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{UP-verify-proof}{$a_{i \in \A_D}, \hat{a}_{i \in \A \setminus \A_D}, c', \hat{s}, n_D, (p, q, g)$}
+      \State $c \gets \Call{Hash}{c', a_{i \in \A_D}, n_D}$
+      \State $\hat{a} \gets g_0^{-c} \cdot h^{\hat{s}} \mod p$
+      
+      \ForAll{$i \in \A_D$}
+        \State $\hat{a} \gets \hat{a} \cdot g_i^{-c \cdot a_i} \mod p$
+      \EndFor
+      \ForAll{$i \in \A \setminus \A_D$}
+        \State $\hat{a} \gets \hat{a} \cdot g_i^{\hat{a}_i} \mod p$
+      \EndFor
+
+      \If{$c' \neq \Call{Hash}{\hat{a}}$}
+        \Return \Call{Invalid}{}
+      \EndIf
+      
+      \Return \Call{Valid}{}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{align*}
+  \hat{a}
+  & = g_0^{-c} \cdot h^{\hat{s}} 
+    \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\hat{a}_i} \\
+  & = g_0^{-c} \cdot h^{\tilde{s} + c \cdot s'} 
+    \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i - c \cdot a_i} \\
+  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h^{c \cdot s'} 
+    \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{- c \cdot a_i} \\
+  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h'^{c \cdot s' \cdot s} 
+    \cdot \textstyle\prod_{i \in \A} g_i^{-c \cdot a_i}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
+  & = h^{\tilde{s}} \cdot h'^{c} \cdot h'^{-c}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i}
+  = h^{\tilde{s}} 
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
+  & = a \mod p
+\end{align*}
+
 
 \section{Smart Card Implementation}
 
-U-Prove consists of two protocols. We briefly introduce
-these protocols here. A detailed description of the protocols and the necessary
-computations can be found in the U-Prove cryptographic
-specification~\cite{U-Prove_Crypto2010}.
-
-During the first protocol, the issuing protocol, the U-Prove token is
+U-Prove consists of two protocols. During the first protocol, the issuing protocol, the U-Prove token is
 constructed by combining the public key of the issuer with the attributes. To
 authenticate this token it is signed by the issuer. However, just signing the
 token would allow the issuer to later recognise the resulting signed token.

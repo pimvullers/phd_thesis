@@ -1,0 +1,44 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instdist}{14cm}
+
+\declinst{R}{}{Receiver}
+\declinst{S}{}{Signer}
+
+\action*{
+  \textsc{Schnorr-prepare}
+  \quad\textit{(Alg. 4.3)}
+}{S}
+\nextlevel[2]
+
+\mess{$a$}{S}{R}
+\nextlevel[1]
+
+\action*{
+  \textsc{Schnorr-commit}
+  \quad\textit{(Alg. 4.4)}
+}{R}
+\nextlevel[2]
+
+\mess{$c$}{R}{S}
+\nextlevel[1]
+
+\action*{
+  \textsc{Schnorr-blind-sign}
+  \quad\textit{(Alg. 4.5)}
+}{S}
+\nextlevel[2]
+
+\mess{$r$}{R}{S}
+\nextlevel[1]
+
+\action*{
+  \textsc{Schnorr-finish}
+  \quad\textit{(Alg. 4.6)}
+}{R}
+\nextlevel[1.5]
+
+\end{msc}

@@ -13,7 +13,7 @@ Camenisch and Lysyanskaya also provide protocols for
 \end{enumerate}
 Furthermore this scheme supports multiple messages to be signed at once. This
 allows a number of attributes to be combined into a credential. In contrast to
-the U-Prove technology an Identity Mixer credential can be randomised (like the
+the U-Prove technology, an Identity Mixer credential can be randomised (like the
 self-blindable credentials) allowing it to be used multiple times while
 remaining anonymous.
 
@@ -36,8 +36,8 @@ Chen~\cite{BrickellCC2004} and by Camenisch and Groth~\cite{CamenischGroth2004}.
 
 \subsection{Keys}\label{sec:cl_keys}
 
-The private key in this scheme are the Sophie Germain primes $p'$ and $q'$. The
-public key consists of a special RSA modulus $n = p \cdot q$ where
+The private key in this scheme comprises two Sophie Germain primes $p'$ and $q'$. 
+The public key consists of a special RSA modulus $n = p \cdot q$ where
 $p = 2 \cdot p' + 1$ and $q = 2 \cdot q' + 1$ are safe primes. Furthermore we
 need a number of elements from the group of quadratic residues modulo $n$,
 $QR_n = \{ x : x,y \in \mathbb{Z}_n \land x = y^2 \mod n \}$, in which the
@@ -161,7 +161,7 @@ the messages, see Section~\ref{sec:cl_blind}).
 \begin{equation}\label{eqn:CL-aggregate}
   Q = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
 \end{equation}
-Next a random prime $e$ is generated which is used as an ephemeral RSA public
+Next, a random prime $e$ is generated which is used as an ephemeral RSA public
 key for this signature. Finally, $A = Q^d \mod n$ is an RSA signature over the
 aggregated messages where $d = e^{-1} \mod (p' \cdot q')$ is the RSA private
 key corresponding to $e$. As a result the signature over the messages
@@ -195,8 +195,8 @@ be checked:
 \begin{equation}\label{eqn:CL-verify}
   A^e = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
 \end{equation}
-This is equivalent to checking the following equation, as used in
-Algorithm~\ref{alg:CL-verify}:
+This is equivalent to checking the following equation, such that it is not 
+necessary to compute the inverse, as used in Algorithm~\ref{alg:CL-verify}:
 \begin{equation}\label{eqn:CL-verify-Z}
   Z = A^e \cdot S^v \cdot \textstyle\prod_{i \in \M} R_i^{m_i} \mod n
 \end{equation}
@@ -208,7 +208,7 @@ Algorithm~\ref{alg:CL-verify}:
   \begin{algorithmic}[1]
     \Function{CL-verify}{$m_{i \in \M}, (A, e, v), (n, S, Z, R_{i \in \M})$}
       \State $Z' \gets A^e \cdot S^v \mod n$
-      \ForAll{$i \in \{1, ..., L\}$}
+      \ForAll{$i \in \M$}
         \State $Z' \gets Z' \cdot R_i^{m_i} \mod n$
       \EndFor
 
@@ -256,7 +256,7 @@ hidden by the blinding value $v'$.
 \end{algorithm}
 
 In order to prove to the signer that the recipient of the signature actually
-knows the hidden messages the following proof of knowledge has to be generated.
+knows the hidden messages, the following proof of knowledge has to be carried out.
 \begin{equation*}
   PK\{(\nu, \mu_{i \in \M_H}) :
     U = S^{\nu} \cdot \textstyle\prod_{i \in \M_H} R_i^{\mu_i} \mod n\}
@@ -368,9 +368,9 @@ recipient that the signature has been constructed correctly.
     \prod_{i \in \M \setminus \M_H} R_i^{m_i}} \right)^{\delta} \mod n \}
 \end{equation*}
 Again, this can be implemented as an interactive zero-knowledge protocol or as
-an non-interactive proof of knowledge. Algorithms~\ref{alg:CL-prove-A}
+a non-interactive proof of knowledge. Algorithms~\ref{alg:CL-prove-A}
 and~\ref{alg:CL-verify-A}, respectively, construct and verify such a
-non-interactive proof with a nonce $n_A$ to guarantee the freshness. The
+non-interactive proof with a nonce $n_A$ provided by the receiver to guarantee the freshness. The
 commitment $\tilde{A}$ can be reconstructed to verify the proof according to
 the following equation\footnote{Note that in version~2.3.3 of the specification
 of the Identity Mixer cryptographic library~\cite{IdemixCrypto2011}, the
@@ -387,15 +387,17 @@ it has been corrected in version~2.3.4~\cite{IdemixCrypto2012}.}.
 \end{equation*}
 
 \begin{algorithm}
-  \caption{Generate a proof of correctness or $A$.}
+  \caption{Generate a proof of correctness for $A$.}
   \label{alg:CL-prove-A}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{CL-prove-A}{$(A, e, v''), n_A, (n, S, Z, R_{i \in \M}), (p', q')$}
+    \Function{CL-prove-A}{$(A, e, v''), d, n_A, (n, S, Z, R_{i \in \M}), (p', q')$}
       \State $\tilde{d} \gets \Call{Random}{~}$
       \State $\tilde{A} \gets Q^{\tilde{d}} \mod n$
+      
       \State $c \gets \Call{Hash}{Q, A, \tilde{A}, n_A}$
-      \State $\hat{d} \gets \tilde{d} - c \cdot e^{-1} \mod (p' \cdot q')$
+      
+      \State $\hat{d} \gets \tilde{d} - c \cdot d \mod (p' \cdot q')$
 
       \Return $(c, \hat{d})$
     \EndFunction
@@ -445,15 +447,9 @@ signature as described in the following section.
 
 While blind signatures hide (a number of) the messages during signature
 generation, the goal of proving knowledge of a signature is to keep them hidden
-during signature verification. This allows the user to prove that she has a
+during signature verification. This allows the recipient to prove that she has a
 signature over one or more (possibly hidden) messages while not revealing the
 actual signature.
-
-To this end the Camenisch-Lysyanskaya signature is randomised, using
-Algorithm~\ref{alg:CL-randomise}, to hide the signature and prevent linkability
-based on the signature values $A$, $e$, and $v$. First a random blinding value
-$r$ is generated to randomise $A$. Next the value $v$ is adjusted such that the
-signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}).
 
 \begin{algorithm}
   \caption{Randomise a Camenisch-Lysyanskaya signature.}
@@ -462,7 +458,7 @@ signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}).
   \begin{algorithmic}[1]
     \Function{CL-randomise}{$(A, e, v), (n, S, Z, R_{i \in \M})$}
       \State $r \gets \Call{Random}{~}$
-      \State $A' \gets A \cdot S^{r} \mod n$
+      \State $A' \gets A \cdot S^r \mod n$
       \State $v' \gets v - e \cdot r$
 
       \Return $(A', e, v')$
@@ -470,11 +466,26 @@ signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}).
   \end{algorithmic}
 \end{algorithm}
 
+To this end the Camenisch-Lysyanskaya signature $(A, e, v)$ is randomised, using
+Algorithm~\ref{alg:CL-randomise}, to hide the signature and prevent linkability
+based on the signature values $A$, $e$, and $v$. First a random blinding value
+$r$ is generated to randomise $A$. Next the value $v$ is adjusted such that the
+signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}):
+\begin{align*}
+  A'^e 
+  & = (A \cdot S^r)^e 
+  = A^e \cdot S^{e \cdot r}
+  = \dfrac{S^{e \cdot r} \cdot Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}}
+  = \dfrac{S^{- e \cdot r} \cdot S^{e \cdot r} \cdot Z}{S^{- e \cdot r} \cdot S^v \cdot \prod_{i \in \M} R_i^{m_i}} \\
+  & = \dfrac{Z}{S^{v - e \cdot r} \cdot \prod_{i \in \M} R_i^{m_i}}
+  = \dfrac{Z}{S^{v'} \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
+\end{align*}
+
 This randomisation operation only effectively randomises the $A$ value of the
 signature. Hence it is required to hide the $e$ and $v'$ values using a
 zero-knowledge proof when revealing this randomised signature and the disclosed
 messages $m_i \in \M_D$. Furthermore the following proof hides the messages
-$m_i \in \M \setminus \M_D$ that the use does not wish to disclose to the
+$m_i \in \M \setminus \M_D$ that the user does not wish to disclose to the
 verifier.
 \begin{equation*}
   PK\{(\epsilon, \nu, \mu_{i \in \M \setminus \M_D}) :
