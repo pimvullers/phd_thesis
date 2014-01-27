@@ -23,6 +23,6 @@ mscs: ${EPS} ${PDF}
 	epstopdf ${<}
 
 clean: 
-	rm -f *.pdf *.eps
+	rm -f *.pdf *.eps *~
 
 .PHONY: mscs clean
