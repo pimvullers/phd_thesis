@@ -32,7 +32,19 @@ Microsoft.
 
 \section{Schnorr Signature Scheme}
 
-\cite{Schnorr1989}
+The Schnorr signature scheme~\cite{Schnorr1989,Schnorr1991} relies on the
+Schnorr identification protocol~\cite{Schnorr1989} which is a special instance
+of the interactive protocol of Chaum, Evertse and Van de
+Graaf~\cite{ChaumEvdG1988} that proves possession of a discrete logarithm.
+It is derived from this identification scheme by replacing the verifier's
+challenge by a hash value according to the Fiat-Shamir
+heuristic~\cite{FiatShamir1987} as can be seen in Algorithm~\ref{alg:Schnorr-sign}.
+
+The public key is a value $h$ together with a description of the prime-order
+group in which the computations take place. As an example we use $(p, q, g)$,
+which denotes a subgroup of $\Z^*_p$ of prime-order $q$ with generator $g$. The
+corresponding private key is $x = \log_g h$. The signature over a message $m$
+is the resulting pair $(c, r)$.
 
 \begin{algorithm}
   \caption{Generate a Schnorr signature.}
@@ -50,6 +62,15 @@ Microsoft.
   \end{algorithmic}
 \end{algorithm}
 
+Verification of such a Schnorr signature $(c, r)$ starts with the reconstruction
+of the input value for the hash function based on $r$, according to the
+following equation:
+\begin{equation*}
+  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot g^{-c \cdot x} = g^u = a \mod p
+\end{equation*}
+If the signature is valid, that is, this equation holds, the resulting output of
+the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
+
 \begin{algorithm}
   \caption{Verify a Schnorr signature.}
   \label{alg:Schnorr-verify}
@@ -66,10 +87,6 @@ Microsoft.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-\begin{equation*}
-  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot g^{-c \cdot x} = g^u = a \mod p
-\end{equation*}
 
 \subsection{Blind Signatures}
 
@@ -177,7 +194,7 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
       \State $u \gets \Call{Random}{~}$
       \State $a \gets g^u \mod p$
       \State $b \gets h'^u \mod p$
-      
+
       \Return $z, a, b, u$
     \EndFunction
   \end{algorithmic}
@@ -193,15 +210,15 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
       \State $s' \gets s^{-1} \mod q$
       \State $h \gets h'^s \mod p$
       \State $z' \gets z^s \mod p$
-      
+
       \State $v \gets \Call{Random}{~}$
       \State $w \gets \Call{Random}{~}$
       \State $a' \gets a \cdot g^v \cdot g_0^w \mod p$
       \State $b' \gets b^s \cdot h^v \cdot z'^w \mod p$
-      
+
       \State $c' \gets \Call{Hash}{h, z', a', b'} \mod q$
       \State $c \gets c' + w \mod q$
-      
+
       \Return $z', a', b', c, c', v, s'$
     \EndFunction
   \end{algorithmic}
@@ -227,7 +244,7 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
   \begin{algorithmic}[1]
     \Function{UP-issuance-finish}{$a', c', z', v, r, (p, q, g), h$}
       \State $r' \gets r + v \mod q$
-      
+
       \If{$a' \cdot b' \neq (g \cdot h)^{r'} \cdot (g_0 \cdot z')^{-c'}$}
         \Return \Call{Invalid}{}
       \EndIf
@@ -294,14 +311,14 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
         \State $a \gets a \cdot g_i^{\tilde{a}_i} \mod p$
       \EndFor
       \State $c' \gets \Call{Hash}{a}$
-      
+
       \State $c \gets \Call{Hash}{c, a_{i \in \A_D}, n_D} \mod q$
-      
+
       \State $\hat{s} \gets \tilde{s} + c \cdot s' \mod q$
       \ForAll{$i \in \A \setminus \A_D$}
         \State $\hat{a}_i \gets \tilde{a}_i - c \cdot a_i \mod q$
       \EndFor
-      
+
       \Return $a_{i \in \A_D}, \hat{a}_{i \in \A \setminus \A_D}, c', \hat{s}$
     \EndFunction
   \end{algorithmic}
@@ -315,7 +332,7 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
     \Function{UP-verify-proof}{$a_{i \in \A_D}, \hat{a}_{i \in \A \setminus \A_D}, c', \hat{s}, n_D, (p, q, g)$}
       \State $c \gets \Call{Hash}{c', a_{i \in \A_D}, n_D}$
       \State $\hat{a} \gets g_0^{-c} \cdot h^{\hat{s}} \mod p$
-      
+
       \ForAll{$i \in \A_D$}
         \State $\hat{a} \gets \hat{a} \cdot g_i^{-c \cdot a_i} \mod p$
       \EndFor
@@ -326,7 +343,7 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
       \If{$c' \neq \Call{Hash}{\hat{a}}$}
         \Return \Call{Invalid}{}
       \EndIf
-      
+
       \Return \Call{Valid}{}
     \EndFunction
   \end{algorithmic}
@@ -334,22 +351,22 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
 
 \begin{align*}
   \hat{a}
-  & = g_0^{-c} \cdot h^{\hat{s}} 
+  & = g_0^{-c} \cdot h^{\hat{s}}
     \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\hat{a}_i} \\
-  & = g_0^{-c} \cdot h^{\tilde{s} + c \cdot s'} 
+  & = g_0^{-c} \cdot h^{\tilde{s} + c \cdot s'}
     \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i - c \cdot a_i} \\
-  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h^{c \cdot s'} 
+  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h^{c \cdot s'}
     \cdot \textstyle\prod_{i \in \A_D} g_i^{-c \cdot a_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{- c \cdot a_i} \\
-  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h'^{c \cdot s' \cdot s} 
+  & = g_0^{-c} \cdot h^{\tilde{s}} \cdot h'^{c \cdot s' \cdot s}
     \cdot \textstyle\prod_{i \in \A} g_i^{-c \cdot a_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
   & = h^{\tilde{s}} \cdot h'^{c} \cdot h'^{-c}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i}
-  = h^{\tilde{s}} 
+  = h^{\tilde{s}}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
   & = a \mod p
 \end{align*}
@@ -371,7 +388,7 @@ his token to a verifier together with a selection of its attributes. To verify
 the authenticity of the token the verifier checks the signature of the issuer.
 Finally the prover needs to prove that the presented attributes are actually the
 attributes contained in the token (and thus the signed attributes). For this
-purpose the prover constructs a zero-knowledge proof~\cite{FiatShamir1986} in
+purpose the prover constructs a zero-knowledge proof~\cite{FiatShamir1987} in
 which he proves that he knows all the attributes contained in the token,
 including those not disclosed to the verifier. Due to the zero-knowledge
 properties of the proof the verifier does not learn anything about the
@@ -381,82 +398,67 @@ stored in the token.
 
 \subsection{U-Prove and Smart Cards}\label{sec:uproveandcards}
 
-The use of U-Prove in combination with a smart card was already envisioned
-by Brands~\cite{Brands2000} and published by Microsoft in the latest
-release of the U-Prove cryptographic
-specification~\cite{U-Prove_Crypto2011}. Their idea is to use a smart card
-(or even any trusted computing device) as a manner of protecting U-Prove
-tokens, which they then call device-protected tokens. This is achieved by
-having the device contribute one attribute to the token. The actual value
-of this attribute is, like a private key, only known by the device and will
-always be hidden. Therefore the device is required during the proving
+The use of U-Prove in combination with a smart card was already envisioned by
+Brands~\cite{Brands2000} and published by Microsoft in version~1.1 of the
+U-Prove cryptographic specification~\cite{U-Prove_Crypto2011}. Their idea is to
+use a smart card (or even any trusted computing device) as a manner of
+protecting U-Prove tokens, which they then call device-protected tokens. This is
+achieved by having the device contribute one attribute to the token. The actual
+value of this attribute is, like a private key, only known by the device and
+will always be hidden. Therefore the device is required during the proving
 protocol, since a prover has to prove knowledge of \emph{all} attributes
 contained in a token.
 
 Besides adding an additional layer of protection the U-Prove technology
 overview~\cite{U-Prove_Overview2011} describes a number of other benefits
-gained when using device-protected tokens. For example, a device can be
-used to enforce dynamic policies or prevent the use of a token at a
-blacklisted website. It also helps to enforce non-transferability of tokens
-by having the prover authenticate to the device before allowing it to be
-used in a protocol interaction. Another option, especially interesting for
-smart cards, is to use the device as a carrier, or secure roaming store,
-for entire U-Prove tokens and not one attribute. This way the U-Prove token
-is always available when needed.
+gained when using device-protected tokens. For example, a device can be used to
+enforce dynamic policies or prevent the use of a token at a blacklisted website.
+It also helps to enforce non-transferability of tokens by having the prover
+authenticate to the device before allowing it to be used in a protocol
+interaction. Another option, especially interesting for smart cards, is to use
+the device as a carrier, or secure roaming store, for entire U-Prove tokens and
+not one attribute. This way the U-Prove token is always available when needed.
 
-This last feature of a device-protected U-Prove token has one major
-drawback, namely one will need to trust the device that is used to perform
-the proving protocol. This is because the actual attribute values are used
-during the computation steps of this protocol. Hence the device must
-release all information, except its own special attribute, during a
-protocol run. When using a personal computer this might be acceptable, but
-in scenarios where the device should be used directly with a verifier, for
-example at a public transport gate, or at a vending machine for cigarettes,
-this turns out to be problematic. Since these are the areas of use which
-are most interesting for us, we decided to develop our own implementation
-of the full prover protocol specification on a smart card instead of using
-Microsoft's more limited approach.
+This last feature of a device-protected U-Prove token has one major drawback,
+namely one will need to trust the device that is used to perform the proving
+protocol. This is because the actual attribute values are used during the
+computation steps of this protocol. Hence the device must release all
+information, except its own special attribute, during a protocol run. When using
+a personal computer this might be acceptable, but in scenarios where the device
+should be used directly with a verifier, for example at a public transport gate,
+or at a vending machine for cigarettes, this turns out to be problematic. Since
+these are the areas of use which are most interesting for us, we decided to
+develop our own implementation of the full prover protocol specification on a
+smart card instead of using Microsoft's more limited approach.
 
 \subsection{U-Prove on MULTOS}
 
-A very general view of our implementation of the U-Prove technology is
-that it provides storage for preloaded (e.g.\ cryptographic domain
-parameters) and calculated (e.g.\ generated keys) values of the
-protocols, as well as attribute storage, and, more importantly, a
-sequence of hash and modulo prime arithmetic operations to execute the
-corresponding stages of the protocols. These arithmetic operations are
-the core of the performance considerations of our implementation. A few
-hashing operations are executed and multiple exponents over numbers in
-a large prime field have to be calculated during a proving
-protocol run. For example, the commitment $a$ to blinding values $w_i$
-is calculated according to the following formula.
-\begin{equation}\label{eqn:a}
-  a = \mathcal{H}(h^{w_0} \prod_{i \in U} g_i^{w_i} \mathop{\mathrm{mod}}
-p)
-\end{equation}
-Here $U$ is the set of attributes \emph{not} to be disclosed, hence
-disclosing less attributes requires more exponentiation and
-multiplications modulo prime number $p$. The range of these calculations
-is also restricted by the limits of our MULTOS implementation platform.
-Namely, on our
-development cards we are limited to a modulus size of 1024 bits for
-modulo arithmetic,\footnote{The card actually supports up to 2048
-  bits, but then during exponentiation only small enough exponents can
-  be used, a requirement which the U-Prove operations do not satisfy.}
-and SHA-1 is the only built-in hashing algorithm available. Although
-this may sound restrictive, it also makes the choice of the U-Prove
-protocol configuration (protocol parameters) for our implementation
-easy. We have simply chosen to implement the protocols using the
-domain parameters fixed to the same ones as in the default
-configuration of the official U-Prove SDK reference implementation and
-official U-Prove test vectors~\cite{U-Prove_Vectors2011}, that is 1024
-bits for modulus size and SHA-1 for hashing to match with the
+A very general view of our implementation of the U-Prove technology is that it
+provides storage for preloaded (e.g.\ cryptographic domain parameters) and
+calculated (e.g.\ generated keys) values of the protocols, as well as attribute
+storage, and, more importantly, a sequence of hash and modulo prime arithmetic
+operations to execute the corresponding stages of the protocols. These
+arithmetic operations are the core of the performance considerations of our
+implementation. A few hashing operations are executed and multiple exponents
+over numbers in a large prime field have to be calculated during a proving
+protocol run. The range of these calculations is also restricted by the limits
+of our MULTOS implementation platform. Namely, on our development cards we are
+limited to a modulus size of 1024~bits for modulo arithmetic,\footnote{The card
+actually supports up to 2048~bits, but then during exponentiation only small
+enough exponents can be used, a requirement which the U-Prove operations do not
+satisfy.} and SHA-1 is the only built-in hashing algorithm available. Although
+this may sound restrictive, it also makes the choice of the U-Prove protocol
+configuration (protocol parameters) for our implementation easy. We have simply
+chosen to implement the protocols using the domain parameters fixed to the same
+ones as in the default configuration of the official U-Prove SDK reference
+implementation and official U-Prove test vectors~\cite{U-Prove_Vectors2011},
+that is 1024~bits for modulus size and SHA-1 for hashing to match with the
 capabilities of the card.
 
-To make the U-Prove protocol calculations efficient the smart card
-memory issues have be to taken into account.
-The first and most important aspect of developing \emph{any} smart card
-application is the allocation of memory. The two rules of thumb are:
+To make the U-Prove protocol calculations efficient the smart card memory issues
+have be to taken into account. The first and most important aspect of developing
+\emph{any} smart card application is the allocation of memory. The two rules of
+thumb are:
 \begin{enumerate}
   \item the total memory allocation should be optimised, and
   \item to prevent memory exhaustion during operation there should be no
@@ -464,14 +466,14 @@ application is the allocation of memory. The two rules of thumb are:
 \end{enumerate}
 Furthermore, for any smart card platform the developer is usually offered a few
 kilobytes of RAM memory, which is normally used for fast ``scratch-pad''
-computations and whose contents disappear on every power down (in MULTOS
-this is called session memory). The other kind of memory is the EEPROM,
-which provides the permanent storage for the card (in MULTOS called static
-memory). Substantially more EEPROM than RAM is usually available on a
-card, in the range of tens of kilobytes. However, it is slower than RAM,
-especially during writing. Moreover, on the hardware level EEPROM\
-is updated in block mode, hence repeated updating of single bytes of this
-memory (e.g.\ with a \lstinline{for} loop) further hinders efficiency.
+computations and whose contents disappear on every power down (in MULTOS this is
+called session memory). The other kind of memory is the EEPROM, which provides
+the permanent storage for the card (in MULTOS called static memory).
+Substantially more EEPROM than RAM is usually available on a card, in the range
+of tens of kilobytes. However, it is slower than RAM, especially during writing.
+Moreover, on the hardware level EEPROM is updated in block mode, hence repeated
+updating of single bytes of this memory (e.g.\ with a \lstinline{for} loop)
+further hinders efficiency.
 
 Considering the size of the U-Prove data that is used in the protocols and the
 requirements of the MULTOS cryptographic routines (all data for a cryptographic
@@ -505,34 +507,30 @@ MULTOS environment and mostly entails direct calls to the MULTOS API.
 
 \subsection{Integration into the Microsoft U-Prove SDK}
 
-The previous section described the implementation of the U-Prove protocols
-which mainly concerns storage and the mathematical computations. This is, however, not
+The previous section described the implementation of the U-Prove protocols which
+mainly concerns storage and the mathematical computations. This is, however, not
 sufficient to use it in combination with Microsoft's U-Prove SDK. We need to
 bridge between the high-level Java interfaces defined in this SDK and the
 low-level APDU interface of the smart card.
 
 We designed the low-level APDU interface to be as simple as possible.
 Essentially it has to provide three types of functionality:
-%\begin{enumerate}
-%  \item
-(1)~sending data to the card,
-%  \item
-(2)~ask the card to perform the necessary computations, and
-%  \item
-(3)~retrieve the results from the card.
-%\end{enumerate}
-The second type of the interface functionality is easiest,
-we just defined an APDU instruction for each
-of the steps in the protocols. For transferring data to and from the card we
-restricted the values to the maximum amount of data that can be transferred in
-one APDU (255 bytes). This allows us to just define one APDU instruction per variable,
-parametrised only with the index if needed (for example $g_i$),
-for setting or getting a value.
+\begin{enumerate}
+  \item sending data to the card,
+  \item ask the card to perform the necessary computations, and
+  \item retrieve the results from the card.
+\end{enumerate}
+The second type of the interface functionality is easiest, we just defined an
+APDU instruction for each of the steps in the protocols. For transferring data
+to and from the card we restricted the values to the maximum amount of data that
+can be transferred in one APDU (255 bytes). This allows us to just define one
+APDU instruction per variable, parametrised only with the index if needed (for
+example $g_i$), for setting or getting a value.
 
-Finally we need to bind this low level APDU API to the interfaces and data types provided
-by the U-Prove SDK. Luckily the SDK just uses byte arrays for the external
-access to the data types such that no additional conversion is needed. The only thing
-that needs to be done for a data type, for example
+Finally we need to bind this low level APDU API to the interfaces and data types
+provided by the U-Prove SDK. Luckily the SDK just uses byte arrays for the
+external access to the data types such that no additional conversion is needed.
+The only thing that needs to be done for a data type, for example
 \lstinline{IssuerParameters}, is that the setter and getter have to be
 divided into the individual APDU instructions, for example the
 \lstinline{setPublicKey} and \lstinline{setEncodingBytes} instructions.
@@ -544,17 +542,14 @@ interface between our MULTOS implementation and the Microsoft SDK.
 
 \section{Performance Results}
 
-
-The two most important factors for us to test in our U-Prove
-implementation were correctness of the protocol calculations
-(obviously) and the speed. Testing the correctness was fairly
-easy. Since we interfaced our card to Microsoft's U-Prove SDK we
-could simply test it by invoking the protocol runs from the SDK and
-check the results. During the first stages of the development partial
-protocol calculations were verified with the test vectors provided with the
-U-Prove SDK~\cite{U-Prove_Vectors2011}. In the whole process a few
-corner case problems with our calculations surfaced that required
-minor corrections.
+The two most important factors for us to test in our U-Prove implementation were
+correctness of the protocol calculations (obviously) and the speed. Testing the
+correctness was fairly easy. Since we interfaced our card to Microsoft's U-Prove
+SDK we could simply test it by invoking the protocol runs from the SDK and check
+the results. During the first stages of the development partial protocol
+calculations were verified with the test vectors provided with the U-Prove
+SDK~\cite{U-Prove_Vectors2011}. In the whole process a few corner case problems
+with our calculations surfaced that required minor corrections.
 
 \begin{figure}
   \centering
@@ -568,23 +563,22 @@ minor corrections.
 
 As we stated in the previous section, for speed we concentrated our
 implementation efforts on the every day use case of the application, i.e.\ the
-attribute proving protocol. However, we also strived to optimise the rest
-of the protocols to maintain speed also during the initialisation and
-issuance parts. For the performance analysis, we executed a number of full
-protocol runs (initialisation, issuance, proving) on the card in various
-configurations. First of all we varied the number of stored
-attributes on the card, then within this attribute range we varied the
-number of (un)disclosed attributes. As shown in Figure~\ref{fig:issue} this
-resulted in a running time of 3.6 and 5.5 seconds for the issuance of a
-U-Prove token with respectively 2 and 5 attributes.
+attribute proving protocol. However, we also strived to optimise the rest of the
+protocols to maintain speed also during the initialisation and issuance parts.
+For the performance analysis, we executed a number of full protocol runs
+(initialisation, issuance, proving) on the card in various configurations. First
+of all we varied the number of stored attributes on the card, then within this
+attribute range we varied the number of (un)disclosed attributes. As shown in
+Figure~\ref{fig:issue} this resulted in a running time of 3.6 and 5.5 seconds
+for the issuance of a U-Prove token with respectively 2 and 5 attributes.
 %The additional time needed for issuing increases
 %with each additional attribute. It takes an additional 0.5 seconds for
 %the step from 1 to 2 attributes and already 0.7 seconds extra for the
 %step from 4 to 5 attributes. .
-The dark grey area on the graph indicates the core running time of the
-protocol calculations on the card, whereas light grey indicates the
-remaining overhead. This overhead consists of transferring data to the card
-and communicating the results of the protocol run between the card and PC.
+The dark grey area on the graph indicates the core running time of the protocol
+calculations on the card, whereas light grey indicates the remaining overhead.
+This overhead consists of transferring data to the card and communicating the
+results of the protocol run between the card and PC.
 
 \begin{figure}[ht]
   \centering
@@ -619,67 +613,49 @@ and communicating the results of the protocol run between the card and PC.
   \label{fig:total}
 \end{figure}
 
-Correspondingly, the cumulative results for the attribute
-proving protocol are shown in Figure~\ref{fig:total}.
-What can be seen in these graphs is that under ``full load'' our
-implementation executes the complete proving protocol in just under
-0.9 seconds (graph~\ref{fig:5attr}). In this worst-case scenario 5 attributes are
-stored on the card, none of which are disclosed during the protocol
-run. In other words, the U-Prove token is only validated for its
-authenticity without revealing any attribute data. Such a scenario is
-not very likely to occur in reality. In a more likely scenario at
-least one or two attributes are going to be disclosed and we can also
-assume that a U-Prove token will contain less attributes (or,
-that a large number of attributes can be split into several separate
-U-Prove tokens). As the graphs show, reducing the number of stored
-attributes improves the running time at a rate of 100 milliseconds per
-attribute, and also that the performance increases along with
-increasing the number of disclosed attributes, roughly 50 milliseconds
-per each extra disclosed attribute. Overall, this brings the total
-execution time for a two attribute token disclosing one attribute to under
-0.5 seconds (graph~\ref{fig:2attr}).
+Correspondingly, the cumulative results for the attribute proving protocol are
+shown in Figure~\ref{fig:total}. What can be seen in these graphs is that under
+``full load'' our implementation executes the complete proving protocol in just
+under 0.9 seconds (graph~\ref{fig:5attr}). In this worst-case scenario 5
+attributes are stored on the card, none of which are disclosed during the
+protocol run. In other words, the U-Prove token is only validated for its
+authenticity without revealing any attribute data. Such a scenario is not very
+likely to occur in reality. In a more likely scenario at least one or two
+attributes are going to be disclosed and we can also assume that a U-Prove token
+will contain less attributes (or, that a large number of attributes can be split
+into several separate U-Prove tokens). As the graphs show, reducing the number
+of stored attributes improves the running time at a rate of 100 milliseconds per
+attribute, and also that the performance increases along with increasing the
+number of disclosed attributes, roughly 50 milliseconds per each extra disclosed
+attribute. Overall, this brings the total execution time for a two attribute
+token disclosing one attribute to under 0.5 seconds (graph~\ref{fig:2attr}).
 
-One of the reasons to justify the Microsoft's device protected approach
-as described in Section~\ref{sec:uproveandcards} are possible resource
-issues with smart cards (limited storage space and limited speed). Our
-performance results undermine this argument. The worst case execution time
-of the proving part is 0.87 seconds. This not only makes the card
-implementation fast enough to be usable in general, it also makes it
-usable for ``field'' applications, e.g.\ dispensing machines. Even more,
-for smaller numbers of smaller attributes the running times become almost
-acceptable for use in public transport\slash e-ticketing, where the
-commonly required card transaction times should stay below 0.3 seconds. We
-also see a potential to improve the running times using faster smart card
-hardware, we elaborate on this in the upcoming section. Overall, these
-good results strongly justify the idea to use U-Prove standalone on a
-smart card rather than to use Microsoft's device-protected token approach,
-which now has no obvious functional or performance advantages over our
-approach.
+One of the reasons to justify the Microsoft's device protected approach as
+described in Section~\ref{sec:uproveandcards} are possible resource issues with
+smart cards (limited storage space and limited speed). Our performance results
+undermine this argument. The worst case execution time of the proving part is
+0.87 seconds. This not only makes the card implementation fast enough to be
+usable in general, it also makes it usable for ``field'' applications, e.g.\
+dispensing machines. Even more, for smaller numbers of smaller attributes the
+running times become almost acceptable for use in public transport\slash
+e-ticketing, where the commonly required card transaction times should stay
+below 0.3 seconds. We also see a potential to improve the running times using
+faster smart card hardware, we elaborate on this in the upcoming section.
+Overall, these good results strongly justify the idea to use U-Prove standalone
+on a smart card rather than to use Microsoft's device-protected token approach,
+which now has no obvious functional or performance advantages over our approach.
 
-Furthermore, excluding our own previous work on implementing ECC-based
-self-blindable signatures on a smart card~\cite{BatinaHJMV10,HoepmanJV10}
-our performance results are by far better than all the previously reported
-results for anonymous credentials implemented on smart cards. One of the
-first attempts within our group to implement a U-Prove like protocol on a
-Java Card~\cite{TewsJacobs09} resulted in running times closing to 10
-seconds for a setup closely corresponding to ours. The DAA protocol was
-also implemented on a Java Card by Sterckx et al.~\cite{Sterckx09} with
-the running times of close to 4 seconds for the DAA signing protocol.
-In~\cite{BichselCGS2009} yet another implementation of anonymous
-credentials on a Java Card is reported with running times of around 7--10
-seconds. Our MULTOS U-Prove implementation is simply way faster.
-
-The only limitations of our implementation are imposed by the limited
-resources of the MULTOS smart card. We had to limit the prime modulus size
-to 1024 bits, use only SHA-1 hashing, and because of the available RAM
-($<$1kB) on the card we could only allow for the maximum of 5 attributes,
-each one up to 255 bytes in size. Otherwise our implementation is fully
-flexible and provides full U-Prove functionality, \emph{including} the
-smart card features described in Section~\ref{sec:uproveandcards}.
-However, it is not uncommon for modern smart cards to support up to 2048
-bits for modulus size and 2 kilobytes of RAM, only no such MULTOS cards
-were available to us. In the following we make some speculative performance
-estimations based on tests performed with Java Cards that we have.
+The only limitations of our implementation are imposed by the limited resources
+of the MULTOS smart card. We had to limit the prime modulus size to 1024 bits,
+use only SHA-1 hashing, and because of the available RAM ($<$1kB) on the card we
+could only allow for the maximum of 5 attributes, each one up to 255 bytes in
+size. Otherwise our implementation is fully flexible and provides full U-Prove
+functionality, \emph{including} the smart card features described in
+Section~\ref{sec:uproveandcards}. However, it is not uncommon for modern smart
+cards to support up to 2048 bits for modulus size and 2 kilobytes of RAM, only
+no such MULTOS cards were available to us. In the following we make some
+speculative performance estimations based on tests performed with Java Cards
+that we have.
 
 \subsection{MULTOS vs. Java Card}
 

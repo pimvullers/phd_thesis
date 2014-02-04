@@ -10,21 +10,21 @@
 \declinst{R}{}{Prover}
 \declinst{S}{}{Verifier}
 
-\action*{%
-  random $r$\\
-  $A' \leftarrow A S^r$
+\action*{
+  \textsc{CL-randomise} 
+  \quad\textit{(Alg 5.12)}
 }{R}
-\nextlevel[3.2]
-
-\mess{$A', \{m_i : i \in I_p\}$}{R}{S}
-\nextlevel[.5]
-
-\referencestart{PK}{%
-  $PK\{ (\varepsilon, \tilde{\nu}, \rho', \{\mu_i : i \in I_s\}) : 
-    Z \equiv A'^\varepsilon S^{\tilde{\nu}} \prod_{i \cup I_s} R_i^{\mu_i} \prod_{i \in I_p} R_i^{m_i}\mod n \}$
-}{R}{S}
-\nextlevel[1.8]
-\referenceend{PK}
 \nextlevel[2]
+
+\referencestart{PK}{\begin{tabular}{r}%
+  $PK\{(\epsilon, \nu, \mu_{i \in \M \setminus \M_D}) :
+    Z = A'^{\epsilon} \cdot S^{\nu}
+    \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\mu_i}
+    \cdot \textstyle\prod_{i \in \M_D} R_i^{m_i} \mod n \}$ \\[5mm]
+  \textit{(Alg. 5.13 \& 5.14)}
+\end{tabular}}{R}{S}
+\nextlevel[2.8]
+\referenceend{PK}
+\nextlevel[.5]
 
 \end{msc}

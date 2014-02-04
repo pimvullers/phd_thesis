@@ -1,10 +1,17 @@
 \chapter{Identity Mixer}
 
-Identity Mixer~\cite{IdemixCrypto2012,CamenischH02} is an attribute-based
-credential system developed at IBM Research. The core of this system is the
-Camenisch-Lysyanskaya signature scheme~\cite{CamenischLysyanskaya2002,Lysyanskaya2002}.
-This scheme is an ideal building block for privacy-preserving technologies as
-Camenisch and Lysyanskaya also provide protocols for
+Identity Mixer~\cite{IdemixCrypto2012} is an attribute-based credential system, 
+developed at IBM Research in Z\"urich, that enables strong authentication and 
+privacy at the same time. The first prototype~\cite{CamenischH02} was developed
+in 2002 and has been improved over the years~\cite{}. An open source Java implementation
+of Identity Mixer\footnote{\url{http://prime.inf.tu-dresden.de/idemix/}} was 
+released in 2010 as part of IBM's open innovation 
+initiavive\footnote{\url{http://www.zurich.ibm.com/news/10/innovation.html}}.
+
+The core of this system is the Camenisch-Lysyanskaya signature 
+scheme~\cite{CamenischLysyanskaya2002,Lysyanskaya2002}. This scheme is an ideal
+building block for privacy-preserving technologies as Camenisch and Lysyanskaya 
+also provide protocols for
 \begin{enumerate}
   \item issuing signatures on committed values (such that the signer has no
     information about the signed value), that is, blind
@@ -444,6 +451,13 @@ signature as described in the following section.
 \end{algorithm}
 
 \subsection{Proving Knowledge of a Signature}\label{sec:cl_proof}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=.45]{mscs/cl_prove-sign_simple}
+  \caption{Protocol for proving knowledge of a signature.}
+  \label{msc:cl_prove-sign}
+\end{figure}
 
 While blind signatures hide (a number of) the messages during signature
 generation, the goal of proving knowledge of a signature is to keep them hidden
