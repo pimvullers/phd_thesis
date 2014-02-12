@@ -1,16 +1,16 @@
 \chapter{Identity Mixer}
 
-Identity Mixer~\cite{IdemixCrypto2012} is an attribute-based credential system, 
-developed at IBM Research in Z\"urich, that enables strong authentication and 
+Identity Mixer~\cite{IdemixCrypto2012} is an attribute-based credential system,
+developed at IBM Research in Z\"urich, that enables strong authentication and
 privacy at the same time. The first prototype~\cite{CamenischH02} was developed
 in 2002 and has been improved over the years~\cite{}. An open source Java implementation
-of Identity Mixer\footnote{\url{http://prime.inf.tu-dresden.de/idemix/}} was 
-released in 2010 as part of IBM's open innovation 
+of Identity Mixer\footnote{\url{http://prime.inf.tu-dresden.de/idemix/}} was
+released in 2010 as part of IBM's open innovation
 initiavive\footnote{\url{http://www.zurich.ibm.com/news/10/innovation.html}}.
 
-The core of this system is the Camenisch-Lysyanskaya signature 
+The core of this system is the Camenisch-Lysyanskaya signature
 scheme~\cite{CamenischLysyanskaya2002,Lysyanskaya2002}. This scheme is an ideal
-building block for privacy-preserving technologies as Camenisch and Lysyanskaya 
+building block for privacy-preserving technologies as Camenisch and Lysyanskaya
 also provide protocols for
 \begin{enumerate}
   \item issuing signatures on committed values (such that the signer has no
@@ -19,10 +19,10 @@ also provide protocols for
   \item proving knowledge of a signature on a committed value.
 \end{enumerate}
 Furthermore this scheme supports multiple messages to be signed at once. This
-allows a number of attributes to be combined into a credential. In contrast to
-the U-Prove technology, an Identity Mixer credential can be randomised (like the
-self-blindable credentials) allowing it to be used multiple times while
-remaining anonymous.
+allows a number of attributes to be combined into a single credential. In
+contrast to the U-Prove technology, an Identity Mixer credential can be
+randomised (like the self-blindable credentials) allowing it to be used multiple
+times while remaining anonymous.
 
 In this chapter we focus on the core features of the Identity Mixer system:
 credential issuance and selective disclosure of attributes. The technology
@@ -41,9 +41,11 @@ library~\cite{IdemixCrypto2012}. These documents incorporate improvements over
 the original scheme which have been presented by Brickell, Camenisch, and
 Chen~\cite{BrickellCC2004} and by Camenisch and Groth~\cite{CamenischGroth2004}.
 
+[TODO: explain the improvements, or rewrite.]
+
 \subsection{Keys}\label{sec:cl_keys}
 
-The private key in this scheme comprises two Sophie Germain primes $p'$ and $q'$. 
+The private key in this scheme comprises two Sophie Germain primes $p'$ and $q'$.
 The public key consists of a special RSA modulus $n = p \cdot q$ where
 $p = 2 \cdot p' + 1$ and $q = 2 \cdot q' + 1$ are safe primes. Furthermore we
 need a number of elements from the group of quadratic residues modulo $n$,
@@ -73,6 +75,8 @@ This proof requires the use of binary challenges due to the security proof for
 zero-knowledge. Hence, we need to generate commitments and responses for each
 bit of the challenge $c$. Such a bit is denoted as $c_j$ where $j \in \mathcal{H}$
 identifies a bit from the output of the hash function.
+
+[TODO: expand and make clear.]
 % Special soundness: take two runs with the same commitment, but different
 % challenges (and responses): (a, c, r) and (a, c', r').
 %
@@ -161,10 +165,10 @@ reconstructed because:
 
 \subsection{Basic Signature Scheme}\label{sec:cl_basic}
 
-In order to sign a number of messages $m_{i \in \M}$, they first have to be
-aggregated into a single group element $Q$ according to~(\ref{eqn:CL-aggregate})
-where $v$ is a random number (used to randomise the signature and when blinding
-the messages, see Section~\ref{sec:cl_blind}).
+In order to sign a collection of messages $m_{i \in \M}$, these $m_i$ first
+have to be aggregated into a single group element $Q$ according
+to~(\ref{eqn:CL-aggregate}) where $v$ is a random number (used to randomise the
+signature and later for blinding the messages, see Section~\ref{sec:cl_blind}).
 \begin{equation}\label{eqn:CL-aggregate}
   Q = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
 \end{equation}
@@ -202,7 +206,7 @@ be checked:
 \begin{equation}\label{eqn:CL-verify}
   A^e = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
 \end{equation}
-This is equivalent to checking the following equation, such that it is not 
+This is equivalent to checking the following equation, such that it is not
 necessary to compute the inverse, as used in Algorithm~\ref{alg:CL-verify}:
 \begin{equation}\label{eqn:CL-verify-Z}
   Z = A^e \cdot S^v \cdot \textstyle\prod_{i \in \M} R_i^{m_i} \mod n
@@ -401,9 +405,9 @@ it has been corrected in version~2.3.4~\cite{IdemixCrypto2012}.}.
     \Function{CL-prove-A}{$(A, e, v''), d, n_A, (n, S, Z, R_{i \in \M}), (p', q')$}
       \State $\tilde{d} \gets \Call{Random}{~}$
       \State $\tilde{A} \gets Q^{\tilde{d}} \mod n$
-      
+
       \State $c \gets \Call{Hash}{Q, A, \tilde{A}, n_A}$
-      
+
       \State $\hat{d} \gets \tilde{d} - c \cdot d \mod (p' \cdot q')$
 
       \Return $(c, \hat{d})$
@@ -486,8 +490,8 @@ based on the signature values $A$, $e$, and $v$. First a random blinding value
 $r$ is generated to randomise $A$. Next the value $v$ is adjusted such that the
 signature remains valid, that is, it still satisfies (\ref{eqn:CL-verify}):
 \begin{align*}
-  A'^e 
-  & = (A \cdot S^r)^e 
+  A'^e
+  & = (A \cdot S^r)^e
   = A^e \cdot S^{e \cdot r}
   = \dfrac{S^{e \cdot r} \cdot Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}}
   = \dfrac{S^{- e \cdot r} \cdot S^{e \cdot r} \cdot Z}{S^{- e \cdot r} \cdot S^v \cdot \prod_{i \in \M} R_i^{m_i}} \\
@@ -613,13 +617,15 @@ This credential can now be used with the protocol for proving knowledge of a
 signature to selectively disclose the attributes to a verifier. In this case the
 set of disclosed messages $\M_D \subset \mathcal{A}$ is a selection of the
 attributes contained in the credential. Using Algorithm~\ref{alg:CL-prove-D} the
-user can now generate a proof of knowledge that can be send to the verifier in
+user can now generate a proof of knowledge that can be sent to the verifier in
 order to reveal the attributes and prove that they are signed by the issuer.
 
 This is the core of the Identity Mixer system that we have implemented on a
 smart card, for extensions of this proof which provide more features we refer
 the reader to the specification of the Identity Mixer
 technology~\cite{IdemixCrypto2012}.
+
+[TODO: make the credential more explicit, using a picture.]
 
 \section{Identity Mixer on Smart Cards}
 
@@ -736,8 +742,11 @@ implementation in order to get comparable results (see
 Chapter~\ref{chp:comparison} for a detailed comparison). Furthermore, our
 implementation uses a modulus size of 1024~bits, which provides a minimal level
 of security, but an acceptable performance. Given this size of the modulus, and
-hence the size of all group elements, we can support at most 5 attributes in our
-implementation.
+hence the size of all group elements, we can support at most 5 attributes per
+credential in our implementation.
+
+[TODO: what is the actual strength of Strong RSA, that is, how many bits are
+left.]
 
 \subsection{Credential Issuance}
 
@@ -779,7 +788,9 @@ sense and five is the largest number of attributes that we can currently keep in
 memory while not using EEPROM. By comparing these graphs, it is clear that each
 attribute that is not disclosed adds roughly 100 milliseconds of computation
 time, whereas the amount of work per undisclosed attribute remains the same.
+[TODO: rewrite this last sentence.]
 
+[TODO: drop U-Prove comparison.]
 Comparing these measurements with those from the U-Prove
 implementation~\cite{MostowskiVullers11}, it is clear that U-Prove is more
 efficient with total running times below 900ms and less. At this point the
@@ -832,5 +843,7 @@ al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes no real
 sense since they do not offer selective disclosure of attributes. It is,
 however, clear that our implementation provides a performance improvement over
 these implementations since we can even hide the secret key and two attributes
-in 1.1 seconds whereas Sterckx et al. already need 4.2 seconds to hide only the
-secret key.
+of a single credential in 1.1 seconds whereas Sterckx et al. already need 4.2
+seconds to hide only the secret key.
+
+[TODO: improve this last sentence. Reverse the order.]

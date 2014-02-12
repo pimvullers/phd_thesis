@@ -1,34 +1,28 @@
 \chapter{U-Prove}
 
-Stefan Brands provided the first integral description of the U-Prove
-technology in his thesis~\cite{Brands2000} in 2000, after which he founded
-the company Credentica in 2002 to implement and sell this technology.
-Microsoft acquired Credentica in 2008 and published the U-Prove protocol
-specification~\cite{U-Prove_Crypto2013} in 2010 under the Open
-Specification
+Stefan Brands provided the first integral description of the U-Prove technology
+in his thesis~\cite{Brands2000} in 2000, after which he founded the company
+Credentica in 2002 to implement and sell this technology. Microsoft acquired
+Credentica in 2008 and published the U-Prove protocol
+specification~\cite{U-Prove_Crypto2013} in 2010 under the Open Specification
 Promise\footnote{\url{http://www.microsoft.com/interop/osp/}} together with
-open source reference software development kits (SDKs) in C\# and Java.
+open source reference software development kits in C\# and Java.
 
-The U-Prove technology is centred around a so-called U-Prove token. This
-token serves as a pseudonym for the prover. It contains a number of
-attributes which can be selectively disclosed to a verifier. Hence the
-prover decides which attributes to show and which to withhold (e.g.\ one
-can reveal the birth date, but not the residence address). Besides the
-attributes the token contains two information fields, one defined by the
-issuer, and one by the prover. These fields are always disclosed and can be
-used to provide some meta data such as a validity date of the token.
-Finally there is the token's public-key, which aggregates all information
-in the token, and a signature from the issuer over this public-key to
-ensure the authenticity.
+The U-Prove technology is centered around a so-called U-Prove token. This token
+serves as a pseudonym for the user. It contains a number of attributes which can
+be selectively disclosed to a verifier. Hence the user decides which attributes
+to show and which to withhold (for example, one can reveal the birth date, but
+not the residence address). Finally there is the token's public-key, which
+aggregates all information in the token, and a signature from the issuer over
+this public-key to ensure the authenticity.
 
 A previous attempt to implement this technology on a smart card by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
-resulted in a highly involved application with running times in the order
-of 5--10 seconds which make it not really usable in practice. Our
-implementation, which we describe in Section~\ref{sec:uproveimp}, not only
-has a much better performance but is also, except from some minimal
-limitations, compatible with the development kits released recently by
-Microsoft.
+resulted in a highly involved application with running times in the order of
+5--10 seconds which make it not really usable in practice. Our implementation,
+which we describe in Section~\ref{sec:uproveimp}, not only has a much better
+performance but is also, except from some minimal limitations, compatible with
+the development kits released by Microsoft.
 
 \section{Schnorr Signature Scheme}
 
