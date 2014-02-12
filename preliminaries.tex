@@ -1,5 +1,11 @@
 \chapter{Preliminaries}
 
+\section{Smart Cards}
+
+\subsection{Java Card Platform}
+
+\subsection{Multos Platform}
+
 \section{Cryptography}
 
 \subsection{Hard Problems}
@@ -25,9 +31,9 @@ Given $n = pq$, $e$ and $c$ where $p, q$ primes, determine $m$ such that $c = m^
 Given $n = pq, c$ where $p, q$ primes, determine $m, e \geq 3$ such that $c = m^e \mod n$.
 
 
-\section{Zero-knowledge proofs}
+\subsection{Zero-knowledge proofs}
 
-\subsection{Zero-knowledge protocols}
+\subsubsection{Zero-knowledge protocols}
 
 \begin{figure}
   \centering
@@ -48,11 +54,11 @@ Given $n = pq, c$ where $p, q$ primes, determine $m, e \geq 3$ such that $c = m^
 
 Schnorr
 
-\subsection{Zero-knowledge proofs}
+\subsubsection{Zero-knowledge proofs}
 
 The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a zero-knowledge protocol into a non-interactive zero-knowledge proof. To achieve this the challenge $c$ is not retrieved from the verifier but computed as follows: $$c \leftarrow H(m,a)$$ where $H$ is a cryptographic hash function, $m$ is some message to be included (to be signed) and $a$ is the commitment. Both the commitment $a$ and the response $r$ are calculated as usual. The result is a signature $(c,r)$ on $m$. This can be verified by checking whether $$c = H(m, g^r h^{-c})$$ holds. It should hold since $g^r h^{-c} = g^{u + cx} h^{-c} = g^{u + cx} (g^x)^{-c} = g^u = a$.
 
-\subsection{Composition of zero-knowledge proofs}
+\subsubsection{Composition of zero-knowledge proofs}
 
 \subsubsection{Combining}
 
@@ -83,9 +89,9 @@ Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P
 \subsubsection{OR} ...
 
 
-\section{Elliptic Curve Cryptography}
+\subsection{Elliptic Curve Cryptography}
 
-\subsection{Elliptic Curves}
+\subsubsection{Elliptic Curves}
 
 \begin{definition}[Elliptic Curve]\label{def:elliptic_curve}
   Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
@@ -253,7 +259,7 @@ finding the logarithm $\alpha$ for given $P$ and $Q$ is called the elliptic
 curve discrete logarithm problem (ECDLP).
 
 
-\subsection{Pairings}\label{sec:pairings}
+\subsubsection{Pairings}\label{sec:pairings}
 
 A bilinear pairing is a map $\mathbb{G}_1 \times \mathbb{G}_2 \rightarrow
 \mathbb{G}_T$ where $\mathbb{G}_1$ and $\mathbb{G}_2$ are typically additive

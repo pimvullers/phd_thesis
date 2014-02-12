@@ -1,0 +1,35 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instdist}{14cm}
+\setlength{\envinstdist}{2\envinstdist}
+
+\declinst{U}{}{User}
+\declinst{V}{}{Verifier}
+
+\mess{$h, (z', c', r')$}{U}{V}
+\nextlevel[1]
+
+\action*{
+  \textsc{UP-verify-token}
+  \quad\textit{(Alg. 4.11)}
+}{V}
+
+\action*{
+  \textsc{UP-selective-disclosure}
+  \quad\textit{(Alg. 4.12)}
+}{U}
+\nextlevel[2.8]
+
+\mess{$a_{i \in \A_D}, \hat{a}_{i \in \A\setminus\A_D}, c', \hat{s}$}{U}{V}
+\nextlevel[1]
+
+\action*{
+  \textsc{UP-verify-proof}
+  \quad\textit{(Alg. 4.13)}
+}{V}
+\nextlevel[1.5]
+
+\end{msc}

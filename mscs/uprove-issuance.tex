@@ -1,0 +1,45 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instdist}{14cm}
+\setlength{\envinstdist}{2\envinstdist}
+
+\declinst{R}{}{User}
+\declinst{S}{}{Issuer}
+
+\action*{
+  \textsc{UP-issuance-prepare}
+  \quad\textit{(Alg. 4.7)}
+}{S}
+\nextlevel[2.5]
+
+\mess{$z, a, b$}{S}{R}
+\nextlevel[1]
+
+\action*{
+  \textsc{UP-issuance-commit}
+  \quad\textit{(Alg. 4.8)}
+}{R}
+\nextlevel[2]
+
+\mess{$c$}{R}{S}
+\nextlevel[1]
+
+\action*{
+  \textsc{UP-issuance-sign}
+  \quad\textit{(Alg. 4.9)}
+}{S}
+\nextlevel[2]
+
+\mess{$r$}{S}{R}
+\nextlevel[1]
+
+\action*{
+  \textsc{UP-issuance-finish}
+  \quad\textit{(Alg. 4.10)}
+}{R}
+\nextlevel[1.5]
+
+\end{msc}
