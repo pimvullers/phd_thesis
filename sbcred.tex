@@ -87,9 +87,9 @@ public key used for verification.
 Since the signature scheme of Chaum and Pedersen operates in the discrete
 logarithm setting it can also be used with elliptic curve cryptography. Boneh,
 Lynn and Shacham~\cite{BonehLS01,BonehLS04} present a signature scheme that
-works on elliptic curves with bilinear pairings and resembles the scheme by
-Chaum and Pedersen, but omits the equality proof in order to achieve short
-signatures.
+works on elliptic curves with bilinear pairings (see Section~\ref{sec:pairing})
+and resembles the scheme by Chaum and Pedersen, but omits the equality proof in
+order to achieve short signatures.
 
 At the same time Verheul~\cite{Verheul01} gives a similar description of this
 proofless variant of the Chaum-Pedersen scheme for groups in which the
@@ -103,6 +103,8 @@ with a description of that curve. The private key is the scalar value $x$. To
 sign a message $m$ the signer transforms this into a point $P_m$ on the curve
 $E_1$ which is simply multiplied with the private key as described in
 Algorithm~\ref{alg:BLS-sign}.
+
+[TODO: Note that $P_2$ is a system parameter]
 
 \begin{algorithm}[t]
   \caption{Generate a Boneh-Lynn-Shacham signature.}
@@ -118,10 +120,11 @@ Algorithm~\ref{alg:BLS-sign}.
   \end{algorithmic}
 \end{algorithm}
 
-To verify the signature (Algorithm~\ref{alg:BLS-verify}) the verifier has to perform
-the same check as with the Chaum-Pedersen scheme, that is, whether the private
-key used to generate the signature corresponds to the public key. This can be
-achieved by checking the following equation:
+To verify the signature (Algorithm~\ref{alg:BLS-verify}) the verifier has to
+perform the same check as with the Chaum-Pedersen scheme, that is, whether the
+private key used to generate the signature corresponds to the public key.
+Instead of using a proof, this can be achieved by checking the following
+equation:
 \begin{equation}\label{eqn:BLS-verify}
   e(P_m, Q) = e(P_m, x \cdot P_2) = e(x \cdot P_m, P_2) = e(Z, P_2)
 \end{equation}
@@ -156,6 +159,8 @@ $$e(b \cdot P_m, Q) = e(b \cdot P_m, x \cdot P_2) =
 e(b \cdot x \cdot P_m, P_2) = e(b \cdot Z, P_2)$$
 Hence the signature remains valid. Since the user can perform this blinding all
 by itself Verheul calls these signatures \emph{self-blindable}.
+
+[TODO: add a reference to Algorithm~\ref{alg:BLS-verify}]
 
 \section{Verheul's Self-Blindable Certificates}
 
@@ -525,13 +530,13 @@ response) for all communication. This is in strong contrast with RSA-based
 protocols~\cite{Sterckx09,TewsJacobs09} which already require multiple APDUs to
 transfer a single command.
 
-\section{MULTOS implementation??}
-
-On the MULTOS platform the ECC API is also limited to ECDH, ECDSA and key
-generation. We can, however, use the same trick as in the Java Card
-implementation to get the minimal BLS version to work. Furthermore the MULTOS
-API does provide \texttt{ModularMultiplication} operation which allows us to
-efficiently blind the private key, such that we can drop the time consuming key
-generation operation.
-
-[Unfortunately the code does not run.]
+%\section{MULTOS implementation??}
+%
+%On the MULTOS platform the ECC API is also limited to ECDH, ECDSA and key
+%generation. We can, however, use the same trick as in the Java Card
+%implementation to get the minimal BLS version to work. Furthermore the MULTOS
+%API does provide \texttt{ModularMultiplication} operation which allows us to
+%efficiently blind the private key, such that we can drop the time consuming key
+%generation operation.
+%
+%[Unfortunately the code does not run.]
