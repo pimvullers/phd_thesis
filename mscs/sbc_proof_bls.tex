@@ -6,22 +6,29 @@
 \setlength{\instdist}{1.5\instdist}
 \setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{c}{$k_c, b$}{Card}
-\declinst{t}{$P_b, P$}{Terminal}
+\declinst{c}{$k_U, b$}{User}
+\declinst{t}{$P_b, P_1$}{Verifier}
 
-\action*{fresh nonce $n$ \\ $N \gets n \cdot P$}{t}
-\nextlevel[2.3]
+\action*{
+  fresh nonce $n$ \\
+  $N \gets n \cdot P_1$
+}{t}
+\nextlevel[3]
 
 \mess{$N$}{t}{c}
 \nextlevel
 
-\action*{$R \gets b \cdot k_c \cdot N$}{c}
-\nextlevel[2.3]
+\action*{
+  $R \gets b \cdot k_U \cdot N$
+}{c}
+\nextlevel[2]
 
 \mess{$R$}{c}{t}
 \nextlevel
 
-\action*{verify $R \stackrel{?}{=} n \cdot P_b$}{t}
+\action*{
+  verify $R \stackrel{?}{=} n \cdot P_b$
+}{t}
 \nextlevel[1.8]
 
 \end{msc}

@@ -14,7 +14,7 @@
 
 \usepackage[a4,center]{crop}\crop[frame,noinfo]
 
-%\usepackage{fancyhdr}\pagestyle{fancy}
+\usepackage{fancyhdr}\pagestyle{plain}
 
 
 
@@ -35,6 +35,8 @@
 
 %%% Support for footnotes in tables using savenotes environment
 \usepackage{footnote}
+\makesavenoteenv{tabular}
+\makesavenoteenv{description}
 
 %%% Proper formatting of pseudo code using algorithm environment
 \usepackage[chapter]{algorithm}
@@ -50,7 +52,13 @@
 \usepackage[T1]{fontenc}
 
 %%% Support for multiple footnotes
-\usepackage[multiple]{footmisc}
+%\usepackage[multiple]{footmisc}
+\let\oldFootnote\footnote
+\newcommand\nextToken\relax
+\renewcommand\footnote[1]{%
+    \oldFootnote{#1}\futurelet\nextToken\isFootnote}
+\newcommand\isFootnote{%
+    \ifx\footnote\nextToken\textsuperscript{,}\fi}
 
 \usepackage{wrapfig}
 \usepackage{textpos}

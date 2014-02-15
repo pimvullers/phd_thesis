@@ -6,18 +6,18 @@
 \setlength{\instdist}{1.5\instdist}
 \setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{c}{$k_c$,\, $P_c = k_c \cdot P$}{Card}
+\declinst{c}{$k_U$,\, $P_U = k_U \cdot P_1$}{User}
 \declinst{t}{($a, s_a$)}{Issuer}
 
-\mess{$P_c$}{c}{t}
+\mess{$P_U$}{c}{t}
 \nextlevel
 
-\referencestart{p}{Proof of possession of $k_c$}{c}{t}
+\referencestart{p}{Proof of possession of $k_U$}{c}{t}
 \nextlevel[2]
 \referenceend{p}
 \nextlevel
 
-\action*{$C_a \gets s_a \cdot P_c$}{t}
+\action*{$C_a \gets s_a \cdot P_U$}{t}
 \nextlevel[2.2]
 
 \mess{$a, C_a$}{t}{c}
