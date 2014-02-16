@@ -12,7 +12,7 @@ tick := 1mm;
 break := 1.5mm;
 
 timeunit := 5.0cm;
-
+outputtemplate:="%j%c.mps";
 
 beginfig(1); % 2 attributes proving SLE78
 

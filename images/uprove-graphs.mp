@@ -12,7 +12,7 @@ tick := 1mm;
 
 timeunit := 3.5cm;
 
-
+outputtemplate:="%j%c.mps";
 beginfig(1);
 
 fill (0,0)--

@@ -6,8 +6,8 @@
 \setlength{\instdist}{14cm}
 \setlength{\referenceoverlap}{2.5\referenceoverlap}
 
-\declinst{R}{$(n, S, Z, R_{i \in \M}), m_{i \in \M}$}{Receiver}
-\declinst{S}{$(n, S, Z, R_{i \in \M}), (p', q'), m_{i \in \M \setminus \M_H}$}{Signer}
+\declinst{R}{$(n, S, Z, \{R_i\}_{i \in \M}), \{m_i\}_{i \in \M}$}{User}
+\declinst{S}{$(n, S, Z, \{R_i\}_{i \in \M}), (p', q'), \{m_i\}_{i \in \M \setminus \M_H}$}{Signer}
 
 \action*{
   \textsc{CL-blind-commit}
@@ -19,7 +19,7 @@
 \nextlevel[1]
 
 \referencestart{pkU}{
-  $PK\{(\nu, \mu_{i \in \M_H}) :
+  $PK\{(\nu, \{\mu_i\}_{i \in \M_H}) :
     U = S^{\nu} \cdot \textstyle\prod_{i \in \M_H} R_i^{\mu_i} \mod n\}$
   \quad\textit{(Alg. 5.6 \& 5.7)}
 }{R}{S}

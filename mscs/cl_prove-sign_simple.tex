@@ -7,17 +7,17 @@
 \setlength{\envinstdist}{2\envinstdist}
 \setlength{\referenceoverlap}{6cm}
 
-\declinst{R}{}{Prover}
-\declinst{S}{}{Verifier}
+\declinst{R}{$(n, S, Z, \{R_i\}_{i \in \M}), (A, e, v), \{m_i\}_{i \in \M}$}{User}
+\declinst{S}{$(n, S, Z, \{R_i\}_{i \in \M}), \{m_i\}_{i \in \M_D}$}{Verifier}
 
 \action*{
-  \textsc{CL-randomise} 
+  \textsc{CL-randomise}
   \quad\textit{(Alg 5.12)}
 }{R}
 \nextlevel[2]
 
 \referencestart{PK}{\begin{tabular}{r}%
-  $PK\{(\epsilon, \nu, \mu_{i \in \M \setminus \M_D}) :
+  $PK\{(\epsilon, \nu, \{\mu_i\}_{i \in \M \setminus \M_D}) :
     Z = A'^{\epsilon} \cdot S^{\nu}
     \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\mu_i}
     \cdot \textstyle\prod_{i \in \M_D} R_i^{m_i} \mod n \}$ \\[5mm]
