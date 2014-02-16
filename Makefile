@@ -1,6 +1,8 @@
 SOURCE_DIR=$(shell pwd)
 BUILD_DIR=.build
 
+MP_SRC=$(shell ls images/*.mp)
+MP_MPS=$(MP_SRC:.mp=.mps)
 MSC_SRC=$(shell grep -l begin{msc} mscs/*.tex)
 MSC_PDF=$(MSC_SRC:.tex=.pdf)
 SVG_SRC=$(shell ls images/*.svg)
@@ -13,7 +15,7 @@ compact: compact_thesis.pdf
 
 thesis: thesis.pdf
 
-%.pdf: %.tex *.bib *.tex ${MSC_PDF} ${SVG_PDF} ${IMG}
+%.pdf: %.tex *.bib *.tex ${MSC_PDF} ${SVG_PDF} ${MP_MPS} ${IMG}
 	@mkdir -p ${BUILD_DIR}
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	@sed -i 's#{references}#{${SOURCE_DIR}/references}#' .build/bibliography.aux
@@ -21,6 +23,9 @@ thesis: thesis.pdf
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	mv ${BUILD_DIR}/${@} ./
+
+${MP_MPS}: ${MP_SRC}
+	${MAKE} -C images `basename ${MP_MPS}`
 
 ${MSC_PDF}: ${MSC_SRC}
 	${MAKE} -C mscs `basename ${MSC_PDF}`
