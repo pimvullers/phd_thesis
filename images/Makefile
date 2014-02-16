@@ -28,4 +28,4 @@ svgs: ${SVG_EPS} ${SVG_PDF}
 clean: 
 	rm -f ${MP_MPS} ${SVG_PDF} ${SVG_EPS} *~
 
-.PHONY: mps svgs clean
+.PHONY: all mps svgs clean

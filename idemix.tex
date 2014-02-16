@@ -32,7 +32,7 @@ attribute-based credential system, but we focus on what can be achieved on a
 smart card with an acceptable performance~\cite{VullersAlpar2013}. Additional
 options can still be added, but at the cost of an increased transaction time.
 
-\section{Camenisch-Lysyanskaya Signature Scheme}
+\section{Camenisch-Lysyanskaya Signature Scheme\label{sec:CL-scheme}}
 
 This description of the Camenisch-Lysyanskaya signature
 scheme~\cite{CamenischLysyanskaya2003,Lysyanskaya2002} is based on the
@@ -714,23 +714,23 @@ library is available for download at \url{https://prime.inf.tu-dresden.de/idemix
 while our patches can be found at \url{https://github.com/credentials/idemix_library}.}
 provided by IBM Research. Thanks to Patrick Bichsel, version 2.3.4 of this
 library provides interfaces for the various roles in the protocols such that we
-could create an extension to this library, the terminal service\footnote{
-Available at \url{https://github.com/credentials/idemix_terminal}}, which takes
-care of all smart card specifics. The service implements the user roles of the
-Identity Mixer issuance and verification protocols, described by the
+could create an extension to this library, the terminal
+service\footnote{\url{https://github.com/credentials/idemix_terminal}}, which
+takes care of all smart card specifics. The service implements the user roles of
+the Identity Mixer issuance and verification protocols, described by the
 \texttt{Recipient} and \texttt{Prover} interfaces respectively. These
 interfaces are implemented by translating all Java method calls from the
 library into the corresponding APDU commands and converting the Java data types
 to raw byte arrays, suitable for APDU communication.
 
-The Identity Mixer application on the card takes care of handling the incoming
-APDUs and storing the values into the internal data structures. While handling
-the communication with the terminal is the largest part of the application, the
-main part is the implementation of the cryptographic operations for the Identity
-Mixer protocols. This allows the card to perform the user roles without
-depending on the terminal for any computations or proof generation. The only
-thing the terminal is responsible for is providing the data in the correct
-format.
+The Identity Mixer application\footnote{\url{https://github.com/pimvullers/idemix_multos/}}
+on the card takes care of handling the incoming APDUs and storing the values
+into the internal data structures. While handling the communication with the
+terminal is the largest part of the application, the main part is the
+implementation of the cryptographic operations for the Identity Mixer protocols.
+This allows the card to perform the user roles without depending on the terminal
+for any computations or proof generation. The only thing the terminal is
+responsible for is providing the data in the correct format.
 
 \subsection{Smart Card Implementation}
 
@@ -746,7 +746,7 @@ protocol. In principle, it is a direct translation from the mathematical
 description to API calls. The only API restriction we came across was that the
 \texttt{ModularExponentiation} function does not accept exponents larger than
 the modulus size. In our case this only involves exponentiations with base $S$
-(see details in Section~\ref{sec:IdemixCrypto2012}). Hence we added a function
+(see details in Section~\ref{sec:CL-scheme}). Hence we added a function
 \texttt{SpecialModularExponentiation} which implements the same method as used
 by Bichsel et al.~\cite{BichselCGS2009}, that is, splitting one exponentiation
 up into two\footnote{This method actually requires three exponentiations, but
@@ -799,14 +799,11 @@ credential to the card, and the running time of the verification protocol.
 
 For these performance tests we've used the same test vectors as with the U-Prove
 implementation in order to get comparable results (see
-Chapter~\ref{chp:comparison} for a detailed comparison). Furthermore, our
+Chapter~\ref{chp:summary} for a detailed comparison). Furthermore, our
 implementation uses a modulus size of 1024~bits, which provides a minimal level
 of security, but an acceptable performance. Given this size of the modulus, and
 hence the size of all group elements, we can support at most 5 attributes per
 credential in our implementation.
-
-[TODO: what is the actual strength of Strong RSA, that is, how many bits are
-left.]
 
 \subsection{Credential Issuance}
 
@@ -825,19 +822,20 @@ and store the values (marked as overhead; see Figure~\ref{fig:issuance}).
   \label{fig:issuance}
 \end{figure}
 
-Sterckx et al.~\cite{Sterckx09} implement the Direct Anonymous Attestation (DAA)
+Sterckx et al.~\cite{Sterckx09} implement the direct anonymous attestation
 protocol, which is derived from the Identity Mixer protocols, on a Java~Card.
 With a 1024~bits modulus they achieve a running time of 2.4~seconds of which
 19\% is overhead, which gives a computation time of approximately 1.9~seconds.
-This is good, but unfortunately the DAA protocol does not support any attributes
-as it is just targeted at anonymous authentication and hence only uses a secret
-key.
+This is good, but unfortunately the direct anonymous attestation protocol does
+not support any attributes as it is just targeted at anonymous authentication
+and hence only uses a secret key.
 
 Bichsel et al.~\cite{BichselCGS2009} from IBM Research Z\"urch also implemented
-a variant of the DAA protocol on a Java~Card. They report a running time of
-7.4~seconds for a modulus size of 1280~bits, which is larger than the 1024~bits
-we used. It is unclear, however, which transaction time they measured. But
-again, this implementation does not include any attributes.
+a variant of the direct anonymous attestation protocol on a Java~Card. They
+report a running time of 7.4~seconds for a modulus size of 1280~bits, which is
+larger than the 1024~bits we used. It is unclear, however, which transaction
+time they measured. But again, this implementation does not include any
+attributes.
 
 \subsection{Selective Disclosure of Attributes}
 
@@ -849,16 +847,6 @@ memory while not using EEPROM. By comparing these graphs, it is clear that each
 attribute that is not disclosed adds roughly 100 milliseconds of computation
 time, whereas the amount of work per undisclosed attribute remains the same.
 [TODO: rewrite this last sentence.]
-
-[TODO: drop U-Prove comparison.]
-Comparing these measurements with those from the U-Prove
-implementation~\cite{MostowskiVullers11}, it is clear that U-Prove is more
-efficient with total running times below 900ms and less. At this point the
-multi-show unlinkability property of the Identity Mixer technology has an effect
-on the performance. To achieve this property, the issuer signature is partly
-randomised and for the remaining part proved using a zero-knowledge proof. This
-clearly has its drawback compared to U-Prove that only requires computation to
-hide the undisclosed attributes.
 
 \begin{figure}[ht]
   \centering
@@ -891,16 +879,9 @@ hide the undisclosed attributes.
   \label{fig:proving}
 \end{figure}
 
-While the multi-show unlinkability property has a negative effect on the running
-time for Identity Mixer, it requires less storage on the card then U-Prove. This
-is due to the fact that the card has to store multiple U-Prove tokens to achieve
-multi-show unlinkability. Given that storage space is rather limited on smart
-cards\footnote{A typical smart card only has 36 to 144 KB of EEPROM available
-for storing application data.}, this is a huge benefit of for this technology.
-
-Comparing our work with the DAA implementations by Sterckx et
-al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes no real
-sense since they do not offer selective disclosure of attributes. It is,
+Comparing our work with the direct anonymous attestation implementations by
+Sterckx et al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes
+no real sense since they do not offer selective disclosure of attributes. It is,
 however, clear that our implementation provides a performance improvement over
 these implementations since we can even hide the secret key and two attributes
 of a single credential in 1.1 seconds whereas Sterckx et al. already need 4.2
