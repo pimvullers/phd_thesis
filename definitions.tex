@@ -16,12 +16,13 @@
 
 \usepackage{fancyhdr}\pagestyle{plain}
 
-
+\usepackage{makeidx}
+\makeindex
 
 \usepackage[british]{babel}
 
 %%% Basic support for math and graphics
-\usepackage{amsmath,amsfonts,amssymb,graphicx,caption,subcaption}
+\usepackage{amsmath,amsfonts,amssymb,graphicx,caption,subcaption,wrapfig}
 
 %%% Support for Theorems and Definitions
 \usepackage{amsthm}
@@ -31,7 +32,7 @@
 \usepackage{hyperref}
 
 %%% Load xcolor package used by colortbl before footnote to avoid issues
-\usepackage{xcolor}
+%\usepackage{xcolor}
 
 %%% Support for footnotes in tables using savenotes environment
 \usepackage{footnote}
@@ -48,21 +49,6 @@
 \newcommand{\LineComment}[1]{\Statex\(\triangleright~\){\it #1}}
 
 %%% Get proper underscores in text without the need to escape them
-%\usepackage{underscore}
 \usepackage[T1]{fontenc}
-
-%%% Support for multiple footnotes
-%\usepackage[multiple]{footmisc}
-\let\oldFootnote\footnote
-\newcommand\nextToken\relax
-\renewcommand\footnote[1]{%
-    \oldFootnote{#1}\futurelet\nextToken\isFootnote}
-\newcommand\isFootnote{%
-    \ifx\footnote\nextToken\textsuperscript{,}\fi}
-
-\usepackage{wrapfig}
-\usepackage{textpos}
-\usepackage{multirow}
-\usepackage{listings}
 
 \include{macros}

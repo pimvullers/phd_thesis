@@ -30,7 +30,7 @@ provider, the user can now just provide the required attributes, such that the
 service can be accessed without the user revealing his identity.
 
 In this paper we use the Identity Mixer (Idemix)
-technology~\cite{CamenischLysyanskaya2001,CamenischLysyanskaya2003,idemix_spec_2.3.4} developed by IBM Research to
+technology~\cite{CamenischLysyanskaya2001,CamenischLysyanskaya2003,IdemixCrypto2012} developed by IBM Research to
 implement attribute-based credentials. This system allows the user to receive a
 signed list of attributes from a trusted party which can then be used to
 convince a service provider. A core feature of this technology, \emph{selective
@@ -179,9 +179,9 @@ answer to the question ``Is French?'' is stored.
 without revealing the credential itself. Since the verifier does not see the
 credential, verification instances are unlinkable and they also cannot be
 related to the issuing procedure. Camenisch and
-Lysyanskaya~\cite{CL2001,CL2003} combine such proofs with randomisation; their
+Lysyanskaya~\cite{CamenischLysyanskaya2001,CamenischLysyanskaya2003} combine such proofs with randomisation; their
 technique was further developed and became IBM's Identity Mixer
-(Idemix)~\cite{idemix_spec_2.3.4}.
+(Idemix)~\cite{IdemixCrypto2012}.
 
 
 -------------------------------------------------------------
@@ -223,7 +223,7 @@ smart card~\cite{BatinaHJMV10,HoepmanJV10} using elliptic curve
 cryptography (ECC), providing the best performance results thus far.
 
 The drawback is that, due to the untraceable nature of this technology,
-incorporating revocation is hard and very costly~\cite{HoepmanLV11}.
+incorporating revocation is hard and very costly~\cite{HoepmanLV11}. % TODO: search for alternative reference.
 Furthermore, ECC support on smart cards is very limited making prototyping
 very hard. Finally, the technology is fairly new compared to U-Prove and
 Idemix, and not backed by a big company which offers support for it.
@@ -255,7 +255,7 @@ A previous attempt to implement this technology on a smart card by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
 resulted in a highly involved application with running times in the order
 of 5--10 seconds which make it not really usable in practice. Our
-implementation, which we describe in Section~\ref{sec:uproveimp}, not only
+implementation, which we describe in Section~\ref{sec:UP-smartcard}, not only
 has a much better performance but is also, except from some minimal
 limitations, compatible with the development kits released recently by
 Microsoft.
@@ -267,7 +267,7 @@ U-Prove alternative by Baldimtsi and Lysyanskaya~\cite{BaLy2012}
 
 Identity mixer (Idemix) is an anonymous credential system, based on the
 Camenisch-Lysyanskaya anonymous credentials
-scheme~\cite{CamenischLysyanskaya2001, CamenischLysyanskaya2002,
+scheme~\cite{CamenischLysyanskaya2001, CamenischLysyanskaya2003,
 Lysyanskaya2002} developed at IBM Research in Z\"urich that enables strong
 authentication and privacy at the same time. The first
 prototype~\cite{CamenischH02} was developed in 2002 and has been improved
@@ -350,7 +350,7 @@ highly secure, accessible only through the APDU commands offered by the
 application, which in turn are subject to any authentication and secure
 messaging requirements that the card application may impose.
 
-\subsubsection{Java Card}\label{sec:javacard}
+\subsection{Java Card}\label{sec:javacard}
 
 Java Card is a now well-established smart card platform based on a
 tailored, cut-down version of Java (hence the name)~\cite{Chen00}. One
@@ -405,7 +405,7 @@ Card API with proprietary extensions to support e-passport
 standards~\cite{NXP09}. But this only solves the problem for one
 application type and, moreover, makes the platform non-interoperable.
 
-\subsubsection{MULTOS}\label{sec:multos}
+\subsection{MULTOS}\label{sec:multos}
 
 The design principles of the MULTOS
 platform~\cite{MULTOS2005,MULTOS_Manual2009} are similar to those of
@@ -503,7 +503,6 @@ applications will need to ensure that their use of dynamic memory does not
 exceed the limit imposed by the chip~\cite{MIR2012} on which the application
 will reside.
 
-
 \section{Contributions}
 
 All contributions are available as open source software under the GNU General
@@ -569,7 +568,7 @@ smart card implementation of the Identity Mixer technology as well as the
 implementation of the corresponding host software. This consists of:
 \begin{itemize}
   \item the MULTOS application\footnote{\url{https://github.com/pimvullers/idemix_multos/}
-    }\footnote{This has evolved into the IRMA application
+    }\textsuperscript{,}\footnote{This has evolved into the IRMA application
     (\url{https://github.com/pimvullers/irma_card/}) which provides additional
     functionality, like secure messaging and an interface which allows the user
     to manage the credentials stored on the card.}

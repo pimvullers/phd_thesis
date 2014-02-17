@@ -1,12 +1,10 @@
-\documentclass[a4paper,twoside,openright]{report}
-
-\usepackage{a4wide}
+\documentclass[a4paper,twoside,openright]{book}
 
 \input{definitions}
 
-\newcommand{\mainmatter}{}
-
 \begin{document}
+
+\frontmatter
 
 \include{frontpage}
 
@@ -14,6 +12,10 @@
 
 \input{mainmatter}
 
+\backmatter
+
 \include{bibliography}
+
+\include{index}
 
 \end{document}

@@ -9,15 +9,18 @@ SVG_SRC=$(shell ls images/*.svg)
 SVG_PDF=$(SVG_SRC:.svg=.pdf)
 IMG=images/*
 
-thesis: thesis.pdf
+all: manuscript thesis
 
-compact: compact_thesis.pdf
+manuscript: manuscript.pdf
+
+thesis: thesis.pdf
 
 %.pdf: %.tex *.bib *.tex ${MP_MPS} ${MSC_PDF} ${SVG_PDF} ${IMG}
 	@mkdir -p ${BUILD_DIR}
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	@sed -i 's#{references}#{${SOURCE_DIR}/references}#' .build/bibliography.aux
 	(cd ${BUILD_DIR}; bibtex `basename ${<} .tex`)
+	(cd ${BUILD_DIR}; makeindex `basename ${<} .tex`)
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	pdflatex -output-directory=${BUILD_DIR} ${<}
 	mv ${BUILD_DIR}/${@} ./
@@ -37,4 +40,4 @@ clean:
 	rm -rf ${BUILD_DIR}
 	rm -f *.pdf *~
 
-.PHONY: clean compact thesis
+.PHONY: all clean manuscript thesis

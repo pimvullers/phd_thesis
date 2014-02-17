@@ -20,7 +20,7 @@ A previous attempt to implement this technology on a smart card by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
 resulted in a highly involved application with running times in the order of
 5--10 seconds which make it not really usable in practice. Our implementation,
-which we describe in Section~\ref{sec:uproveimp}, not only has a much better
+which we describe in Section~\ref{sec:UP-smartcard}, not only has a much better
 performance but is also, except from some minimal limitations, compatible with
 the development kits released by Microsoft.
 
@@ -340,7 +340,7 @@ also verify whether the values received from the issuer are correct:
   \centering
   \includegraphics[scale=.45]{mscs/uprove-verification}
   \caption{Protocol for U-Prove credential verification.}
-  \label{msc:uprove-issuance}
+  \label{msc:uprove-verification}
 \end{figure}
 
 The verification of a U-Prove credential consists of two parts. First, the
@@ -583,9 +583,9 @@ Finally we need to bind this low level APDU API to the interfaces and data types
 provided by the U-Prove software development kit. Luckily the development kit
 just uses byte arrays for the external access to the data types such that no
 additional conversion is needed. The only thing that needs to be done for a data
-type, for example \lstinline{IssuerParameters}, is that the setter and getter
+type, for example \texttt{IssuerParameters}, is that the setter and getter
 have to be divided into the individual APDU instructions, for example the
-\lstinline{setPublicKey} and \lstinline{setEncodingBytes} instructions.
+\texttt{setPublicKey} and \texttt{setEncodingBytes} instructions.
 
 All this functionality has been combined into a single Java class which provides
 setters and getters for the data stored on the card as well as methods for the
@@ -593,7 +593,7 @@ protocol steps. Using the Java built-in smart card library it serves as an
 interface between our MULTOS implementation and the U-Prove software development
 kit.
 
-\section{Performance Results}
+\section{Performance Results\label{sec:UP-performance}}
 
 The two most important factors for us to test in our U-Prove implementation were
 correctness of the protocol calculations (obviously) and the speed. Testing the

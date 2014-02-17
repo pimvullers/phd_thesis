@@ -1,4 +1,5 @@
 \chapter{Identity Mixer}
+\index{Identity Mixer|(}
 
 Identity Mixer~\cite{CamenischLysyanskaya2001,IdemixCrypto2012} is an
 attribute-based credential system, developed at IBM Research in Z\"urich, that
@@ -33,6 +34,7 @@ smart card with an acceptable performance~\cite{VullersAlpar2013}. Additional
 options can still be added, but at the cost of an increased transaction time.
 
 \section{Camenisch-Lysyanskaya Signature Scheme\label{sec:CL-scheme}}
+\index{Camenisch-Lysyanskaya signature scheme}
 
 This description of the Camenisch-Lysyanskaya signature
 scheme~\cite{CamenischLysyanskaya2003,Lysyanskaya2002} is based on the
@@ -247,7 +249,7 @@ inverse:
 \end{algorithm}
 
 \subsection{Blind Signatures\label{sec:cl_blind}}
-
+\index{Identity Mixer!issuance|(}
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/cl_blind-sign_simple}
@@ -468,7 +470,10 @@ now be verified using the verification procedure from the basic signature scheme
 (Algorithm~\ref{alg:CL-verify}) or it can be used to prove knowledge of this
 signature as described in the following section.
 
+\index{Identity Mixer!issuance|)}
+
 \subsection{Proving Knowledge of a Signature\label{sec:cl_proof}}
+\index{Identity Mixer!selective disclosure|(}
 
 Blind signatures hide (a number of) the messages from the signer during
 signature generation. The goal of proving knowledge of a signature is to hide
@@ -619,8 +624,10 @@ proof will fail.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+\index{Identity Mixer!selective disclosure|)}
 
 \section{Identity Mixer Credentials}
+\index{Identity Mixer!credentials}
 
 The Identity Mixer technology is tightly built upon the Camenisch-Lysyanskaya
 signature scheme and its protocols. The blind signature scheme provides the
@@ -628,6 +635,7 @@ issuance protocol where the messages become the contents of the credential. The
 protocol for proving knowledge of a signature is used as the credential
 verification protocol.
 
+\index{Identity Mixer!issuance}
 An Identity Mixer credential contains a master secret $s$, which belongs to the
 user and is never revealed, and a collection of attributes
 $\{a_i\}_{i \in \mathcal{A}}$, where $\mathcal{A}$ denotes the set of
@@ -637,7 +645,7 @@ issuance protocol the user obtains a signature $(A, e, v)$ over these values
 which completes the credential.
 
 \clearpage
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{images/idemix-credential}
   \caption{A visual representation of an Identity Mixer credential.}
@@ -654,6 +662,7 @@ Figure~\ref{fig:idemix-credential}, consists of:
     and $d = e^{-1} \mod (p' \cdot q')$.
 \end{itemize}
 
+\index{Identity Mixer!selective disclosure|)}
 This credential can now be used with the protocol for proving knowledge of a
 signature to selectively disclose the attributes to a verifier. In this case the
 set of disclosed messages $\M_D \subseteq \mathcal{A}$ is a selection of the
@@ -689,7 +698,7 @@ implementations of this technology on smart cards. The major drawback of these
 implementations is the running time of several seconds which is still too much
 for being really practical.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{subfigure}{0.45\textwidth}
     \includegraphics[scale=.45]{images/idemix-terminal-architecture}
@@ -792,7 +801,7 @@ again in the next operation. By doing this we could reduce the amount of memory
 required for intermediate values which in the end allowed us to get all
 necessary variables in RAM.
 
-\section{Performance Results}
+\section{Performance Results\label{sec:IM-performance}}
 
 There are two important performance measures: the time it takes to issue a new
 credential to the card, and the running time of the verification protocol.
@@ -888,3 +897,5 @@ of a single credential in 1.1 seconds whereas Sterckx et al. already need 4.2
 seconds to hide only the secret key.
 
 [TODO: improve this last sentence. Reversing the order would already help.]
+
+\index{Identity Mixer|)}
