@@ -16,8 +16,8 @@
 
 \usepackage{fancyhdr}\pagestyle{plain}
 
-\usepackage{makeidx}
-\makeindex
+\usepackage{imakeidx}
+\makeindex[intoc]
 
 \usepackage[british]{babel}
 
@@ -50,5 +50,7 @@
 
 %%% Get proper underscores in text without the need to escape them
 \usepackage[T1]{fontenc}
+
+\usepackage{multicol}
 
 \include{macros}

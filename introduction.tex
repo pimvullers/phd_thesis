@@ -1,84 +1,134 @@
 \chapter{Introduction}
 
-The world is moving into a digital era. Many people spend time on the Internet,
-not just for fun or gathering information, but also for shopping and banking.
-Not only do our activities happen in the digital world, existing systems are
-also moving to digital alternatives. Train tickets are being replaced by
-electronic public transport cards. Identity documents, such as passports,
-are equipped with chips to hold digital copies of the identity data printed on
-the document and sometimes even additional information is stored there such as
-fingerprints or other biometric data.
+The world is moving into a digital era. Computers are becoming more and more
+intertwined in our daily lives. Many people spend time on the Internet, not just
+for fun or gathering information, but also for social interaction, shopping or
+on-line banking. Not only do our activities take place in a digital world,
+existing systems are also moving to digital alternatives. Paper train tickets
+are being replaced by electronic public transport cards. Identity documents,
+such as passports and identity cards, are equipped with electronic chips to hold
+digital copies of the identity data printed on the document. Sometimes even
+additional information is stored in these chips, such as fingerprints or other
+biometric data.
 
-Unfortunately, most such systems use a simple approach to identify entities;
-they just attach a unique number to them. While this is convenient for
+Unfortunately, most digital systems use a simple approach to identify entities;
+they just associate them with a unique identifier. While this is convenient for
 bookkeeping, it also has a big drawback with respect to privacy. Using these
-unique identifiers, it is easy to trace the user. For example, not only might it
-be possible to track user activities on the world wide web, but real world
-actions could also be traced through the use of public transport cards or
-digital identity documents.
+unique identifiers, it is easy to trace the user. For example, it might be
+possible to track user activities on the world wide web, but through the use of
+public transport cards or digital identity documents real world actions could be
+traced as well.
 
-These unique identifiers are used to identify entities during authentication
-and/or authorisation, but actually in most use cases identification is not
-necessary. For instance, when you want to buy liquor, a merchant only needs to
-verify that you are of a certain age. The same holds when boarding a train; the
-system only needs to know whether or not you are allowed to do so, and there is
-no direct need for the system to know exactly who you are.
+In a security context, these unique identifiers are used to identify entities
+during authentication and/or authorisation processes, but in most use cases
+identification is not necessary during such a transaction. For instance, when
+you want to buy liquor, a merchant only needs to verify that you are of a
+certain age. The same holds when boarding a train; the public transport system
+only needs to know whether or not you are allowed to do so, and there is no
+direct need for the system to know exactly who you are.
 
-A more privacy-friendly approach is possible by using attribute-based
-credentials. Instead of providing lots of identity information to the service
-provider, the user can now just provide the required attributes, such that the
-service can be accessed without the user revealing his identity.
+A more privacy-friendly approach is possible by using only specific properties
+of the user, or \emph{attributes}, as an alternative to identities. Instead of
+providing lots of identity information to a service provider, the user can just
+provide the required attributes, such that the service can be accessed without
+the user revealing his identity. For example, when you want to buy a bottle of
+wine you just prove that you are over 18 (or 21) years of age, which is enough
+to authorise the transaction, without revealing who you are. To be more precise,
+it does not matter who you are, where you live, or even what your age actually
+is. You are allowed to buy the wine, as long as you satisfy the property that
+you have reached a certain age. This illustrates that it is often more important
+\emph{what} you are than \emph{who} you are.
 
-In this paper we use the Identity Mixer (Idemix)
-technology~\cite{CamenischLysyanskaya2001,CamenischLysyanskaya2003,IdemixCrypto2012} developed by IBM Research to
-implement attribute-based credentials. This system allows the user to receive a
-signed list of attributes from a trusted party which can then be used to
-convince a service provider. A core feature of this technology, \emph{selective
-disclosure}, enables a user to control which attributes from this list get
-revealed to the service provider.
+%In this paper we use the Identity Mixer (Idemix)
+%technology~\cite{CamenischLysyanskaya2001,CamenischLysyanskaya2003,IdemixCrypto2012} developed by IBM Research to
+%implement attribute-based credentials. This system allows the user to receive a
+%signed list of attributes from a trusted party which can then be used to
+%convince a service provider. A core feature of this technology, \emph{selective
+%disclosure}, enables a user to control which attributes from this list get
+%revealed to the service provider.
 
-Having public transport cards and identity documents in mind, we focus on smart
-card implementations. We use cards running the MULTOS platform that offers an
-API suitable for implementing cryptographic protocols. Our prototype achieves
-the best performance for Idemix on a smart card thus far, with running times
-which are acceptable for on-line, and certain off-line scenarios.
+%Having public transport cards and identity documents in mind, we focus on smart
+%card implementations. We use cards running the MULTOS platform that offers an
+%API suitable for implementing cryptographic protocols. Our prototype achieves
+%the best performance for Idemix on a smart card thus far, with running times
+%which are acceptable for on-line, and certain off-line scenarios.
 
-While others have implemented Idemix on a smart
-card~\cite{BichselCGS2009,Sterckx09}, we are the first to provide the selective
-disclosure functionality. We compare our implementation against an
-implementation~\cite{MostowskiVullers11} of Microsoft's U-Prove
-system~\cite{Brands2000,U-Prove_Crypto2011} which offers similar functionality,
-and currently provides the best smart card performance. The benefit of using
-Idemix is its multi-show unlinkability property, which allows a single
-credential to be used multiple times, whereas U-Prove only provides single-show
-unlinkability and hence requires multiple credentials to provide anonymity
-instead of just pseudonymity.
-
+%While others have implemented Idemix on a smart
+%card~\cite{BichselCGS2009,Sterckx09}, we are the first to provide the selective
+%disclosure functionality. We compare our implementation against an
+%implementation~\cite{MostowskiVullers11} of Microsoft's U-Prove
+%system~\cite{Brands2000,U-Prove_Crypto2011} which offers similar functionality,
+%and currently provides the best smart card performance. The benefit of using
+%Idemix is its multi-show unlinkability property, which allows a single
+%credential to be used multiple times, whereas U-Prove only provides single-show
+%unlinkability and hence requires multiple credentials to provide anonymity
+%instead of just pseudonymity.
 
 \section{Attributes and Credentials}
 
-Within this article, an attribute will be understood as some property of a
-person. One can think of ``over~18'', ``male'', or ``owner of bank
-account~1234'' as examples of attributes. Informally, a person's identity can be
-seen as the collection of all attributes that hold for this person. In practice,
-many transactions can be based on a subset of attributes, such as buying a
-bottle of whiskey by verifying the ``over~18'' attribute while other attributes
-are irrelevant.
+Within this work, an attribute will be understood as a property or statement
+concerning a person. Examples of attributes are:
+\begin{multicols}{2}
+\begin{itemize}
+  \item I am a student (or senior citizen)
+  \item I am over 12 (or 18, or 21, or 65)
+  \item I have a second class train pass
+  \item My gender is male / female
+  \item My loyalty status for company \dots\ is bronze / silver / gold / \dots
+  \item My name is \dots
+  \item My date of birth is \dots
+  \item My address is \dots
+  \item My social security number is \dots
+  \item Owner of bank account \dots
+\end{itemize}
+\end{multicols}
 
-There are several cryptographic systems for dealing with attribute-based
-identities. Typically these systems distinguish credentials and attributes.
+Note that some of these attributes, like your bank account or social security
+number, can be used to uniquely identify you, while other attributes are not
+uniquely identifying: they apply to other people as well.
+
+Informally, a person's identity can be seen as the collection of all attributes
+that hold for this person. In practice, many transactions can be based on a
+minimal set of attributes, namely exactly those attributes which are relevant or
+required to carry out the transaction. For example one can think of the
+following scenarios:
+\begin{itemize}
+  \item When you buy a certain type of game or video on-line, you need to
+    prove that you possess the attribute \emph{over 12}, or \emph{over 18}.
+  \item if you wish to get a cheaper meal, show the \emph{student} attribute,
+    and for cheaper public transport you show that you are a \emph{senior
+    citizen}.
+  \item If you buy an item in a on-line shop you need to reveal your \emph{bank
+    account} and \emph{address} attributes, and possibly also your
+    \emph{loyalty status} attribute.
+\end{itemize}
+
+There are several cryptographic systems for dealing with identities based on
+attributes. Typically these systems distinguish attributes and credentials.
 Informally, a credential is a \emph{cryptographic container of attributes}. As
 a first approximation, one can think of a credential as depicted in
 Figure~\ref{fig:Credential}.
 
-\begin{figure}
+\begin{figure}[b]
   \centering
-  \includegraphics[scale=.45]{images/credential}
-  \caption{A first look at an attribute-based credential with four attributes.}
+  \includegraphics[scale=.5]{images/credential}
+  \caption{A visual representation of an attribute-based credential.}
   \label{fig:Credential}
 \end{figure}
 
-\subsection{Issuance and Selective Disclosure}
+\subsection{Credential Issuance and Verifcation}
+
+A credential is an attestation of qualification, competence, or authority
+issued by a third party, the \emph{issuer}, to an individual. This
+individual, the \emph{prover}, can subsequently use this credential to
+prove\slash demonstrate his qualification, competence, or authority to
+another party, the \emph{verifier}. Examples of credentials are a
+membership certificate, such as a passport or employee card, or some kind
+of ticket to obtain some service, such as a cinema ticket or a public
+transport ticket. These credentials are often bound to a specific person,
+by means of a name and\slash or picture (e.g.\ for a passport or public
+transport year pass), but this is not necessarily the case (e.g.\ for a
+paper train ticket).
 
 Credentials are \emph{issued} and \emph{verified}, whereas attributes can be
 \emph{disclosed} during verification. In the issuance procedure, an issuer and
@@ -95,6 +145,8 @@ both by the issuer's signature and by the embedded secret key of the owner. The
 secret key in the credential is only known by the credential owner and plays an
 essential role in verification of the credential. It ensures that a credential
 cannot be transferred from one user to another.
+
+\subsection{Selective Disclosure of Attributes}
 
 A user may have several credentials, each asserting some collection of
 attributes. When requesting a service from a service provider, the user is
@@ -186,17 +238,7 @@ technique was further developed and became IBM's Identity Mixer
 
 -------------------------------------------------------------
 
-A credential is an attestation of qualification, competence, or authority
-issued by a third party, the \emph{issuer}, to an individual. This
-individual, the \emph{prover}, can subsequently use this credential to
-prove\slash demonstrate his qualification, competence, or authority to
-another party, the \emph{verifier}. Examples of credentials are a
-membership certificate, such as a passport or employee card, or some kind
-of ticket to obtain some service, such as a cinema ticket or a public
-transport ticket. These credentials are often bound to a specific person,
-by means of a name and\slash or picture (e.g.\ for a passport or public
-transport year pass), but this is not necessarily the case (e.g.\ for a
-paper train ticket).
+
 
 Anonymous credentials have the same properties as any other credentials,
 except that they do not reveal the identity of the prover, i.e.\ they provide

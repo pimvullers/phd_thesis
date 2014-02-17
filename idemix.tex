@@ -34,7 +34,7 @@ smart card with an acceptable performance~\cite{VullersAlpar2013}. Additional
 options can still be added, but at the cost of an increased transaction time.
 
 \section{Camenisch-Lysyanskaya Signature Scheme\label{sec:CL-scheme}}
-\index{Camenisch-Lysyanskaya signature scheme}
+\index{Camenisch-Lysyanskaya!signature scheme|(}
 
 This description of the Camenisch-Lysyanskaya signature
 scheme~\cite{CamenischLysyanskaya2003,Lysyanskaya2002} is based on the
@@ -46,8 +46,8 @@ Chen~\cite{BrickellCC2004} and by Camenisch and Groth~\cite{CamenischGroth2004}.
 
 \subsection{Keys}\label{sec:cl_keys}
 
-The private key in this scheme comprises two Sophie Germain primes $p'$ and $q'$.
-The public key consists of a special RSA modulus $n = p \cdot q$ where
+The private key\index{Camenisch-Lysyanskaya!private key} in this scheme comprises two Sophie Germain primes $p'$ and $q'$.
+The public key \index{Camenisch-Lysyanskaya!public key} consists of a special RSA modulus $n = p \cdot q$ where
 $p = 2 \cdot p' + 1$ and $q = 2 \cdot q' + 1$ are safe primes. Furthermore we
 need the following parameters from
 $QR_n = \{ x \in \Z_n: y \in Z_n \land x = y^2 \mod n \}$, the group of
@@ -65,6 +65,7 @@ quadratic residues modulo $n$:
 Hence the resulting public key is $(n, S, Z, \{R_i\}_{i \in \M})$ where $\M$
 denotes the set of message indices supported by this key.
 
+\index{Camenisch-Lysyanskaya!public key!proof|(}
 In order to guarantee that such a public key has been constructed correctly,
 that is, all values are elements of $\langle S \rangle$, a proof of
 correctness can be constructed (Algorithm~\ref{alg:CL-prove-key}, based
@@ -169,12 +170,13 @@ reconstructed because:
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+\index{Camenisch-Lysyanskaya!public key!proof|)}
 
 \subsection{Basic Signature Scheme}\label{sec:cl_basic}
-
+\index{Camenisch-Lysyanskaya!signature|(}
 In order to sign a collection of messages $\{m_i\}_{i \in \M}$, these $m_i$
 first have to be aggregated into a single group element $Q$ according
-to the following equation:
+to the following equation:\index{Camenisch-Lysyanskaya!message aggregation}
 \begin{equation}\label{eqn:CL-aggregate}
   Q = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n\text,
 \end{equation}
@@ -182,7 +184,7 @@ where $v$ is a random number. This value $v$ is used in
 Section~\ref{sec:cl_blind} for blinding the messages that have to remain hidden,
 and in Section~\ref{sec:cl_proof} to randomise the signature.
 
-The actual signature generation process is similar to the RSA signature scheme.
+The actual signature generation process is similar to the RSA signature scheme.\index{Camenisch-Lysyanskaya!signature!generation}
 The first step is the generation of a random prime $e$ which is used as the
 ephemeral RSA public key for this signature. Next, the RSA private key
 $d = e^{-1} \mod (p' \cdot q')$ corresponding to the public key $e$ is
@@ -217,7 +219,7 @@ Algorithm~\ref{alg:CL-sign}).
 
 In order to verify such a Camenisch-Lysyanskaya signature $(A, e, v)$ the RSA
 signature over the aggregated messages has to be verified. That is, the verifier
-has to check the following equation:
+has to check the following equation:\index{Camenisch-Lysyanskaya!signature!verification}
 \begin{equation}\label{eqn:CL-verify}
   A^e = \dfrac{Z}{S^v \cdot \prod_{i \in \M} R_i^{m_i}} \mod n
 \end{equation}
@@ -247,9 +249,10 @@ inverse:
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+\index{Camenisch-Lysyanskaya!signature|)}
 
 \subsection{Blind Signatures\label{sec:cl_blind}}
-\index{Identity Mixer!issuance|(}
+\index{Camenisch-Lysyanskaya!blind signature|(}
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/cl_blind-sign_simple}
@@ -264,7 +267,7 @@ commitment to these values and blinding them according to
 Algorithm~\ref{alg:CL-blind-commit}. During this commitment phase these
 messages are aggregated into a single element $U$ and hidden by the blinding
 value $v'$. Note that the remaining messages $\{m_i\}_{\M \setminus \M_H}$,
-that are not hidden during this phase, are known by the signer.
+that are not hidden during this phase, are known by the signer.\index{Camenisch-Lysyanskaya!message aggregation}
 
 \begin{algorithm}
   \caption{Prepare for a blind Camenisch-Lysyanskaya signature.}
@@ -470,11 +473,10 @@ now be verified using the verification procedure from the basic signature scheme
 (Algorithm~\ref{alg:CL-verify}) or it can be used to prove knowledge of this
 signature as described in the following section.
 
-\index{Identity Mixer!issuance|)}
+\index{Camenisch-Lysyanskaya!blind signature|)}
 
 \subsection{Proving Knowledge of a Signature\label{sec:cl_proof}}
-\index{Identity Mixer!selective disclosure|(}
-
+\index{Camenisch-Lysyanskaya!signature!proving knowledge|(}
 Blind signatures hide (a number of) the messages from the signer during
 signature generation. The goal of proving knowledge of a signature is to hide
 (a number of) the messages from the verifier during signature verification as
@@ -624,7 +626,8 @@ proof will fail.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-\index{Identity Mixer!selective disclosure|)}
+\index{Camenisch-Lysyanskaya!signature!proving knowledge|)}
+\index{Camenisch-Lysyanskaya!signature scheme|)}
 
 \section{Identity Mixer Credentials}
 \index{Identity Mixer!credentials}
@@ -636,6 +639,7 @@ protocol for proving knowledge of a signature is used as the credential
 verification protocol.
 
 \index{Identity Mixer!issuance}
+\index{Identity Mixer!issuance|see{Camenisch-Lysyanskaya, blind signature}}
 An Identity Mixer credential contains a master secret $s$, which belongs to the
 user and is never revealed, and a collection of attributes
 $\{a_i\}_{i \in \mathcal{A}}$, where $\mathcal{A}$ denotes the set of
@@ -662,7 +666,8 @@ Figure~\ref{fig:idemix-credential}, consists of:
     and $d = e^{-1} \mod (p' \cdot q')$.
 \end{itemize}
 
-\index{Identity Mixer!selective disclosure|)}
+\index{Identity Mixer!selective disclosure}
+\index{Identity Mixer!selective disclosure|see{Camenisch-Lysyanskaya, signature, proving knowledge}}
 This credential can now be used with the protocol for proving knowledge of a
 signature to selectively disclose the attributes to a verifier. In this case the
 set of disclosed messages $\M_D \subseteq \mathcal{A}$ is a selection of the
@@ -676,7 +681,7 @@ the reader to the specification of the Identity Mixer
 technology~\cite{IdemixCrypto2012}.
 
 \subsection{Direct Anonymous Attestation}
-
+\index{direct anonymous attestation}
 Direct anonymous attestation~\cite{BrickellCC04} is a technology based on
 Identity Mixer, but it omits the attributes, hence $\M = \M_H$ and
 $\M_D = \emptyset$. It allows a user to convince a verifier that she uses a
