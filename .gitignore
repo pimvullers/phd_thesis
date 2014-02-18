@@ -1,4 +1,6 @@
+*~
 *.aux
+*.bak
 *.bbl
 *.blg
 *.log
@@ -10,3 +12,4 @@
 *.eps
 *.mps
 *.mpx
+.build
