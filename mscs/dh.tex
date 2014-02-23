@@ -1,0 +1,21 @@
+\begin{msc}{}
+
+\fontfamily{\rmdefault}
+
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
+
+\declinst{a}{$(p, q, g), x_1, h_1 = g^{x_1} \mod p$}{$A$}
+\declinst{b}{$(p, q, g), x_2, h_2 = g^{x_2} \mod p$}{$B$}
+
+\mess{$h_1$}{a}{b}
+\nextlevel[1]
+
+\mess{$h_2$}{b}{a}
+\nextlevel[1]
+
+\action*{key $k = h_2^{x_1} \mod p$}{a}
+\action*{key $k = h_1^{x_2} \mod p$}{b}
+\nextlevel[1.2]
+
+\end{msc}

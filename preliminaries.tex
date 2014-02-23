@@ -1,84 +1,193 @@
 \chapter{Cryptographic Preliminaries}
 
-\section{Hard Problems}
+This chapter provides some cryptographic background information which is
+relevant for the attribute-based credential systems which we describe in the
+next chapters. In particular we focus on public-key cryptography in which a key
+consists of a public an a private part. These key pairs are constructed such
+that deriving the private part of the key from the public part is equivalent to
+solving a computational problem that is considered extremely difficult.
 
-\subsection{Discrete Log}~\\
+\section{RSA Cryptography}
 
-Given $h \in G = \langle g \rangle$, determine $x$ such that $h = g^x$.
+In an RSA-based cryptosystem~\cite{RSA1978} a key pair consists a public part
+$(n, e)$ and a private part $d$. The RSA modulus $n = p \cdot q$ is the product
+of two primes $p$ and $q$ and the public exponent $e$ is a value that satisfies
+$1 < e < \phi(n)$ and $gcd(e, \phi(n)) = 1$ where $\phi(n) = (p-1)(q-1)$ is
+Euler's totient function\footnote{Euler's totient function $\phi(n)$ computes
+the number of positive integers less then or equal to $n$ that are relatively
+prime to $n$. An integer $k$ is relatively prime to $n$ if $gcd(k, n) = 1$.}.
+The private exponent $d$ is a value that satisfies $1 < d < \phi(n)$ and
+$e \cdot d = 1 \mod \phi(n)$, hence it can be computed as
+$d = e^{-1} \mod \phi(n)$. When $p$ and $q$ are know, this computation is easy,
+but computing $d$ based on just $n$ and $e$ is proved to be computationally
+equivalent to determining the prime factors $p$ and $q$ of $n$, which is known
+as the integer factorisation problem, a number-theoretic problem which is
+considered intractable for large integers.
 
-\subsection{Diffie-Hellman}~\\
+Such a key pair can then be used to encrypt a message $m$ into an RSA ciphertext
+$c = m^e \mod n$ using Algorithm~\ref{alg:RSA-encrypt}. Decryption of such a
+ciphertext using Algorithm~\ref{alg:RSA-decrypt} is based on the fact that
+\begin{equation*}
+  c^d = (m^e)^d = m^{e \cdot d} = m \mod n\text.
+\end{equation*}
 
-Given $h_1 = g^x$ and $h_2 = g^y$, determine $h$ such that $h = g^z$ where $z = xy$.
+\begin{algorithm}[ht]
+  \caption{RSA encryption.}
+  \label{alg:RSA-encrypt}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{RSA-encrypt}{$(n, e), m$}
+      \State $c \gets m^e \mod n$
+      \Return $c$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}[ht]
+  \caption{RSA decryption.}
+  \label{alg:RSA-decrypt}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{RSA-encrypt}{$(n, e), c, d$}
+      \State $m \gets c^d \mod n$
+      \Return $m$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
-\subsection{Factoring}~\\
+The problem of recovering the message $m$ based on the ciphertext $m^e \mod n$
+and public key $(n, e)$ is known as the \emph{RSA problem}. This is equivalent
+to finding $e$th roots modulo $n$ which is assumed to be as difficult as the
+integer factorisation problem. Hence, the \emph{RSA assumption} states that the
+probability that an attacker can solve the RSA problem is negligible.
 
-Given $n \in \mathbb{N}$, determine primes $p_i$ and exponents $e_i$ such that $n = \prod_i p_i^{e_i}$.
+In a similar fashion, this construction can also be used to create digital
+signatures. To generate an RSA signature with Algorithm~\ref{alg:RSA-sign}, the
+signer computes the message digest $h = \Call{Hash}{m}$ of the message to be
+signed $m$ using a cryptographic hash function $\Call{Hash}{}$. This $h$, which
+serves as a fingerprint of the original message, is then raised to the private
+exponent. The result of this operation is the signature $s = h^d \mod n$ over
+the message $m$.
+Such an RSA signature can be verified using Algorithm~\ref{alg:RSA-verify}. The
+verifier recovers the fingerprint $\hat{h} = s^e \mod n$ from the signature
+value $s$ using the public exponent $e$ and checks whether this matches with the
+message digest of the message $m$. If they match, the signature is valid,
+otherwise the signature is invalid. The security of this RSA signature scheme is
+also based on the RSA assumption.
 
-\subsection{RSA}~\\
+\begin{algorithm}[H]
+  \caption{RSA signature generation.}
+  \label{alg:RSA-sign}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{RSA-sign}{$(n, e), m, d$}
+      \State $h \gets \Call{Hash}{m}$
+      \State $s \gets h^d \mod n$
+      \Return $s$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}[H]
+  \caption{RSA signature verification.}
+  \label{alg:RSA-verify}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{RSA-verify}{$(n, e), m, s$}
+      \State $\hat{h} \gets s^e \mod n$
+      \If{$\hat{h} \neq \Call{Hash}{m}$}
+        \Return \Call{Invalid}{}
+      \EndIf
+      \Return \Call{Valid}{}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
-Given $n = pq$, $e$ and $c$ where $p, q$ primes, determine $m$ such that $c = m^e \mod n$.
+Some other signature schemes based on the RSA cryptosystem, such as the
+Camensich-Lysyanskaya scheme which is described in Section~\ref{sec:CL-scheme},
+only use the RSA modulus $n$ as the public part of the key, whereas the private
+part consists of the primes $p$ and $q$. This allows them to generate a fresh
+exponent $e$ for each signature which will then become part of the signature.
+Since an attacker can now control both the signature and the exponent, solving
+the RSA problem has become easier. Hence a stronger assumption is needed. This
+\emph{strong RSA assumption} states that the probability that an attacker can
+solve the RSA problem is negligible, even when the attacker can chose the public
+exponent $e$.
 
-\subsection{Strong RSA}~\\
+\section{Discrete Logarithm Cryptography}
 
-Given $n = pq, c$ where $p, q$ primes, determine $m, e \geq 3$ such that $c = m^e \mod n$.
+In a discrete logarithm-based cryptosystem~\cite{DH1976,ElGamal1985} a key pair
+is accompanied with a description of the prime-order group in which the
+computations take place. As an example we use $(p, q, g)$, where $p$ is a prime,
+$q$ is a prime divisor of $p-1$, and $g$ is a generator, with order $q$, of a
+subgroup of $\Z^*_p$. A private part of the key in such system is a random value
+$x$ and the corresponding public part is $h = g^x \mod p$. The problem of
+computing the private part $x = \log_g h$, based on the description of the group
+$(p, q, g)$ and the public part $h$, is known as the \emph{discrete logarithm
+problem}.
 
+Such a key pair can be used to computed a shared key with another party that
+uses the same group parameters. To this end, both parties send their public key
+to each other and compute the modular exponentiation of the received value and
+their private key, as depicted in Figure~\ref{msc:DH}. The result of this
+computation can then be used as a shared key since
+\begin{equation*}
+  h_2^{x_1} = (g^{x_2})^{x_1} = g^{x_2 \cdot x_1}
+  = k = g^{x_1 \cdot x_2} = (g^{x_1})^{x_2} = h_1^{x_2} \mod p
+\end{equation*}
+The problem of computing $k$, based on both public keys $h_1$ and $h_2$ and the
+group description $(p, q, g)$, is assumed to be as difficult as the discrete
+logarithm problem and is called the \emph{Diffie-Hellman problem}. A related
+problem is to determine whether a value $y$ is created using $h_1$ and $h_2$,
+hence $y = g^{x_1 \cdot x_2}$, or not. This is known as the \emph{decisional
+Diffie-Hellman problem}.
 
-\section{Zero-knowledge proofs}
-
-\subsection{Zero-knowledge protocols}
-
-\begin{figure}
+\begin{figure}[hb]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/schnorr}
-    \caption{$PK\{(\alpha) : h = g^\alpha \}$}
-    \label{msc:schnorr}
-  \end{subfigure}
-  \quad
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/schnorr_mod}
-    \caption{$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$}
-    \label{msc:schnorr_mod}
-  \end{subfigure}
-  \caption{Schnorr's zero-knowledge protocol~\cite{Schnorr1991} for prime order groups (a) and for groups modulo a composite (b).}
-  \label{fig:schnorr}
+  \includegraphics[scale=.45]{mscs/dh}
+  \caption{Diffie-Hellman key agreement protocol.}
+  \label{msc:DH}
 \end{figure}
 
-Schnorr
+Many signature schemes have been based on the discrete logarithm problem, for
+example the Chaum-Pedersen scheme which is described in
+Section~\ref{sec:CP-scheme}, but also the Digital Signature Algorithm (DSA),
+described in Algorithms~\ref{alg:DSA-sign} and~\ref{alg:DSA-verify}, which is
+part of the Digital Signature Standard of the United States government.
 
-\subsection{Zero-knowledge proofs}
+\begin{algorithm}[H]
+  \caption{DSA signature generation.}
+  \label{alg:DSA-sign}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{DSA-sign}{$(p, q, g), m, x$}
+      \State $r \gets 0$
+      \While{$r = 0 \mod p$}
+        \State $k \gets \Call{Random}{}$
+        \State $r \gets (g^k \mod p) \mod q$
+      \EndWhile
+      \State $c \gets \Call{Hash}{m}$
+      \State $s \gets k^{-1} \cdot (c + x \cdot r) \mod q$
+      \Return $(r, s)$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}[H]
+  \caption{DSA signature verification.}
+  \label{alg:DSA-verify}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{DSA-verify}{$(p, q, g), m, (r, s), h$}
+      \State $c \gets \Call{Hash}{m}$
+      \State $u \gets c \cdot s^{-1} \mod q$
+      \State $v \gets r \cdot s^{-1} \mod q$
+      \State $\hat{r} \gets (g^u \cdot g^v \mod p) \mod q$
+      \If{$\hat{r} \neq r$}
+        \Return \Call{Invalid}{}
+      \EndIf
+      \Return \Call{Valid}{}
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
-The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a zero-knowledge protocol into a non-interactive zero-knowledge proof. To achieve this the challenge $c$ is not retrieved from the verifier but computed as follows: $$c \leftarrow H(m,a)$$ where $H$ is a cryptographic hash function, $m$ is some message to be included (to be signed) and $a$ is the commitment. Both the commitment $a$ and the response $r$ are calculated as usual. The result is a signature $(c,r)$ on $m$. This can be verified by checking whether $$c = H(m, g^r h^{-c})$$ holds. It should hold since $g^r h^{-c} = g^{u + cx} h^{-c} = g^{u + cx} (g^x)^{-c} = g^u = a$.
-
-\subsection{Composition of zero-knowledge proofs}
-
-\subsubsection{Combining}
-
-Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ do not share any variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$.
-
-\subsubsection{Equality}
-
-\begin{figure}
-  \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/okamoto}
-    \caption{$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$}
-    \label{msc:okamoto}
-  \end{subfigure}
-  \quad
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/equality}
-    \caption{$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$}
-    \label{msc:equality}
-  \end{subfigure}
-  \caption{Okamoto's zero-knowledge protocol~\cite{Okamoto1993} for multi-exponents (a) and an adaption for equality (of the first exponent) composition (b).}
-  \label{fig:okamoto}
-\end{figure}
-
-Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ share variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$ and \emph{using the same randoms and responses} $u_i$ and $r_i$.
-
-
-\subsubsection{OR} ...
 
 
 \section{Elliptic Curve Cryptography}
@@ -403,3 +512,61 @@ In order to verify $A$'s signature on $m$, $B$ performs the following steps:
     $v = x_0 \bmod n$.
   \item Accept the signature if and only if $v = r$.
 \end{enumerate}
+\section{Zero-knowledge proofs}
+
+\subsection{Zero-knowledge protocols}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/schnorr}
+    \caption{$PK\{(\alpha) : h = g^\alpha \}$}
+    \label{msc:schnorr}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/schnorr_mod}
+    \caption{$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$}
+    \label{msc:schnorr_mod}
+  \end{subfigure}
+  \caption{Schnorr's zero-knowledge protocol~\cite{Schnorr1991} for prime order groups (a) and for groups modulo a composite (b).}
+  \label{fig:schnorr}
+\end{figure}
+
+Schnorr
+
+\subsection{Zero-knowledge proofs}
+
+The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a zero-knowledge protocol into a non-interactive zero-knowledge proof. To achieve this the challenge $c$ is not retrieved from the verifier but computed as follows: $$c \leftarrow H(m,a)$$ where $H$ is a cryptographic hash function, $m$ is some message to be included (to be signed) and $a$ is the commitment. Both the commitment $a$ and the response $r$ are calculated as usual. The result is a signature $(c,r)$ on $m$. This can be verified by checking whether $$c = H(m, g^r h^{-c})$$ holds. It should hold since $g^r h^{-c} = g^{u + cx} h^{-c} = g^{u + cx} (g^x)^{-c} = g^u = a$.
+
+\subsection{Composition of zero-knowledge proofs}
+
+\subsubsection{Combining}
+
+Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ do not share any variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$.
+
+\subsubsection{Equality}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/okamoto}
+    \caption{$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$}
+    \label{msc:okamoto}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[scale=.45]{mscs/equality}
+    \caption{$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$}
+    \label{msc:equality}
+  \end{subfigure}
+  \caption{Okamoto's zero-knowledge protocol~\cite{Okamoto1993} for multi-exponents (a) and an adaption for equality (of the first exponent) composition (b).}
+  \label{fig:okamoto}
+\end{figure}
+
+Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ share variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$ and \emph{using the same randoms and responses} $u_i$ and $r_i$.
+
+
+\subsubsection{OR} ...
+
+
