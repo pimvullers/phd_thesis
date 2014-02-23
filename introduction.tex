@@ -421,7 +421,7 @@ response APDUs are placed here. This buffer is also used to pass information
 from one application to another when delegation is used. MULTOS guarantees that
 data in this memory remains private to the running application until it exits
 or delegates to another application. This means that it can be used as
-temporary workspace.
+temporary work space.
 
 \paragraph{Dynamic memory} is the volatile storage for an application. It is
 used to store session data, if any. The size of the session data area is fixed
@@ -457,16 +457,23 @@ regardless of the high-level language used during development.
 
 \section{Contributions}
 
-The goal of the research described in this thesis has been the development of
-efficient smart card implementations and comparison of various cryptographic
-systems for attribute-based credentials. This has resulted in a detailed
-description and discussion of the technologies listed below, which can
-be found in Chapters~\ref{chp:self-blindable}, \ref{chp:uprove},
-\ref{chp:idemix} and \ref{chp:discussion}. A large and essential part of this
-thesis consists of the efficient smart card implementations for each of these
-technologies. These implementations are available in my personal GitHub
-repository\footnote{\url{https://github.com/pimvullers/}} as open source
-software, under the GNU General Public License, version~3\footnote{\url{https://www.gnu.org/copyleft/gpl.html}}.
+The goal of the research presented in this thesis has been to
+\begin{center}\it
+  develop efficient smart card implementations of attribute-based credentials
+\end{center}
+and
+\begin{center}\it
+  compare various cryptographic systems for attribute-based credentials.
+\end{center}
+This has resulted in a detailed description and discussion of the technologies
+listed below, which can be found in Chapters~\ref{chp:self-blindable},
+\ref{chp:uprove}, \ref{chp:idemix} and \ref{chp:discussion}. Additionally, a
+large and essential part of this thesis consists of the efficient smart card
+implementations for each of these technologies. These implementations are
+available as open source software, under the GNU General Public
+License\footnote{\url{https://www.gnu.org/copyleft/gpl.html}}, version~3. The
+source code of these implementations can be found in their respective
+repositories, as specified below, at \url{https://github.com/pimvullers/}.
 
 \subsubsection{Self-blindable Credentials}
 
@@ -486,14 +493,18 @@ My contribution in this chapter is the development and analysis of the
 credentials technology as well as the implementation of the corresponding host
 software. This consists of:
 \begin{itemize}
-  \item the Java Card applet\footnote{\url{https://github.com/pimvullers/sbcred_javacard/}},
+  \item the Java Card applet (\texttt{sbcred\_javacard} repository\footnote{%
+    \url{https://github.com/pimvullers/sbcred_javacard/}}),
     which provides the cryptographic operations on the smart card;
-  \item the terminal software\footnote{\url{https://github.com/pimvullers/sbcred_terminal/}},
+  \item the terminal software (\texttt{sbcred\_terminal} repository\footnote{%
+    \url{https://github.com/pimvullers/sbcred_terminal/}}),
     which provides the cryptographic operations for the issuer and verifier as
     well as the protocol interaction with the smart card; and
-  \item an extension\footnote{\url{https://github.com/pimvullers/bouncycastle-ext/}}
-    to the Bouncy Castle cryptographic library\footnote{\url{http://bouncycastle.org/java.html}},
-    which adds support for elliptic curve bilinear pairings.
+  \item an extension, (\texttt{bouncycastle-ext} repository\footnote{%
+    \url{https://github.com/pimvullers/bouncycastle-ext/}}),
+    to the Bouncy Castle cryptographic library\footnote{%
+    \url{http://bouncycastle.org/java.html}}, which adds support for elliptic
+    curve bilinear pairings.
 \end{itemize}
 
 \subsubsection{U-Prove}
@@ -508,12 +519,14 @@ International ICST Conference on Security and Privacy in Communication Networks
 
 My contribution in this chapter is the analysis of the efficient smart card
 implementation of the U-Prove technology as well as the development of the
-terminal software\footnote{\url{https://github.com/pimvullers/uprove_terminal/}}
-which builds upon the U-Prove SDK\footnote{\url{http://archive.msdn.microsoft.com/uprovesdkjava/}}
+terminal software (\texttt{uprove\_terminal} repository\footnote{%
+\url{https://github.com/pimvullers/uprove_terminal/}}), which builds upon the
+U-Prove SDK\footnote{\url{http://archive.msdn.microsoft.com/uprovesdkjava/}}
 and takes care of the protocol interaction with the smart card. Furthermore I
 provided the pseudo code that allowed my co-author to develop the MULTOS
-application\footnote{\url{https://github.com/pimvullers/uprove_multos/}} which
-provides the cryptographic operations on the smart card.
+application (\texttt{uprove\_multos} repository\footnote{%
+\url{https://github.com/pimvullers/uprove_multos/}}), which provides the
+cryptographic operations on the smart card.
 
 \subsubsection{Identity Mixer}
 
@@ -529,25 +542,30 @@ smart card implementation of the Identity Mixer technology, which is the first
 to include \emph{selective disclosure} of the attributes, as well as the
 implementation of the corresponding host software. This consists of:
 \begin{itemize}
-  \item the MULTOS application\footnote{\url{https://github.com/pimvullers/idemix_multos/}
-    }\textsuperscript{,}\footnote{This has evolved into the IRMA application
-    (\url{https://github.com/pimvullers/irma_card/}) which provides additional
-    functionality, like secure messaging and an interface which allows the user
-    to manage the credentials stored on the card.}
-    which provides the cryptographic operations on the card; and
-  \item the terminal software\footnote{\url{https://github.com/pimvullers/idemix_terminal/}}
-    which provides the protocol interaction between the smart card and our
-    patched version\footnote{\url{https://github.com/pimvullers/idemix_library/}}
-    of the Identity Mixer cryptographic library\footnote{\url{https://prime.inf.tu-dresden.de/idemix/}}.
+  \item the MULTOS application\footnote{This has evolved into the IRMA
+    application (\url{https://github.com/pimvullers/irma_card/}) which provides
+    additional functionality, like secure messaging and an interface which
+    allows the user to manage the credentials stored on the card.}
+    (\texttt{idemix\_multos} repository\footnote{%
+    \url{https://github.com/pimvullers/idemix_multos/}}), which provides the
+    cryptographic operations on the card; and
+  \item the terminal software (\texttt{idemix\_terminal} repository\footnote{%
+    \url{https://github.com/pimvullers/idemix_terminal/}}), which provides the
+    protocol interaction between the smart card and our patched version of the
+    Identity Mixer cryptographic
+    library\footnote{\url{https://prime.inf.tu-dresden.de/idemix/}}
+    (\texttt{idemix\_library} repository\footnote{%
+    \url{https://github.com/pimvullers/idemix_library/}}).
 \end{itemize}
 
 This implementation is the most complicated and challenging one in this thesis.
-Because of the complicated nature of the Identity Mixer operations it was, on
-beforehand, not expected that a fast implementation could be realised on a
-smart card. The successful development of this implementation laid the
-foundation for the IRMA project. This is an on-going research and development
-project focusing on attribute-based credentials and their use in practice. This
-thesis does not described the IRMA project in great detail (see
-\url{https://www.irmacard.org/} for more information) but concentrates on the
-smart card implementations on the underlying attribute-based credential
-technologies.
+Because of the complicated nature of the Identity Mixer operations it was, at
+first, not expected that a fast implementation could be realised on a smart
+card. The successful development of this implementation laid the foundation for
+the IRMA project. This is an on-going research and development project focusing
+on attribute-based credentials and their use in practice.
+
+This thesis does not described the IRMA project in great detail but concentrates
+on the smart card implementations of the underlying attribute-based credential
+technologies. For more information concerning the IRMA project, please visit
+\url{https://www.irmacard.org/}.

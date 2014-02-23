@@ -1,4 +1,4 @@
-\chapter{Self-Blindable Credentials\label{chp:self-blindable}}
+\chapter{Self-blindable Credentials\label{chp:self-blindable}}
 
 The drawback of using regular public-key certificates, like X.509
 certificates~\cite{ISO9594-8}, is that they are inherently traceable. This is
@@ -18,7 +18,7 @@ In this chapter we describe the underlying signature schemes and the resulting
 credential system as well as our smart card
 implementations~\cite{BatinaHJMV10,HoepmanJV10}.
 
-\section{Self-Blindable Signatures}
+\section{Self-blindable Signatures}
 
 Chaum and Pedersen~\cite{ChaumPedersen93} describe a basic signature scheme
 which is intended to be used in combination with smart cards. This scheme
@@ -162,7 +162,7 @@ verification equation (\ref{eqn:BLS-verify}):
 Hence the signature remains valid. Since the user can perform this blinding all
 by itself Verheul calls these signatures \emph{self-blindable}.
 
-\section{Verheul's Self-Blindable Certificates}
+\section{Verheul's Self-blindable Certificates}
 
 Verheul proposes to use the self-blindable signatures to construct public-key
 certificates which allow the user to randomise its key pair and the
@@ -484,7 +484,7 @@ being the inverse of the other, that is, $e_2 = e_1^{-1}$. Here we can use that
 $e_1 \cdot e_2 = e_1 \cdot e_1^{-1} = 1$ to avoid an extra pairing calculation
 for the negated point of $C_b$.
 
-\section{Performance results}
+\section{Performance Results}
 
 The results of our tests are summarised in Table~\ref{tab:sbc-results}. These
 values are the average of ten test runs for each configuration. The table shows
