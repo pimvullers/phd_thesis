@@ -258,139 +258,120 @@ key of the signer and the fact that
 In the previous section we described the discrete logarithm cryptography in a
 setting of a prime order subgroup of $\Z^*_p$. These techniques can, however,
 be applied to any finite cyclic group. Another popular setting for implementing
-discrete logarithm systems is the elliptic curve setting.
+discrete logarithm systems is the elliptic curve setting which we describe below.
 
 \subsection{Elliptic Curves}
 
-\begin{figure}[hb]
+Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
+power, an elliptic curve $E$ over $\F{q}$ is defined by the equation
+\begin{equation}\label{eqn:elliptic_curve}
+  E: y^2 = x^3 + a \cdot x + b
+\end{equation}
+where $a, b \in \F{q}$ are the curve parameters that satisfy $4 \cdot a^3 + 27 \cdot b^2 \neq 0$.
+The set of all points $P = (x, y)$ on this curve $E$ is denoted as
+\begin{equation*}
+  E(\F{q}) = \{ (x, y) \in \F{q} \times \F{q} : y^2 = x^3 + a \cdot x + b \}
+                         \cup \{ \infty \}
+\end{equation*}
+where $\infty$ is a special point called the \emph{point at infinity}.
+
+
+\begin{figure}[ht]
   \centering
-  \includegraphics[scale=.45]{images/elliptic-curve.mps}
-  \caption{Elliptic curve.}
+  \includegraphics[scale=.4]{images/ec_math}
+  \caption{Geometric visualisation of point addition ($R = P + Q$), point
+    doubling ($R' = 2P'$) and point negation ($-R$) on an elliptic curve.}
   \label{fig:EC}
 \end{figure}
 
-\begin{definition}[Elliptic Curve]\label{def:elliptic_curve}
-  Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
-  power, an elliptic curve $E$ over $\F{q}$ is defined by the equation
-  \begin{equation}\label{eqn:elliptic_curve}
-    E: y^2 = x^3 + a x + b
-  \end{equation}
-  where $a, b \in \F{q}$ are the curve parameters and $4 a^3 + 27 b^2 \neq 0$.
-  The set of all points $P = (x, y)$ on this curve $E$ is denoted as
-  \begin{equation*}
-    E(\F{q}) = \{ (x, y) \in \F{q} \times \F{q} : y^2 = x^3 + a x + b \}
-                         \cup \{ \infty \}
-  \end{equation*}
-  where $\infty$ is a special point called the \emph{point at infinity}.
-\end{definition}
-
-If we know the $x$-coordinate of a point on the curve, the square of the
-corresponding $y$-coordinate is known, namely as $y^{2} = x^{3} + ax + b$.
-By taking the square root of $x^{3} + ax + b$ we find either $y$ or $-y$.
-This forms the basis of ``point compression'', for compact representation
-of points.  This is important for the implementation, because Diffie-Hellman
-on a Java smart card only produces the $x$-coordinate of a multiplication.
-
-\subsection{Operations}
-
+On these points three basic operations can be defined: negation, addition and
+doubling. These operations are detailed below and visualised geometrically in
+Figure~\ref{fig:EC}.
 \begin{enumerate}
-  \item \emph{Point Negation}
-    If $P = (x, y) \in E(\F{q})$ then $(x, y) + (x, -y) = \infty$. The point
-    $(x, -y)$ is denoted by $-P$ and is called the \emph{negative of $P$}.
-    Also, $-\infty = \infty$.
-  \item \emph{Point addition}
-    Let $P = (x_P, y_P) \in E(\F{q})$ and $Q = (x_Q, y_Q) \in E(\F{q})$, where
-    $P \neq \pm Q$. Then $P + Q = R = (x_R, y_R) \in E(\F{q})$, where
-    \begin{equation*}
-      x_R = \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right)^2 - x_P - x_Q
-      \text{ and }
-      y_R = \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right) (x_P - x_R) - y_P
-      \text{.}
-    \end{equation*}
-    Also, $P + \infty = \infty + P = P$ for all $P \in E(\F{q})$.
-  \item \emph{Point doubling}
-    Let $P = (x_P, y_P) \in E(\F{q})$, where $P \neq -P$. Then
-    $2P = R = (x_R, y_R) \in E(\F{q})$, where
-    \begin{equation*}
-      x_R = \left(\dfrac{3 x_P^3 + a}{2 y_P}\right)^2 - 2 x_P
-      \text{ and }
-      y_R = \left(\dfrac{3 x_P^3 + a}{2 y_P}\right) (x_P - x_R) - y_P
-      \text{.}
-    \end{equation*}
-    Also, $2\infty = \infty$.
-  \item \emph{Point multiplication}
-    Given an integer $k$ and a point $P$ the multiplication is denoted as
-    $k \cdot P$. To compute this multiplication various methods exist. A basic
-    solution is the repeated-double-and-add method given in Algorithm~\ref{alg:ec_point_multiplication}.
+  \item \emph{Point negation}, the \emph{negative} $R = -P$, of the point $P$
+    is computed according to Algorithm~\ref{alg:ec_point_negation}.
+    Geometrically, this is the reflection of point $P$ in the $x$-axis.
+    \begin{algorithm}[H]
+      \caption{Elliptic curve point negation: $R = -P$}
+      \label{alg:ec_point_negation}
+
+      \begin{algorithmic}[1]
+        \Function{ECPointNegation}{$P$}
+          \If{$P = \infty$}
+            \Return $\infty$
+          \EndIf
+
+          \State $(x_P, y_P) \gets P$
+
+          \Return $(x_P, -y_P)$
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+
+  \item \emph{Point addition}, the \emph{sum} $R = P + Q$, of the points $P$
+    and $Q$ is computed using Algorithm~\ref{alg:ec_point_addition}.
+    In geometry, this is the reflection in the $x$-axis of the intersection of
+    the curve and the line through the points $P$ and $Q$.
+    \begin{algorithm}[H]
+      \caption{Elliptic curve point addition: $R = P + Q$}
+      \label{alg:ec_point_addition}
+
+      \begin{algorithmic}[1]
+        \Function{ECPointAddition}{$P$, $Q$}
+          \If{$P = \infty$}
+            \Return $Q$
+          \EndIf
+          \If{$P = Q$}
+            \Return $2 \cdot P$
+          \EndIf
+          \If{$P = -Q$ or $Q = \infty$}
+            \Return $\infty$
+          \EndIf
+
+          \State $(x_P, y_P) \gets P$
+          \State $(x_Q, y_Q) \gets Q$
+
+          \State $x \gets \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right)^2 - x_P - x_Q \mod q$
+          \State $y \gets \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right) (x_P - x_R) - y_P \mod q$
+
+          \Return $(x, y)$
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
+
+  \item \emph{Point doubling}, the \emph{double} $R = 2 \cdot P$ is computed
+    using Algorithm~\ref{alg:ec_point_doubling}. Geometrically, this is the
+    reflection in the $x$-axis of the intersection of the curve and the tangent
+    line to the curve at the point $P$, see Figure~\ref{fig:EC}.
+    \begin{algorithm}
+      \caption{Elliptic curve point doubling: $R = 2 \cdot P$}
+      \label{alg:ec_point_doubling}
+
+      \begin{algorithmic}[1]
+        \Function{ECPointDoubling}{$P$}
+          \If{$P = \infty$}
+            \Return $P$
+          \EndIf
+
+          \State $(x_P, y_P) \gets P$
+
+          \State $x_R \gets \left(\dfrac{3 x_P^3 + a}{2 y_P}\right)^2 - 2 x_P \mod q$
+          \State $y_R \gets \left(\dfrac{3 x_P^3 + a}{2 y_P}\right) (x_P - x_R) - y_P \mod q$
+
+          \Return $(x_R, y_R)$
+        \EndFunction
+      \end{algorithmic}
+    \end{algorithm}
 \end{enumerate}
 
-\begin{algorithm}
-  \caption{Elliptic curve point negation: $R = -P$}
-  \label{alg:ec_point_negation}
-
-  \begin{algorithmic}[1]
-    \Function{ECPointNegation}{$P$}
-      \If{$P = \infty$}
-        \Return $\infty$
-      \Else
-        \State $(x_P, y_P) \gets P$
-      \EndIf
-
-      \smallskip
-      \Return $(x_P, -y_P)$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-
-\begin{algorithm}
-  \caption{Elliptic curve point addition: $R = P + Q$}
-  \label{alg:ec_point_addition}
-
-  \begin{algorithmic}[1]
-    \Function{ECPointAddition}{$P$, $Q$}
-      \If{$P = \infty$}
-        \Return $Q$
-      \ElsIf{$P = Q$}
-        \Return $2 \cdot P$
-      \ElsIf{$P = -Q$ or $Q = \infty$}
-        \Return $\infty$
-      \Else
-        \State $(x_P, y_P) \gets P$
-        \State $(x_Q, y_Q) \gets Q$
-      \EndIf
-      \medskip
-
-      \State $x \gets \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right)^2 - x_P - x_Q$ % FIXME: \mod q
-      \State $y \gets \left(\dfrac{y_Q - y_P}{x_Q - x_P}\right) (x_P - x_R) - y_P$ % FIXME: \mod q
-
-      \smallskip
-      \Return $(x, y)$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}
-  \caption{Elliptic curve point doubling: $R = 2 \cdot P$}
-  \label{alg:ec_point_doubling}
-
-  \begin{algorithmic}[1]
-    \Function{ECPointDoubling}{$P$}
-      \If{$P = \infty$}
-        \Return $P$
-      \Else
-        \State $(x_P, y_P) \gets P$
-      \EndIf
-      \medskip
-
-      \State $x_R \gets \left(\dfrac{3 x_P^3 + a}{2 y_P}\right)^2 - 2 x_P$ % FIXME: \mod q
-      \State $y_R \gets \left(\dfrac{3 x_P^3 + a}{2 y_P}\right) (x_P - x_R) - y_P$ % FIXME: \mod q
-
-      \smallskip
-      \Return $(x_R, y_R)$
-    \EndFunction
-  \end{algorithmic}
-\end{algorithm}
+Furthermore, based on these basic operations we can define \emph{point
+multiplication} as the multiplication of a point $P$ with an integer $k$, which
+is denoted as $k \cdot P$. To compute this multiplication various methods exist.
+A basic solution is the repeated-double-and-add method given in
+Algorithm~\ref{alg:ec_point_multiplication}. The inverse of this operation is to
+find an integer $k$ such that $Q = k \cdot P$ for given points $P$ and $Q$. This
+is a hard problem which is know as the \emph{elliptic curve discrete logarithm
+problem}.
 
 \begin{algorithm}
   \caption{Elliptic curve point multiplication: $R = k \cdot P$ (repeated-double-and-add; right-to-left binary method)}
@@ -408,42 +389,47 @@ on a Java smart card only produces the $x$-coordinate of a multiplication.
         \State $P \gets 2P$
       \EndFor
 
-      \smallskip
       \Return $R$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
 
-%%[BHJMV]
-For elliptic curve cryptography the field $\F{q}$ is of the form $\F{p^n}$ for
-some prime number $p$ and $n \in \N$ ($p \neq 2,3)$. The solutions of
-equation~(\ref{eqn:elliptic_curve}) form an abelian group with point addition
-as the group operation and the point at infinity as the zero-element. The
-condition $4a^3 + 27b^2 \neq 0$ is required for $E$ to be non-singular, as
-required for cryptographic applications. For cryptography we need a finite
-cyclic group in which the group operation is efficiently computable, but the
-discrete logarithm problem is very difficult to solve. Elliptic curve groups
-meet these criteria when the underlying field is finite and the size of $p$ is
-at least 160~bits.
+Finally, if we know the $x$-coordinate of a point on the curve, the square of
+the corresponding $y$-coordinate is known, namely as defined in
+(\ref{eqn:elliptic_curve}). By taking the square root of $x^{3} + ax + b$ we
+find either $y$ or $-y$. This method of \emph{point reconstruction} forms the
+basis of \emph{point compression}, for compact representation of points.
 
-\subsection{Elliptic Curve Discrete Logarithm Problem}
+The points on the elliptic curve $E$ form a finite cyclic group with point
+addition as the group operation and the point at infinity as the zero-element.
+Hence, such a group can be used to implement discrete logarithm-based
+cryptography. An example to show how easy it is to translate the algorithms and
+protocols for discrete logarithm-based cryptography to the elliptic curve
+setting is given in Figure~\ref{msc:ECDH}. Like its counterpart from
+Figure~\ref{msc:DH}, this version of the Diffie-Hellman key agreement protocol
+also computes a shared key $K = x_1 \cdot x_2 \cdot P$. The only difference is
+that $K$ is now a point instead of an integer.
 
-Let $E$ be an elliptic curve over $\F{q}$ and let $P \in E$ be a point of order
-$k$. Let $Q \in \langle P \rangle$ be a point generated by $P$, that is,
-$Q = \alpha \cdot P$ for $\alpha$ where $0 \leq \alpha < k$. The problem of
-finding the logarithm $\alpha$ for given $P$ and $Q$ is called the elliptic
-curve discrete logarithm problem (ECDLP).
-
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=.45]{mscs/ecdh}
+  \caption{Elliptic curve version of the Diffie-Hellman key agreement protocol.}
+  \label{msc:ECDH}
+\end{figure}
 
 \subsection{Pairings\label{sec:pairings}}
+
+Besides an alternative implementation for discrete logarithm-based cryptography,
+elliptic curves also offer additional functionality, such as efficiently
+computable bilinear pairings.
 
 A bilinear pairing is a map $\mathbb{G}_1 \times \mathbb{G}_2 \rightarrow
 \mathbb{G}_T$ where $\mathbb{G}_1$ and $\mathbb{G}_2$ are typically additive
 groups and $\mathbb G_T$ is a multiplicative group and the map is bilinear, that
 is, linear in both components. Many pairings are used in cryptography such as the
-Tate pairing, ate pairing and the most recent R-ate
-pairing~\cite{Vercauteren09}. For all these pairings one often uses specific cyclic
-subgroups of $E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$
+Weil pairing, Tate pairing, ate pairing and the most recent R-ate
+pairing~\cite{Vercauteren09}. For all these pairings one often uses specific
+cyclic subgroups of a curve $E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$
 and $\mathbb{F}_{p^k}^*$ as $\mathbb{G}_T$.
 
 The bilinearity property can be written as follows:
@@ -454,139 +440,25 @@ The bilinearity property can be written as follows:
     e(P,\; Q + Q') & = & e(P,\; Q)\cdot e(P,\; Q')
   \end{array}
 \end{equation*}
-As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n\,m}$. Pairings are used for many
-(new) cryptographic protocols~\cite{BSS05}, such as short
+As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n\,m}$. Pairings are used
+for many (new) cryptographic protocols~\cite{BSS05}, such as short
 signatures~\cite{BonehLS04}, three-party one-round key agreement~\cite{Joux04},
 identity based encryption~\cite{BonehFranklin01} and anonymous
 credentials~\cite{CamenischLysyanskaya04}.
 
-\subsection{Barreto-Naehrig Curves}
+\subsubsection{Barreto-Naehrig Curves}
 
-Pairing friendly elliptic curves are curves with a small embedding degree and
-large prime-order subgroup. In 2005, Barreto and Naehrig (BN) discovered a new
-method for constructing pairing friendly elliptic curves of prime order over a
-prime field~\cite{BN06}. More precisely, BN curves are defined over $\F{p}$
-where $p = p(u) = 36 u^4 + 36 u^3 + 24 u^2 + 6 u + 1$ for $u \in \Z$ such that
-$p$ is prime. The order of a BN curve is a prime $n$ where
-$n = n(u) = 36 u^4 + 36 u^3 + 18 u^2 + 6 u + 1$. Hence, a BN curve is
-constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
-numbers. The embedding degree of BN curves is 12 and we detail the parameters
+Pairing friendly elliptic curves are curves with a small embedding degree and a
+large prime-order subgroup. In 2005, Barreto and Naehrig discovered a new method
+for constructing pairing friendly elliptic curves of prime order over a prime
+field~\cite{BN06}. More precisely, Barreto-Naehrig curves are defined over
+$\F{p}$ where $p = p(u) = 36 u^4 + 36 u^3 + 24 u^2 + 6 u + 1$ for $u \in \Z$
+such that $p$ is prime. The order of such curve is a prime $n$ where
+$n = n(u) = 36 u^4 + 36 u^3 + 18 u^2 + 6 u + 1$. Hence, a Barreto-Naehrig curve
+is constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
+numbers. The embedding degree of these curves is 12 and we detail the parameters
 for our case when they are used.
 
-Here we use pairings of the form $e: E(\F{p}) \times E(\F{p^k}) \to \F{p^k}$,
-obtained by taking $\G{1} = \G{2} = \F{p^k}$ and using the obvious inclusion
-$\F{p} \to \F{p^k}$ in the first argument. The number $k$ is known in this
-context as the embedding degree. As previously mentioned, one uses $k = 12$ for
-BN-curves.
-
-\subsection{DH and DSA for Elliptic Curves}\label{sec:dhdsa}
-
-The Diffie-Hellman key agreement protocol (DH) and the Digital Signature
-Algorithm (DSA) are easily adapted to the ECC case as in~\cite{BSS05}
-and~\cite{JM00} respectively. We recall the protocols, which in this case are
-called ECDH and ECDSA.
-
-\subsubsection{EC Diffie-Hellman Key Agreement (ECDH)}
-
-Alice ($A$) and Bob ($B$) wish to agree on a
-secret key over an insecure channel. They first agree on the set
-of domain parameters $(\mathbb{F}_q, E, n,
-h, G)$. Here, $E$ is an elliptic curve over
-$\mathbb{F}_q$, $G$ is a generating (publicly known) point in
-the elliptic curve group of order $n$ and the integer
-$h$ is called the cofactor. For the cofactor we have:
-$\# E(\mathbb{F}_q) = h \, n.$
-Due to the security of the ECDLP one usually
-selects a curve for which $h \leq 4$.
-Any random point of sufficiently high order on
-an elliptic curve $E$ can be used as a key.
-
-\begin{figure}
-  \centering
-  \includegraphics[scale=.4]{mscs/ecdh}
-  \caption{EC Diffie-Hellman key agreement protocol}\label{fig:ecdh}
-\end{figure}
-
-\paragraph{Key Agreement}
-
-Each time a shared key is required, the following steps, as depicted in \figurename~\ref{fig:ecdh}, have to be performed.
-
-\begin{enumerate}
-  \item $A$ chooses a random secret $x$, where $1 \leq x \leq n-1$, as her private
-    key and sends $B$ the corresponding public key $x \cdot G$
-  \item $B$ chooses a random secret $y$, where $1 \leq y \leq n-1$, as his private
-    key and sends $A$ the corresponding public key $y \cdot G$.
-  \item $B$ receives $x \cdot G$ and computes the shared key as
-    $k = y \cdot (x \cdot G) = (xy) \cdot G$.
-  \item $A$ receives $y \cdot G$ and computes the shared key as
-    $k = x \cdot (y \cdot G) = (xy) \cdot G$.
-\end{enumerate}
-
-So, they both end up with the same point as the common key: $k = xy \cdot G$.
-An adversary Eve may have knowledge of $G$, $x\cdot G$,
-and $y\cdot G$ but not of $x$ or $y$. She wants to determine number $xy\cdot G$. This
-task is called the ``(computational) Diffie-Hellman problem for elliptic curves''.
-
-9.2 DL/ECKAS-DH1
-DL/ECKAS-DH1 is the Discrete Logarithm and Elliptic Curve Key Agreement Scheme, Diffie-Hellman
-version, where each party contributes one key pair.
-\textbf{Scheme options}
-The following options shall be established or otherwise agreed upon between the parties to the scheme:
-\begin{itemize}
-  \item A secret value derivation primitive, which shall be: DLSVDP-DH, DLSVDP-DHC, ECSVDP-DH, or ECSVDP-DHC
-  \item For a -DHC secret value derivation primitive, an indication as to whether or not compatibility with the corresponding -DH primitive is desired
-  \item A key derivation function, which should be KDF1 (see 13.1), or a function designated for use with DL/ECKAS-DH1 in an amendment to this standard
-\end{itemize}
-The above information may remain the same for any number of executions of the key agreement scheme, or
-it may be changed at some frequency. The information need not be kept secret.
-\textbf{Key agreement operation}
-A sequence of shared secret keys, K 1 , K 2 , ..., K t , shall be generated by each party by performing the
-following or an equivalent sequence of steps:
-\begin{enumerate}
-  \item Establish the valid set of DL or EC domain parameters with which the parties’ key pairs shall be associated.
-  \item Select a valid private key s for the operation, associated with the parameters established in step 1.
-  \item Obtain the other party’s purported public key w′ for the operation, associated with the parameters established in step 1.
-  \item (Optional) If the selected secret value derivation primitive is DLSVDP-DHC or ECSVDP-DHC, then validate that w′ is an element in the appropriate group (i.e., in GF (q) for DL or on the elliptic curve for EC; see 6.2.2 and 7.2.2); otherwise, validate that w′ is a valid public key. If any validation fails, output “invalid public key” and stop.
-  \item Compute a shared secret value z from the private key s and the other party’s public key w′ with the selected secret value derivation primitive (see 9.2.1).
-  \item Convert the shared secret value z to an octet string Z using FE2OSP.
-  \item For each shared secret key to be agreed on (a.) Establish or otherwise agree on key derivation parameters P i for the key.
- (b.) Derive a shared secret key K i from the octet string Z and the key derivation parameters P i with the selected key derivation function (see 9.2.1).
-\end{enumerate}
-
-\subsubsection{EC Digital Signature Algorithm (ECDSA)}
-
-The ECDSA is specified by an elliptic curve $E$ defined
-over $\mathbb{F}_q$ and a publicly known point
-$G \in E$ of prime order $n$. As above, a private key of Alice is a scalar $z$ and the
-corresponding public key is $Q = z \cdot G \in E$. The ECDSA requires a hash
-function in addition and consists of two parts as explained below.
-
-\paragraph{Signature Generation}
-
-In order to sign a message $m$, $A$ should perform the following steps:
-
-\begin{enumerate}
-  \item Select a random integer $k$, where $1 \leq k \leq n-1$.
-  \item Compute $(x_1,\; y_1) = k \cdot G$.
-  \item Compute $r = x_1\, \bmod n$. If $r = 0$, then go back to the step 1.
-  \item Compute $s = k^{-1} (h(m)+z \, r)\bmod n$, where $h$ is a hash function.
-    If $s = 0$, then go to step 1.
-  \item $A$'s signature for the message $m$ is the pair $(r,\; s)$.
-\end{enumerate}
-
-\paragraph{Signature Verification}
-
-In order to verify $A$'s signature on $m$, $B$ performs the following steps:
-
-\begin{enumerate}
-  \item Obtain an authenticated copy of $A$'s public key $Q$.
-  \item Verify that $r$ and $s$ are integers in the interval $[1, n-1]$.
-  \item Compute $w = s^{-1} \bmod n$ and $h(m)$.
-  \item Compute $u_1 = h(m) \, w \bmod n$ and $u_2 = r\,w \bmod n$.
-  \item Compute $(x_0,\; y_0) = u_1 \cdot G + u_2 \cdot Q$ and
-    $v = x_0 \bmod n$.
-  \item Accept the signature if and only if $v = r$.
-\end{enumerate}
 \section{Zero-knowledge proofs}
 
 \subsection{Zero-knowledge protocols}
