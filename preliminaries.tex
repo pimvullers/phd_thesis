@@ -7,7 +7,7 @@ consists of a public an a private part. These key pairs are constructed such
 that deriving the private part of the key from the public part is equivalent to
 solving a computational problem that is considered extremely difficult.
 
-\section{RSA Cryptography}
+\section{RSA Cryptography}\index{RSA}
 
 In an RSA-based cryptosystem~\cite{RSA1978} a key pair consists a public part
 $(n, e)$ and a private part $d$. The RSA modulus $n = p \cdot q$ is the product
@@ -24,9 +24,12 @@ equivalent to determining the prime factors $p$ and $q$ of $n$, which is known
 as the integer factorisation problem, a number-theoretic problem which is
 considered intractable for large integers.
 
-Such a key pair can then be used to encrypt a message $m$ into an RSA ciphertext
-$c = m^e \mod n$ using Algorithm~\ref{alg:RSA-encrypt}. Decryption of such a
-ciphertext using Algorithm~\ref{alg:RSA-decrypt} is based on the fact that
+\subsection{Encryption Scheme}\index{RSA!encryption}
+
+Such an RSA key pair can then be used to encrypt a message $m$ into an RSA
+ciphertext $c = m^e \mod n$ using Algorithm~\ref{alg:RSA-encrypt}. Decryption
+of such a ciphertext using Algorithm~\ref{alg:RSA-decrypt} is based on the fact
+that
 \begin{equation*}
   c^d = (m^e)^d = m^{e \cdot d} = m \mod n\text.
 \end{equation*}
@@ -47,7 +50,7 @@ ciphertext using Algorithm~\ref{alg:RSA-decrypt} is based on the fact that
   \label{alg:RSA-decrypt}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{RSA-encrypt}{$(n, e), c, d$}
+    \Function{RSA-decrypt}{$(n, e), c, d$}
       \State $m \gets c^d \mod n$
       \Return $m$
     \EndFunction
@@ -55,10 +58,13 @@ ciphertext using Algorithm~\ref{alg:RSA-decrypt} is based on the fact that
 \end{algorithm}
 
 The problem of recovering the message $m$ based on the ciphertext $m^e \mod n$
-and public key $(n, e)$ is known as the \emph{RSA problem}. This is equivalent
-to finding $e$th roots modulo $n$ which is assumed to be as difficult as the
-integer factorisation problem. Hence, the \emph{RSA assumption} states that the
-probability that an attacker can solve the RSA problem is negligible.
+and public key $(n, e)$ is known as the \emph{RSA problem}\index{RSA problem}.
+This is equivalent to finding $e$th roots modulo $n$ which is assumed to be as
+difficult as the integer factorisation problem\index{integer factorisation
+problem}. Hence, the \emph{RSA assumption}\index{RSA assumpsion} states that
+the probability that an attacker can solve the RSA problem is negligible.
+
+\subsection{Signature Schemes}
 
 In a similar fashion, this construction can also be used to create digital
 signatures. To generate an RSA signature with Algorithm~\ref{alg:RSA-sign}, the
@@ -66,7 +72,7 @@ signer computes the message digest $h = \Call{Hash}{m}$ of the message to be
 signed $m$ using a cryptographic hash function $\Call{Hash}{}$. This $h$, which
 serves as a fingerprint of the original message, is then raised to the private
 exponent. The result of this operation is the signature $s = h^d \mod n$ over
-the message $m$.
+the message $m$.\index{RSA!signature}
 Such an RSA signature can be verified using Algorithm~\ref{alg:RSA-verify}. The
 verifier recovers the fingerprint $\hat{h} = s^e \mod n$ from the signature
 value $s$ using the public exponent $e$ and checks whether this matches with the
@@ -102,15 +108,16 @@ also based on the RSA assumption.
 \end{algorithm}
 
 Some other signature schemes based on the RSA cryptosystem, such as the
-Camensich-Lysyanskaya scheme which is described in Section~\ref{sec:CL-scheme},
-only use the RSA modulus $n$ as the public part of the key, whereas the private
-part consists of the primes $p$ and $q$. This allows them to generate a fresh
-exponent $e$ for each signature which will then become part of the signature.
-Since an attacker can now control both the signature and the exponent, solving
-the RSA problem has become easier. Hence a stronger assumption is needed. This
-\emph{strong RSA assumption} states that the probability that an attacker can
-solve the RSA problem is negligible, even when the attacker can chose the public
-exponent $e$.
+Camensich-Lysyanskaya scheme~\cite{CamenischLysyanskaya2003}
+\index{Camenisch-Lysyansakay scheme} which is described
+in Section~\ref{sec:CL-scheme}, only use the RSA modulus\index{RSA modulus} $n$ as the public part
+of the key, whereas the private part consists of the primes $p$ and $q$. This
+allows them to generate a fresh exponent $e$ for each signature which will then
+become part of the signature. Since an attacker can now control both the
+signature and the exponent, solving the RSA problem has become easier. Hence a
+stronger assumption is needed. This \emph{strong RSA assumption}\index{strong RSA assumption} states that the
+probability that an attacker can solve the RSA problem is negligible, even when
+the attacker can chose the public exponent $e$.
 
 \section{Discrete Logarithm Cryptography}
 
@@ -122,23 +129,27 @@ subgroup of $\Z^*_p$. A private part of the key in such system is a random value
 $x$ and the corresponding public part is $h = g^x \mod p$. The problem of
 computing the private part $x = \log_g h$, based on the description of the group
 $(p, q, g)$ and the public part $h$, is known as the \emph{discrete logarithm
-problem}.
+problem}\index{discrete logarithm problem}.
 
-Such a key pair can be used to computed a shared key with another party that
-uses the same group parameters. To this end, both parties send their public key
-to each other and compute the modular exponentiation of the received value and
-their private key, as depicted in Figure~\ref{msc:DH}. The result of this
-computation can then be used as a shared key since
+\subsection{Key Agreement Scheme}\index{Diffie-Hellman key agreement}
+
+The first discrete logarithm-based scheme was the key agreement scheme by Diffie
+and Hellman~\cite{DH1976}. In this scheme a key pair as described above can be
+used to compute a shared key with another party that uses the same group
+parameters. To this end, both parties send their public key to each other and
+compute the modular exponentiation of the received value and their private key,
+as depicted in Figure~\ref{msc:DH}. The result of this computation can then be
+used as a shared key\index{shared key} since
 \begin{equation*}
   h_2^{x_1} = (g^{x_2})^{x_1} = g^{x_2 \cdot x_1}
   = k = g^{x_1 \cdot x_2} = (g^{x_1})^{x_2} = h_1^{x_2} \mod p
 \end{equation*}
 The problem of computing $k$, based on both public keys $h_1$ and $h_2$ and the
 group description $(p, q, g)$, is assumed to be as difficult as the discrete
-logarithm problem and is called the \emph{Diffie-Hellman problem}. A related
+logarithm problem and is called the \emph{(computational) Diffie-Hellman problem}\index{Diffie-Hellman problem}. A related
 problem is to determine whether a value $y$ is created using $h_1$ and $h_2$,
 hence $y = g^{x_1 \cdot x_2}$, or not. This is known as the \emph{decisional
-Diffie-Hellman problem}.
+Diffie-Hellman problem}\index{decisional Diffie-Hellman problem}.
 
 \begin{figure}[hb]
   \centering
@@ -147,13 +158,67 @@ Diffie-Hellman problem}.
   \label{msc:DH}
 \end{figure}
 
+\subsection{Encryption}
+
+The first encryption scheme based on discrete logarithms was proposed by
+ElGamal~\cite{ElGamal1985}. In order to encrypt a message $m$, the user
+generates a random value $r$ and commits to it by computing $c_1 = g^r \mod p$.
+The value $r$ is then used to randomise the public key which is multiplied with
+the message to obtain the encrypted message $c_2 = m \cdot h^r \mod p$. The
+resulting ciphertext consists of both $c_1$ and $c_2$ (see Algorithm~\ref{alg:ElGamal-encrypt}.
+In contrast to the RSA encryption scheme, the ElGamal encryption algorithm
+produces a different ciphertext each time although the inputs remain the same.
+
+The message $m$ can be recovered from a ciphertext $(c_1, c_2)$ by dividing
+$c_2$ by $c_1^x = g^{r \cdot x} = h^r \mod p$, as described in Algorithm~\ref{alg:ElGamal-decrypt}. An attacker, who does not have
+the private key $x$, must determine $h^r = g^{x \cdot r} \mod p$ based on the
+public key $h = g^x \mod p$ and the commitment $c_1 = g^r \mod p$, that is, he
+must solve the Diffie-Hellman problem.
+
+\begin{algorithm}[t]
+  \caption{ElGamal encryption.}
+  \label{alg:ElGamal-encrypt}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{ElGamal-encrypt}{$(p, q, g), h, m$}
+      \State $r \gets \Call{Random}{}$
+      \State $c_1 \gets g^r \mod p$
+      \State $c_2 \gets m \cdot h^r \mod p$
+      \Return $(c_1, c_2)$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}[t]
+  \caption{ElGamal decryption.}
+  \label{alg:ElGamal-decrypt}
+  \addtolength{\baselineskip}{1mm}
+  \begin{algorithmic}[1]
+    \Function{ElGamal-decrypt}{$(p, q, g), (c_1, c_2), x$}
+      \State $m \gets c_2 \cdot c_1^{-x} \mod p$
+      \Return $m$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Signatures}
+
 Many signature schemes have been based on the discrete logarithm problem, for
 example the Chaum-Pedersen scheme which is described in
 Section~\ref{sec:CP-scheme}, but also the Digital Signature Algorithm (DSA),
-described in Algorithms~\ref{alg:DSA-sign} and~\ref{alg:DSA-verify}, which is
-part of the Digital Signature Standard of the United States government.
+which is part of the Digital Signature Standard of the United States government.
+The digital signature algorithm, described in Algorithms~\ref{alg:DSA-sign}
+and~\ref{alg:DSA-verify}, is similar to the first discrete logarithm-based
+signature scheme proposed by ElGamal~\cite{ElGamal1985}. Like the encryption
+scheme, the signature $(r, s)$ consists of two parts. The first is a commitment
+on the randomisation value, whereas the second part commits to the fingerprint
+$h$ of the message $m$ that is to be signed. This signature cannot be verified
+directly, but is based on reconstructing the commitment value using the public
+key of the signer and the fact that
+\begin{equation*}
+  k = s^{-1} \cdot (c + x \cdot r) \mod q\text.
+\end{equation*}
 
-\begin{algorithm}[H]
+\begin{algorithm}
   \caption{DSA signature generation.}
   \label{alg:DSA-sign}
   \addtolength{\baselineskip}{1mm}
@@ -161,7 +226,7 @@ part of the Digital Signature Standard of the United States government.
     \Function{DSA-sign}{$(p, q, g), m, x$}
       \State $r \gets 0$
       \While{$r = 0 \mod p$}
-        \State $k \gets \Call{Random}{}$
+        \State $k \gets \Call{Random}{~}$
         \State $r \gets (g^k \mod p) \mod q$
       \EndWhile
       \State $c \gets \Call{Hash}{m}$
@@ -170,7 +235,7 @@ part of the Digital Signature Standard of the United States government.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-\begin{algorithm}[H]
+\begin{algorithm}
   \caption{DSA signature verification.}
   \label{alg:DSA-verify}
   \addtolength{\baselineskip}{1mm}
@@ -179,7 +244,7 @@ part of the Digital Signature Standard of the United States government.
       \State $c \gets \Call{Hash}{m}$
       \State $u \gets c \cdot s^{-1} \mod q$
       \State $v \gets r \cdot s^{-1} \mod q$
-      \State $\hat{r} \gets (g^u \cdot g^v \mod p) \mod q$
+      \State $\hat{r} \gets (g^u \cdot h^v \mod p) \mod q$
       \If{$\hat{r} \neq r$}
         \Return \Call{Invalid}{}
       \EndIf
@@ -188,11 +253,21 @@ part of the Digital Signature Standard of the United States government.
   \end{algorithmic}
 \end{algorithm}
 
-
-
 \section{Elliptic Curve Cryptography}
 
+In the previous section we described the discrete logarithm cryptography in a
+setting of a prime order subgroup of $\Z^*_p$. These techniques can, however,
+be applied to any finite cyclic group. Another popular setting for implementing
+discrete logarithm systems is the elliptic curve setting.
+
 \subsection{Elliptic Curves}
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[scale=.45]{images/elliptic-curve.mps}
+  \caption{Elliptic curve.}
+  \label{fig:EC}
+\end{figure}
 
 \begin{definition}[Elliptic Curve]\label{def:elliptic_curve}
   Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
@@ -568,5 +643,3 @@ Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P
 
 
 \subsubsection{OR} ...
-
-
