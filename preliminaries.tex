@@ -61,7 +61,7 @@ The problem of recovering the message $m$ based on the ciphertext $m^e \mod n$
 and public key $(n, e)$ is known as the \emph{RSA problem}\index{RSA problem}.
 This is equivalent to finding $e$th roots modulo $n$ which is assumed to be as
 difficult as the integer factorisation problem\index{integer factorisation
-problem}. Hence, the \emph{RSA assumption}\index{RSA assumpsion} states that
+problem}. Hence, the \emph{RSA assumption}\index{RSA assumption} states that
 the probability that an attacker can solve the RSA problem is negligible.
 
 \subsection{Signature Schemes}
@@ -108,8 +108,8 @@ also based on the RSA assumption.
 \end{algorithm}
 
 Some other signature schemes based on the RSA cryptosystem, such as the
-Camensich-Lysyanskaya scheme~\cite{CamenischLysyanskaya2003}
-\index{Camenisch-Lysyansakay scheme} which is described
+Camenisch-Lysyanskaya scheme~\cite{CamenischLysyanskaya2003}
+\index{Camenisch-Lysyanskaya scheme} which is described
 in Section~\ref{sec:CL-scheme}, only use the RSA modulus\index{RSA modulus} $n$ as the public part
 of the key, whereas the private part consists of the primes $p$ and $q$. This
 allows them to generate a fresh exponent $e$ for each signature which will then
@@ -396,7 +396,7 @@ problem}.
 
 Finally, if we know the $x$-coordinate of a point on the curve, the square of
 the corresponding $y$-coordinate is known, namely as defined in
-(\ref{eqn:elliptic_curve}). By taking the square root of $x^{3} + ax + b$ we
+(\ref{eqn:elliptic_curve}). By taking the square root of $x^{3} + a \cdot x + b$ we
 find either $y$ or $-y$. This method of \emph{point reconstruction} forms the
 basis of \emph{point compression}, for compact representation of points.
 
@@ -425,14 +425,9 @@ computable bilinear pairings.
 
 A bilinear pairing is a map $\mathbb{G}_1 \times \mathbb{G}_2 \rightarrow
 \mathbb{G}_T$ where $\mathbb{G}_1$ and $\mathbb{G}_2$ are typically additive
-groups and $\mathbb G_T$ is a multiplicative group and the map is bilinear, that
-is, linear in both components. Many pairings are used in cryptography such as the
-Weil pairing, Tate pairing, ate pairing and the most recent R-ate
-pairing~\cite{Vercauteren09}. For all these pairings one often uses specific
-cyclic subgroups of a curve $E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$
-and $\mathbb{F}_{p^k}^*$ as $\mathbb{G}_T$.
-
-The bilinearity property can be written as follows:
+groups and $\mathbb G_T$ is a multiplicative group and the map is bilinear,
+that is, linear in both components. This bilinearity property can be written as
+follows:
 \begin{equation*}
   \begin{array}{rcl}
     e(P + P',\; Q) & = & e(P,\; Q)\cdot e(P',\; Q) \\
@@ -440,11 +435,17 @@ The bilinearity property can be written as follows:
     e(P,\; Q + Q') & = & e(P,\; Q)\cdot e(P,\; Q')
   \end{array}
 \end{equation*}
-As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n\,m}$. Pairings are used
-for many (new) cryptographic protocols~\cite{BSS05}, such as short
-signatures~\cite{BonehLS04}, three-party one-round key agreement~\cite{Joux04},
-identity based encryption~\cite{BonehFranklin01} and anonymous
-credentials~\cite{CamenischLysyanskaya04}.
+As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n\,m}$.
+
+Pairings are used for many (new) cryptographic protocols~\cite{BSS05}, such as
+short signatures~\cite{BonehLS04}, three-party one-round key
+agreement~\cite{Joux04}, identity based encryption~\cite{BonehFranklin01} and
+anonymous credentials~\cite{CamenischLysyanskaya04}. There are different
+pairings that can be used for this kind of cryptography, for example the Weil
+pairing, Tate pairing, ate pairing and the recent R-ate pairing~\cite{Vercauteren09}.
+For all these pairings one often uses specific cyclic subgroups of a curve
+$E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$ and
+$\mathbb{F}_{p^k}^*$ as $\mathbb{G}_T$.
 
 \subsubsection{Barreto-Naehrig Curves}
 
@@ -459,59 +460,122 @@ is constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
 numbers. The embedding degree of these curves is 12 and we detail the parameters
 for our case when they are used.
 
-\section{Zero-knowledge proofs}
+\section{Proof of Knowledge}
 
-\subsection{Zero-knowledge protocols}
+A cryptographic concept that is frequently used in attribute-based credential is
+a proof of knowledge. The goal of such proof is for the user to convince the
+verifier of a given statement. For example, the often used challenge-response
+construction in which a user has to sign or decrypt a challenge to authenticate
+herself, is a proof that she knows the private key corresponding to the public
+key used by the verifier.
 
-\begin{figure}
+To describe such proofs of knowledge we use the notation introduced by Camenisch
+and Stadler~\cite{CamenischStadler1997}. For example,
+\begin{equation*}
+  PK\{(\alpha) : h = g^{\alpha} \mod p \}
+\end{equation*}
+denotes a proof of knowledge of a value $\alpha$ such that $h = g^{\alpha} \mod p$,
+that is, a proof of knowledge of the private part of a discrete logarithm key
+pair.
+
+\subsection{Zero-knowledge Protocols}
+
+In this section we describe zero-knowledge protocols as a way to convince a
+verifier. The protocols have the property that no matter what a verifier does,
+he will not be able to extract any useful information from the user. More
+precisely, the term \emph{zero-knowledge} refers to the fact that whatever
+information the verifier learns from the user, that information could have been
+generated by the verifier on its own, without the assistance of the user.
+However, a verifier that actually carried out the protocol will be convinced
+that the user has the specified knowledge, in our example, the private key.
+
+A well-known example of a zero-knowledge protocol is Schnorr's identification
+protocol~\cite{Schnorr1991}, which proves knowledge of a discrete logarithm.
+This protocol is depicted in Figure~\ref{msc:schnorr}. To prove that the user
+knows the private key, she first commits to a random value $u$ and sends the
+commitment $a$ to the verifier. The verifier then generates a challenge $c$ at
+random and sends this to the user, which computes the response $r$ based on the
+challenge. Finally, the verifier checks whether $g^r = a \cdot h^c \mod p$.
+
+\begin{figure}[ht]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/schnorr}
-    \caption{$PK\{(\alpha) : h = g^\alpha \}$}
-    \label{msc:schnorr}
-  \end{subfigure}
-  \quad
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/schnorr_mod}
-    \caption{$PK\{(\alpha) : h \equiv g^\alpha \mod n \}$}
-    \label{msc:schnorr_mod}
-  \end{subfigure}
-  \caption{Schnorr's zero-knowledge protocol~\cite{Schnorr1991} for prime order groups (a) and for groups modulo a composite (b).}
-  \label{fig:schnorr}
+  \includegraphics[scale=.45]{mscs/schnorr}
+  \caption{Schnorr's zero-knowledge protocol identification protocol.}
+  \label{msc:schnorr}
 \end{figure}
 
-Schnorr
 
-\subsection{Zero-knowledge proofs}
+The verifier does not learn anything from such a conversation $(a, c, r)$, since
+he could have computed such a triple himself by choosing $c$ and $r$ at random
+and computing $a = g^r \cdot h^{-c} \mod p$. This means that the zero-knowledge
+property holds for this protocol. Another important property is soundness, which
+guarantees that the user actually knows the the secret. Suppose that given a
+single commitment $a$ the user is able to respond to two different challenges,
+hence generating two conversations $(a, c, r)$ and $(a, c', r')$ where
+$c \neq c'$. Then, from $g^r = a \cdot h^c \mod p$ and
+$g^{'r} = a \cdot h^{c'} \mod p$ it follows that
+\begin{equation*}
+  a = g^r \cdot h^{-c} \mod p
+  \quad\text{and}\quad
+  g^{r'} = g^r \cdot h^{-c} \cdot h^{c'} \mod p
+\end{equation*}
+which implies that
+\begin{equation*}
+  g^{r'-r} = h^{c'-c} \mod p\text.
+\end{equation*}
+Hence, $h = g^{\frac{r'-r}{c'-c}} \mod p$ which means that the user actually
+knows the private key $x$, since $x = \frac{r'-r}{c'-c} \mod q$.
 
-The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a zero-knowledge protocol into a non-interactive zero-knowledge proof. To achieve this the challenge $c$ is not retrieved from the verifier but computed as follows: $$c \leftarrow H(m,a)$$ where $H$ is a cryptographic hash function, $m$ is some message to be included (to be signed) and $a$ is the commitment. Both the commitment $a$ and the response $r$ are calculated as usual. The result is a signature $(c,r)$ on $m$. This can be verified by checking whether $$c = H(m, g^r h^{-c})$$ holds. It should hold since $g^r h^{-c} = g^{u + cx} h^{-c} = g^{u + cx} (g^x)^{-c} = g^u = a$.
+A similar protocol~\cite{Girault1991} can also be constructed
+for groups in which the order is not known to all parties, which is for instance
+the case in an RSA setting. As a result the user cannot perform the modular
+reduction when computing the response, as depicted in
+Figure~\ref{msc:schnorr_mod}. This means that the response no longer hides the
+secret $x$ as it is not distributed uniformly. Therefore the user must choose a
+significantly larger\footnote{For instance, the length of the random value $u$
+should be 80-bits longer than the combined lengths of the modulus $n$ and the
+challenge $n$. This in contrast to just the length of the prime order $q$.}
+random value $u$ such that $a$ is distributed statistically close to uniform
+over the subgroup generated by $g$ and $x$ is statistically hidden in $r$.
+Hence, this protocol is called \emph{statistical zero-knowledge}~\cite{Pointcheval2000}.
 
-\subsection{Composition of zero-knowledge proofs}
-
-\subsubsection{Combining}
-
-Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ do not share any variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$.
-
-\subsubsection{Equality}
-
-\begin{figure}
+\begin{figure}[ht]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/okamoto}
-    \caption{$PK\{(\alpha, \beta) : h = g_1^\alpha g_2^\beta \}$}
-    \label{msc:okamoto}
-  \end{subfigure}
-  \quad
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[scale=.45]{mscs/equality}
-    \caption{$PK\{(\alpha, \beta, \gamma) : h = g_1^\alpha g_2^\beta \land \tilde{h} = \tilde{g}_1^\alpha \tilde{g}_2^\gamma\}$}
-    \label{msc:equality}
-  \end{subfigure}
-  \caption{Okamoto's zero-knowledge protocol~\cite{Okamoto1993} for multi-exponents (a) and an adaption for equality (of the first exponent) composition (b).}
-  \label{fig:okamoto}
+  \includegraphics[scale=.45]{mscs/schnorr_mod}
+  \caption{Schnorr's zero-knowledge protocol for groups of unknown order.}
+  \label{msc:schnorr_mod}
 \end{figure}
 
-Constructing a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$ where $P_1$ and $P_2$ share variables from $(\dots)$ can be achieved by constructing proofs for $P_1$ and $P_2$ \emph{using the same challenge} $c$ and \emph{using the same randoms and responses} $u_i$ and $r_i$.
+Using these basic building blocks, more complex protocols can be constructed.
+For example, a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$, where the
+statements $P_1$ and $P_2$ do not share any of the variables of which the
+knowledge is being proved, can be build by constructing individual proofs for
+$P_1$ and $P_2$ using the same challenge $c$ for both protocols. Alternatively,
+when $P_1$ and $P_2$ do share a variable of which the knowledge is being proved,
+a proof can be build by constructing proofs for $P_1$ and $P_2$ individually,
+while using the same challenge $c$ for both protocols as well as the same random
+value $u$ and response $r$ for the shared variable,
 
+\subsection{Zero-knowledge Proofs}
 
-\subsubsection{OR} ...
+The Fiat-Shamir heuristic~\cite{FiatShamir1987} can be used to transform a
+zero-knowledge protocol into a non-interactive zero-knowledge proof. This is
+often used to translate a zero-knowledge protocol into a signature scheme, or to
+reduce the communication overhead of the interactive protocols. To make a
+zero-knowledge protocol non-interactive the challenge $c$ is not retrieved from
+the verifier but computed as follows:
+\begin{equation*}
+  c \gets \Call{Hash}{m, a}
+\end{equation*}
+where $\Call{Hash}{}$ is a cryptographic hash function, $m$ is some message to
+be included (to be signed) and $a$ is the commitment. Both the commitment $a$
+and the response $r$ are calculated as usual. The result is a signature $(c, r)$
+on $m$. This can be verified by checking whether the following holds:
+\begin{equation*}
+  c = \Call{Hash}{m, \hat{a}}
+\end{equation*}
+where $\hat{a} = g^r \cdot h^{-c}$. If the proof $(c, r)$ is valid, this holds
+since:
+\begin{equation*}
+  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot h^{-c} = g^{u + c\cdot x} \cdot (g^x)^{-c} = g^u = a \mod p\text.
+\end{equation*}

@@ -1,4 +1,7 @@
-\usepackage{amsmath,amsthm,amssymb,bbm}
+\usepackage{amsmath,amsfonts,bbm}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
 \usepackage{graphicx}
 \usepackage{msc}
 
@@ -58,7 +61,7 @@
 \setlength{\instfootheight}{\instfootheight}% height of foot symbols
 \setlength{\instheadheight}{1.5\instheadheight}% height of head symbols
 \setlength{\instwidth}{1.5\instwidth}%  width of header and foot symbols
-\setlength{\labeldist}{1.5\labeldist}% distance between labels and message lines or head symbl boxes 
+\setlength{\labeldist}{1.5\labeldist}% distance between labels and message lines or head symbl boxes
 \setlength{\lastlevelheight}{\lastlevelheight}% height of level just above foot symbols
 \setlength{\leftnamedist}{1.5\leftnamedist}% distance between left of frame and (top of) msc title
 \setlength{\levelheight}{1.5\levelheight}% height of a level
@@ -74,7 +77,7 @@
 \setlength{\stopwidth}{1.5\stopwidth}% width of the stop symbol
 \setlength{\timerwidth}{1.5\timerwidth}% width of the timer symbols
 \setlength{\topheaddist}{\topheaddist}% distance between top of head symbols and frame
-\setlength{\topnamedist}{\topnamedist}% distance between top of frame and (top of) msc title 
+\setlength{\topnamedist}{\topnamedist}% distance between top of frame and (top of) msc title
 
 %%% Here are the lengths we usually play with
 % \setlength{\actionwidth}{30ex}
@@ -151,10 +154,10 @@
 }
 
 
-%\newcounter{pzaehler}      
+%\newcounter{pzaehler}
 \newenvironment{protokoll}[4]{%
 %\bigskip
-%\begin{figure}[!htp] 
+%\begin{figure}[!htp]
 % \hrule\medskip
 #4
 \noarrow{\boxtext{\hfil \bf #1\hfil}}{}{\boxtext{\hfil\bf #2\hfil}}
@@ -165,11 +168,10 @@
 %\addtocounter{pzaehler}{1}
 %\centerline{
 %\hrulefill
-%\bf 
-%\rm\normalsize \ Figure \thepzaehler: \tempprot\  
-%\rm\tiny \ \tempprot\  
+%\bf
+%\rm\normalsize \ Figure \thepzaehler: \tempprot\
+%\rm\tiny \ \tempprot\
 %\hrulefill
 %}
 %\end{figure}
 }
-

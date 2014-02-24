@@ -1,29 +1,33 @@
 \begin{msc}{}
 
-\setlength{\instwidth}{1.5\instwidth}
+\setlength{\instwidth}{1,5\instwidth}
+\setlength{\instdist}{1.5\instdist}
+\setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{P}{$h = g^x$}{Prover}
-\declinst{V}{$g$, $h$}{Verifier}
+\declinst{P}{$(p, q, g), x, h = g^x$}{User}
+\declinst{V}{$(p, q, g), h$}{Verifier}
 
-\action*{$u \in_R \mathbb{Z}_p$\\ $a \leftarrow g^u$}{P}
-\nextlevel[2.2]
+\action*{
+  $u \gets \Call{Random}{~}$ \\
+  $a \gets g^u \mod p$}{P}
+\nextlevel[3]
 
 \mess{$a$}{P}{V}
-\nextlevel[.5]
+\nextlevel[1]
 
-\action*{$c \in_R \mathbb{Z}_p$}{V}
-\nextlevel[1.5]
+\action*{$c \gets \Call{Random}{~}$}{V}
+\nextlevel[2]
 
 \mess{$c$}{V}{P}
-\nextlevel[.5]
+\nextlevel[1]
 
-\action*{$r \leftarrow_p u + cx$}{P}
-\nextlevel[1.5]
+\action*{$r \gets u + c \cdot x \mod q$}{P}
+\nextlevel[2]
 
 \mess{$r$}{P}{V}
-\nextlevel[.5]
+\nextlevel[1]
 
-\action*{$g^r \stackrel{?}{=} a h^c$}{V}
+\action*{$g^r \stackrel{?}{=} a \cdot h^c \mod p$}{V}
 \nextlevel[1.5]
 
 \end{msc}
