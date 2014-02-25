@@ -545,7 +545,10 @@ which implies that
   g^{r'-r} = h^{c'-c} \mod p\text.
 \end{equation*}
 Hence, $h = g^{\frac{r'-r}{c'-c}} \mod p$ which means that the user actually
-knows the private key $x$, since $x = \frac{r'-r}{c'-c} \mod q$.
+knows the private key $x$, since
+\begin{equation*}
+  x = \frac{r'-r}{c'-c} \mod q\text.
+\end{equation*}
 
 A similar protocol~\cite{Girault1991}, depicted in Figure~\ref{msc:schnorr_mod},
 can also be constructed for groups in which the order of the (sub)group is not
