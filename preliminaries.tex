@@ -3,13 +3,13 @@
 This chapter provides some cryptographic background information which is
 relevant for the attribute-based credential systems which we describe in the
 next chapters. In particular we focus on public-key cryptography in which a key
-consists of a public an a private part. These key pairs are constructed such
+consists of a public and a private part. These key pairs are constructed such
 that deriving the private part of the key from the public part is equivalent to
 solving a computational problem that is considered extremely difficult.
 
 \section{RSA Cryptography}\index{RSA}
 
-In an RSA-based cryptosystem~\cite{RSA1978} a key pair consists a public part
+In an RSA-based cryptosystem~\cite{RSA1978} a key pair consists of a public part
 $(n, e)$ and a private part $d$. The RSA modulus $n = p \cdot q$ is the product
 of two primes $p$ and $q$ and the public exponent $e$ is a value that satisfies
 $1 < e < \phi(n)$ and $gcd(e, \phi(n)) = 1$ where $\phi(n) = (p-1)(q-1)$ is
@@ -35,7 +35,7 @@ that
 \end{equation*}
 
 \begin{algorithm}[ht]
-  \caption{RSA encryption.}
+  \caption{Basic RSA encryption.}
   \label{alg:RSA-encrypt}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
@@ -46,7 +46,7 @@ that
   \end{algorithmic}
 \end{algorithm}
 \begin{algorithm}[ht]
-  \caption{RSA decryption.}
+  \caption{Basic RSA decryption.}
   \label{alg:RSA-decrypt}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
@@ -63,6 +63,10 @@ This is equivalent to finding $e$th roots modulo $n$ which is assumed to be as
 difficult as the integer factorisation problem\index{integer factorisation
 problem}. Hence, the \emph{RSA assumption}\index{RSA assumption} states that
 the probability that an attacker can solve the RSA problem is negligible.
+
+[TODO: mention that this is just basic, and that this scheme is insecure, to
+improve security padding schemes as defined in PKCS \#1 should be used.
+Also, the same holds for signatures.]
 
 \subsection{Signature Schemes}
 
@@ -81,7 +85,7 @@ otherwise the signature is invalid. The security of this RSA signature scheme is
 also based on the RSA assumption.
 
 \begin{algorithm}[H]
-  \caption{RSA signature generation.}
+  \caption{Basic RSA signature generation.}
   \label{alg:RSA-sign}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
@@ -93,7 +97,7 @@ also based on the RSA assumption.
   \end{algorithmic}
 \end{algorithm}
 \begin{algorithm}[H]
-  \caption{RSA signature verification.}
+  \caption{Basic RSA signature verification.}
   \label{alg:RSA-verify}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
@@ -148,8 +152,11 @@ The problem of computing $k$, based on both public keys $h_1$ and $h_2$ and the
 group description $(p, q, g)$, is assumed to be as difficult as the discrete
 logarithm problem and is called the \emph{(computational) Diffie-Hellman problem}\index{Diffie-Hellman problem}. A related
 problem is to determine whether a value $y$ is created using $h_1$ and $h_2$,
-hence $y = g^{x_1 \cdot x_2}$, or not. This is known as the \emph{decisional
-Diffie-Hellman problem}\index{decisional Diffie-Hellman problem}.
+hence whether $y = g^{x_1 \cdot x_2}$, or not. This is known as the
+\emph{decisional Diffie-Hellman problem}\index{decisional Diffie-Hellman
+problem}.
+
+[TODO: adjust description to modified MSC protocol]
 
 \begin{figure}[hb]
   \centering
@@ -165,7 +172,7 @@ ElGamal~\cite{ElGamal1985}. In order to encrypt a message $m$, the user
 generates a random value $r$ and commits to it by computing $c_1 = g^r \mod p$.
 The value $r$ is then used to randomise the public key which is multiplied with
 the message to obtain the encrypted message $c_2 = m \cdot h^r \mod p$. The
-resulting ciphertext consists of both $c_1$ and $c_2$ (see Algorithm~\ref{alg:ElGamal-encrypt}.
+resulting ciphertext consists of both $c_1$ and $c_2$ (see Algorithm~\ref{alg:ElGamal-encrypt}).
 In contrast to the RSA encryption scheme, the ElGamal encryption algorithm
 produces a different ciphertext each time although the inputs remain the same.
 
@@ -210,7 +217,7 @@ The digital signature algorithm, described in Algorithms~\ref{alg:DSA-sign}
 and~\ref{alg:DSA-verify}, is similar to the first discrete logarithm-based
 signature scheme proposed by ElGamal~\cite{ElGamal1985}. Like the encryption
 scheme, the signature $(r, s)$ consists of two parts. The first is a commitment
-on the randomisation value, whereas the second part commits to the fingerprint
+to the randomisation value, whereas the second part commits to the fingerprint
 $h$ of the message $m$ that is to be signed. This signature cannot be verified
 directly, but is based on reconstructing the commitment value using the public
 key of the signer and the fact that
@@ -218,6 +225,7 @@ key of the signer and the fact that
   k = s^{-1} \cdot (c + x \cdot r) \mod q\text.
 \end{equation*}
 
+[TODO: explain why double mod and why the while loop.]
 \begin{algorithm}
   \caption{DSA signature generation.}
   \label{alg:DSA-sign}
@@ -260,7 +268,11 @@ setting of a prime order subgroup of $\Z^*_p$. These techniques can, however,
 be applied to any finite cyclic group. Another popular setting for implementing
 discrete logarithm systems is the elliptic curve setting which we describe below.
 
+[TODO: mention that additive notation is common in an ECC setting, whereas multiplicative notation is used for prime order subgroups.]
+
 \subsection{Elliptic Curves}
+
+[TODO: explain notation $\F{q}$ instead of $\Z_q$]
 
 Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
 power, an elliptic curve $E$ over $\F{q}$ is defined by the equation
@@ -423,10 +435,10 @@ Besides an alternative implementation for discrete logarithm-based cryptography,
 elliptic curves also offer additional functionality, such as efficiently
 computable bilinear pairings.
 
-A bilinear pairing is a map $\mathbb{G}_1 \times \mathbb{G}_2 \rightarrow
+A bilinear pairing is a map of the form $e: \mathbb{G}_1 \times \mathbb{G}_2 \to
 \mathbb{G}_T$ where $\mathbb{G}_1$ and $\mathbb{G}_2$ are typically additive
-groups and $\mathbb G_T$ is a multiplicative group and the map is bilinear,
-that is, linear in both components. This bilinearity property can be written as
+groups and $\mathbb G_T$ is a multiplicative group. Bilinearity means that the
+map is linear in both components. This bilinearity property can be written as
 follows:
 \begin{equation*}
   \begin{array}{rcl}
@@ -460,14 +472,16 @@ is constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
 numbers. The embedding degree of these curves is 12 and we detail the parameters
 for our case when they are used.
 
-\section{Proof of Knowledge}
+[TODO: embedding degree is not explained.]
+
+\section{Proofs of Knowledge}
 
 A cryptographic concept that is frequently used in attribute-based credential is
-a proof of knowledge. The goal of such proof is for the user to convince the
-verifier of a given statement. For example, the often used challenge-response
-construction in which a user has to sign or decrypt a challenge to authenticate
-herself, is a proof that she knows the private key corresponding to the public
-key used by the verifier.
+a proof of knowledge. The goal of such proof is for the user, or \emph{prover},
+to convince the verifier of a given statement. For example, the often used
+challenge-response construction in which a user has to sign or decrypt a
+challenge to authenticate herself, is a proof that she knows the private key
+corresponding to the public key used by the verifier.
 
 To describe such proofs of knowledge we use the notation introduced by Camenisch
 and Stadler~\cite{CamenischStadler1997}. For example,
@@ -500,7 +514,7 @@ challenge. Finally, the verifier checks whether $g^r = a \cdot h^c \mod p$.
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/schnorr}
-  \caption{Schnorr's zero-knowledge protocol identification protocol.}
+  \caption{Schnorr's zero-knowledge identification protocol.}
   \label{msc:schnorr}
 \end{figure}
 
@@ -526,11 +540,11 @@ which implies that
 Hence, $h = g^{\frac{r'-r}{c'-c}} \mod p$ which means that the user actually
 knows the private key $x$, since $x = \frac{r'-r}{c'-c} \mod q$.
 
-A similar protocol~\cite{Girault1991} can also be constructed
-for groups in which the order is not known to all parties, which is for instance
-the case in an RSA setting. As a result the user cannot perform the modular
-reduction when computing the response, as depicted in
-Figure~\ref{msc:schnorr_mod}. This means that the response no longer hides the
+A similar protocol~\cite{Girault1991}, depicted in Figure~\ref{msc:schnorr_mod},
+can also be constructed for groups in which the order [TODO: of a generator?] is not known to all parties,
+which is for instance the case in an RSA setting [TODO: explain.].
+As a result the user cannot perform the modular
+reduction when computing the response, as . This means that the response no longer hides the
 secret $x$ as it is not distributed uniformly. Therefore the user must choose a
 significantly larger\footnote{For instance, the length of the random value $u$
 should be 80-bits longer than the combined lengths of the modulus $n$ and the
@@ -538,6 +552,8 @@ challenge $n$. This in contrast to just the length of the prime order $q$.}
 random value $u$ such that $a$ is distributed statistically close to uniform
 over the subgroup generated by $g$ and $x$ is statistically hidden in $r$.
 Hence, this protocol is called \emph{statistical zero-knowledge}~\cite{Pointcheval2000}.
+
+[TODO: so the order of $g$ is unknown.]
 
 \begin{figure}[ht]
   \centering
@@ -549,10 +565,10 @@ Hence, this protocol is called \emph{statistical zero-knowledge}~\cite{Pointchev
 Using these basic building blocks, more complex protocols can be constructed.
 For example, a proof for $PK\{(\dots) : P_1 \;\land\; P_2 \}$, where the
 statements $P_1$ and $P_2$ do not share any of the variables of which the
-knowledge is being proved, can be build by constructing individual proofs for
+knowledge is being proved, can be built by constructing individual proofs for
 $P_1$ and $P_2$ using the same challenge $c$ for both protocols. Alternatively,
 when $P_1$ and $P_2$ do share a variable of which the knowledge is being proved,
-a proof can be build by constructing proofs for $P_1$ and $P_2$ individually,
+a proof can be built by constructing proofs for $P_1$ and $P_2$ individually,
 while using the same challenge $c$ for both protocols as well as the same random
 value $u$ and response $r$ for the shared variable,
 

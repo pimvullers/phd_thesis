@@ -5,8 +5,16 @@
 \setlength{\instdist}{1.5\instdist}
 \setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{a}{$(p, q, g), x_1, h_1 = g^{x_1} \mod p$}{$A$}
-\declinst{b}{$(p, q, g), x_2, h_2 = g^{x_2} \mod p$}{$B$}
+\declinst{a}{$(p, q, g)$}{$A$}
+\declinst{b}{$(p, q, g)$}{$B$}
+
+\action*{
+  $x_1 \gets \Call{Random}{~}$ \\
+  $h_1 \gets g^{x_1} \mod p$}{a}
+\action*{
+  $x_2 \gets \Call{Random}{~}$ \\
+  $h_2 \gets g^{x_2} \mod p$}{b}
+\nextlevel[3]
 
 \mess{$h_1$}{a}{b}
 \nextlevel[1]

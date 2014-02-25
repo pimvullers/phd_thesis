@@ -25,15 +25,15 @@ fill (0,-5mm)--
 (3cm,0.024timeunit)--(3cm,-5mm)--cycle withcolor 0.6white;
 
 pickup pencircle scaled thick;
-draw (0cm,0.469timeunit);label.llft(btex {\smallersize 1.219} etex, (0cm,0.469timeunit));
-draw (1cm,0.365timeunit);label.llft(btex {\smallersize 1.115} etex, (1cm,0.365timeunit));
-draw (2cm,0.263timeunit);label.llft(btex {\smallersize 1.013} etex, (2cm,0.263timeunit));
-draw (3cm,0.162timeunit);label.llft(btex {\smallersize 0.912} etex, (3cm,0.162timeunit));
+draw (0cm,0.469timeunit);label.llft(btex {\smallersize 1219} etex, (0cm,0.469timeunit));
+draw (1cm,0.365timeunit);label.llft(btex {\smallersize 1115} etex, (1cm,0.365timeunit));
+draw (2cm,0.263timeunit);label.llft(btex {\smallersize 1013} etex, (2cm,0.263timeunit));
+draw (3cm,0.162timeunit);label.llft(btex {\smallersize 912} etex, (3cm,0.162timeunit));
 
-draw (0cm,0.327timeunit);label.llft(btex {\smallersize 1.077} etex, (0cm,0.327timeunit));
-draw (1cm,0.224timeunit);label.llft(btex {\smallersize 0.974} etex, (1cm,0.224timeunit));
-draw (2cm,0.123timeunit);label.llft(btex {\smallersize 0.873} etex, (2cm,0.123timeunit));
-draw (3cm,0.024timeunit);label.llft(btex {\smallersize 0.774} etex, (3cm,0.024timeunit));
+draw (0cm,0.327timeunit);label.llft(btex {\smallersize 1077} etex, (0cm,0.327timeunit));
+draw (1cm,0.224timeunit);label.llft(btex {\smallersize 974} etex, (1cm,0.224timeunit));
+draw (2cm,0.123timeunit);label.llft(btex {\smallersize 873} etex, (2cm,0.123timeunit));
+draw (3cm,0.024timeunit);label.llft(btex {\smallersize 774} etex, (3cm,0.024timeunit));
 
 
 pickup pencircle scaled thin;
@@ -58,9 +58,9 @@ draw (0,-5mm)--(-tick,-5mm);
 draw (0,0)--(-tick,0);
 draw (0,0.75timeunit)--(-tick,0.75timeunit);
 label.lft(btex 0 etex, (-tick,-5mm));
-label.lft(btex 0.75s etex, (-tick,0));
-label.lft(btex 1.5s etex, (-tick,0.75timeunit));
-label.rt(btex time etex, (0,0.75timeunit+.25cm));
+label.lft(btex 750 etex, (-tick,0));
+label.lft(btex 1500 etex, (-tick,0.75timeunit));
+label.rt(btex time (ms) etex, (0,0.75timeunit+.25cm));
 
 endfig; % 3 attributes proving SLE78
 

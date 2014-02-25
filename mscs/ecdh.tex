@@ -5,8 +5,16 @@
 \setlength{\instdist}{1.5\instdist}
 \setlength{\envinstdist}{1.5\envinstdist}
 
-\declinst{a}{$(E, \F{q}, a, b, P), x_1, Q_1 = x_1 \cdot P$}{$A$}
-\declinst{b}{$(E, \F{q}, a, b, P), x_2, Q_2 = x_2 \cdot P$}{$B$}
+\declinst{a}{$(E, \F{q}, a, b, P)$}{$A$}
+\declinst{b}{$(E, \F{q}, a, b, P)$}{$B$}
+
+\action*{
+  $x_1 \gets \Call{Random}{~}$ \\
+  $Q_1 \gets x_1 \cdot P$}{a}
+\action*{
+  $x_2 \gets \Call{Random}{~}$ \\
+  $Q_2 \gets x_2 \cdot P$}{b}
+\nextlevel[3]
 
 \mess{$Q_1$}{a}{b}
 \nextlevel[1]

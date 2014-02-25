@@ -1,12 +1,12 @@
 \chapter{U-Prove\label{chp:uprove}}
 
 Stefan Brands provided the first integral description of the U-Prove technology
-in his thesis~\cite{Brands2000} in 2000, after which he founded the company
-Credentica in 2002 to implement and sell this technology. Microsoft acquired
-Credentica in 2008 and published the U-Prove cryptographic
-specification~\cite{U-Prove_Crypto2010, U-Prove_Crypto2013} in 2010 under the
-Open Specification Promise\footnote{\url{http://www.microsoft.com/interop/osp/}}
-together with open source reference software development kits in C\# and Java.
+in his thesis~\cite{Brands2000}, after which he founded the company Credentica
+to implement and sell this technology. Microsoft acquired Credentica and
+published the U-Prove cryptographic specification~\cite{U-Prove_Crypto2010,
+U-Prove_Crypto2013} under the Open Specification Promise\footnote{%
+\url{http://www.microsoft.com/interop/osp/}} together with open source reference
+software development kits in C\# and Java.
 
 The U-Prove technology is centred around a so-called U-Prove token. This token
 serves as a pseudonym for the user. It contains a number of attributes which can
@@ -18,27 +18,25 @@ this public-key to ensure the authenticity.
 
 A previous attempt to implement this technology on a smart card by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
-resulted in a highly involved application with running times in the order of
-5--10 seconds which make it not really usable in practice. Our implementation,
-which we describe in Section~\ref{sec:UP-smartcard}, not only has a much better
-performance but is also, except from some minimal limitations, compatible with
-the development kits released by Microsoft.
+resulted in a highly involved Java Card applet with running times in the order
+of 5--10 seconds which make it not really usable in practice. They concluded
+that the lack of cryptographic hardware support through the Java Card API was
+the main cause of the slow performance. Therefore, we decided to develop our
+application using the MULTOS platform, which offers a much more suitable API.
+Our implementation, which we describe in Section~\ref{sec:UP-smartcard}, not
+only has a much better performance but is also, except from some minimal
+limitations, compatible with the development kits released by Microsoft.
 
 \section{Schnorr Signature Scheme}
 
 The Schnorr signature scheme~\cite{Schnorr1989,Schnorr1991} relies on the
 Schnorr identification protocol~\cite{Schnorr1989} which is a special instance
 of the interactive protocol of Chaum, Evertse and Van de
-Graaf~\cite{ChaumEvdG1988} that proves possession of a discrete logarithm. It
-is derived from this identification scheme by replacing the verifier's challenge
-by a hash value according to the Fiat-Shamir heuristic~\cite{FiatShamir1987} as
-can be seen in Algorithm~\ref{alg:Schnorr-sign}.
-
-The public key is a value $h$ together with a description of the prime-order
-group in which the computations take place. As an example we use $(p, q, g)$,
-which denotes a subgroup of $\Z^*_p$ of prime-order $q$ with generator $g$. The
-corresponding private key is $x = \log_g h$. The signature over a message $m$
-is the resulting pair $(c, r)$.
+Graaf~\cite{ChaumEvdG1988} that proves knowledge of a discrete logarithm key
+pair. It is derived from this identification scheme by replacing the verifier's
+challenge by a hash value according to the Fiat-Shamir
+heuristic~\cite{FiatShamir1987} as can be seen in
+Algorithm~\ref{alg:Schnorr-sign}.
 
 \begin{algorithm}
   \caption{Generate a Schnorr signature.}
@@ -55,16 +53,6 @@ is the resulting pair $(c, r)$.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-Verification of such a Schnorr signature $(c, r)$ starts with the reconstruction
-of the input value for the hash function based on $r$, according to the
-following equation:
-\begin{equation}\label{eqn:Schnorr-verify}
-  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot g^{-c \cdot x} = g^u = a \mod p
-\end{equation}
-If the signature is valid, that is, this equation holds, the resulting output of
-the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
-
 \begin{algorithm}
   \caption{Verify a Schnorr signature.}
   \label{alg:Schnorr-verify}
@@ -82,6 +70,21 @@ the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
   \end{algorithmic}
 \end{algorithm}
 
+The private key is a random value $x$. The corresponding public key is a value
+$h = g^x \mod p$ together with a description of the prime-order group in which
+the computations take place. As an example we use $(p, q, g)$, which denotes a
+subgroup of $\Z^*_p$ of prime-order $q$ with generator $g$. The signature over
+a message $m$ is the resulting pair $(c, r)$.
+
+Verification of such a Schnorr signature $(c, r)$ starts with the reconstruction
+of the input value for the hash function based on $r$, according to the
+following equation:
+\begin{equation}\label{eqn:Schnorr-verify}
+  \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot g^{-c \cdot x} = g^u = a \mod p
+\end{equation}
+If the signature is valid, that is, this equation holds, the resulting output of
+the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
+
 \subsection{Blind Signatures}
 
 \begin{figure}[ht]
@@ -97,7 +100,11 @@ similar to the original signing protocol. In Algorithm~\ref{alg:Schnorr-prepare}
 the signer constructs a commitment $a$, to the randomisation value $u$, which is
 sent to the recipient of the signature.
 
-\begin{algorithm}
+The recipient generates blinding values $v$ and $w$ to hide the message $m$ that
+it whats to get signed. A (blinded) commitment $c$ to this message is generated
+(see Algorithm~\ref{alg:Schnorr-commit}) and sent to the signer.
+
+\begin{algorithm}[H]
   \caption{Prepare for a blind Schnorr signature.}
   \label{alg:Schnorr-prepare}
   \addtolength{\baselineskip}{1mm}
@@ -110,10 +117,6 @@ sent to the recipient of the signature.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-The recipient generates blinding values $v$ and $w$ to hide the message $m$ that
-it whats to get signed. A (blinded) commitment $c$ to this message is generated
-(see Algorithm~\ref{alg:Schnorr-commit}) and sent to the signer.
 
 \begin{algorithm}
   \caption{Commit to the message for a blind Schnorr signature.}
@@ -133,7 +136,23 @@ it whats to get signed. A (blinded) commitment $c$ to this message is generated
 
 Upon receipt of the message commitment, the signer constructs the Schnorr
 signature value $r$ according to Algorithm~\ref{alg:Schnorr-blind-sign} and
-returns this value to the recipient.
+returns this value to the recipient. Finally, the recipient checks whether the
+received value is correct according to (\ref{eqn:Schnorr-verify}) and computes
+the last element of the blind Schnorr signature $(c', r')$.
+
+The resulting signature $(c', r')$ can then be verified using the regular
+verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
+\begin{align*}
+  \hat{a}
+  & = g^{r'} \cdot h^{-c'}
+  = g^{r + v} \cdot g^{-c' \cdot x}
+  = g^{u + c \cdot x + v} \cdot g^{-c' \cdot x}
+  = g^{u + (c' + w) \cdot x + v} \cdot g^{-c' \cdot x} \\
+  & = g^u \cdot g^v \cdot g^{c' \cdot x} \cdot g^{w \cdot x} \cdot g^{-c' \cdot x}
+  = g^u \cdot g^v \cdot g^{x \cdot w}
+  = a \cdot g^v \cdot h^w
+  = a' \mod p
+\end{align*}
 
 \begin{algorithm}[H]
   \caption{Generate a blind Schnorr signature.}
@@ -147,11 +166,6 @@ returns this value to the recipient.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-Finally, the recipient checks whether the received value is correct according to
-(\ref{eqn:Schnorr-verify}) and computes the last element of the blind Schnorr
-signature $(c', r')$.
-
 \begin{algorithm}
   \caption{Finish a blind Schnorr signature.}
   \label{alg:Schnorr-finish}
@@ -169,20 +183,6 @@ signature $(c', r')$.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
-The resulting signature $(c', r')$ can then be verified using the regular
-verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
-\begin{align*}
-  \hat{a}
-  & = g^{r'} \cdot h^{-c'}
-  = g^{r + v} \cdot g^{-c' \cdot x}
-  = g^{u + c \cdot x + v} \cdot g^{-c' \cdot x}
-  = g^{u + (c' + w) \cdot x + v} \cdot g^{-c' \cdot x} \\
-  & = g^u \cdot g^v \cdot g^{c' \cdot x} \cdot g^{w \cdot x} \cdot g^{-c' \cdot x}
-  = g^u \cdot g^v \cdot g^{x \cdot w}
-  = a \cdot g^v \cdot h^w
-  = a' \mod p
-\end{align*}
 
 \section{U-Prove Credentials}
 
@@ -211,7 +211,19 @@ the user does not want to be traced during a credential verification (see
 Section~\ref{sec:UP-verification}) she should use a fresh token to prevent the
 verifier from linking the token to previous transactions.
 
-[TODO: make the credential more explicit, using a picture.]
+To summarise, a U-Prove credential, as depicted in
+Figure~\ref{fig:uprove-credential}, consists of:
+\begin{itemize}
+  \item a collection of attributes $\{a_i\}_{i \in \mathcal{A}}$ aggregated in $h'$,
+  \item a key pair ($h = h'^s \mod p$, $s' = s^{-1} \mod q$), based on the user's secret~$s$, and
+  \item a number of signatures $(z', c', r')$, over the token public key (and hence over the user's secret and the attributes).
+\end{itemize}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.45]{images/uprove-credential}
+  \caption{A visual representation of a U-Prove credential.}
+  \label{fig:uprove-credential}
+\end{figure}
 
 \section{Credential Issuance}\label{sec:UP-issuance}
 
@@ -477,8 +489,8 @@ reconstruction works because of the following equation:
     \cdot \textstyle\prod_{i \in \A} g_i^{-c \cdot a_i}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
   & = h^{\tilde{s}} \cdot h'^{c} \cdot h'^{-c}
-    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i}
-  = h^{\tilde{s}}
+    \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
+  & = h^{\tilde{s}}
     \cdot \textstyle\prod_{i \in \A \setminus \A_D} g_i^{\tilde{a}_i} \\
   & = a \mod p
 \end{align*}
@@ -520,7 +532,7 @@ interesting for us, we decided to develop an implementation which provides the
 full verification protocol on a smart card instead of using Microsoft's more
 limited approach.
 
-\subsection{U-Prove on MULTOS}
+\subsection{Smart Card Implementation}
 
 A very general view of our implementation of the U-Prove technology is that it
 provides storage for preloaded (e.g.\ cryptographic domain parameters) and
@@ -644,23 +656,25 @@ communicating the results of the protocol run between the card and PC.
 
 \begin{figure}[hbt]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
+  \begin{subfigure}[b]{0.4\textwidth}
     \includegraphics{images/uprove-2attr.mps}
     \caption{2 stored attributes}
     \label{fig:2attr}
   \end{subfigure}
-  \begin{subfigure}[b]{0.45\textwidth}
+  \begin{subfigure}[b]{0.5\textwidth}
     \includegraphics{images/uprove-4attr.mps}
     \caption{4 stored attributes}
     \label{fig:4attr}
   \end{subfigure}
 
-  \begin{subfigure}[b]{0.45\textwidth}
+  \vspace{5mm}
+
+  \begin{subfigure}[b]{0.4\textwidth}
     \includegraphics{images/uprove-3attr.mps}
     \caption{3 stored attributes}
     \label{fig:3attr}
   \end{subfigure}
-  \begin{subfigure}[b]{0.45\textwidth}
+  \begin{subfigure}[b]{0.5\textwidth}
     \includegraphics{images/uprove-5attr.mps}
     \caption{5 stored attributes}
     \label{fig:5attr}
@@ -669,7 +683,7 @@ communicating the results of the protocol run between the card and PC.
   \caption[Credential verification times for different configurations.]{
     Credential verification times for different configurations
     (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}: computation,
-      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}: overhead)..}
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}: overhead).}
   \label{fig:total}
 \end{figure}
 

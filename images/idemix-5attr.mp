@@ -27,19 +27,19 @@ fill (0,-5mm)--
 --(5cm,-5mm)--cycle withcolor 0.6white;
 
 pickup pencircle scaled thick;
-draw (0cm,0.704timeunit);label.llft(btex {\smallersize 1.454} etex, (0cm,0.704timeunit));
-draw (1cm,0.602timeunit);label.llft(btex {\smallersize 1.352} etex, (1cm,0.602timeunit));
-draw (2cm,0.476timeunit);label.llft(btex {\smallersize 1.226} etex, (2cm,0.476timeunit));
-draw (3cm,0.399timeunit);label.llft(btex {\smallersize 1.149} etex, (3cm,0.399timeunit));
-draw (4cm,0.275timeunit);label.llft(btex {\smallersize 1.025} etex, (4cm,0.275timeunit));
-draw (5cm,0.197timeunit);label.llft(btex {\smallersize 0.947} etex, (5cm,0.197timeunit));
+draw (0cm,0.704timeunit);label.llft(btex {\smallersize 1454} etex, (0cm,0.704timeunit));
+draw (1cm,0.602timeunit);label.llft(btex {\smallersize 1352} etex, (1cm,0.602timeunit));
+draw (2cm,0.476timeunit);label.llft(btex {\smallersize 1226} etex, (2cm,0.476timeunit));
+draw (3cm,0.399timeunit);label.llft(btex {\smallersize 1149} etex, (3cm,0.399timeunit));
+draw (4cm,0.275timeunit);label.llft(btex {\smallersize 1025} etex, (4cm,0.275timeunit));
+draw (5cm,0.197timeunit);label.llft(btex {\smallersize 947} etex, (5cm,0.197timeunit));
 
-draw (0cm,0.537timeunit);label.llft(btex {\smallersize 1.287} etex, (0cm,0.537timeunit));
-draw (1cm,0.435timeunit);label.llft(btex {\smallersize 1.185} etex, (1cm,0.435timeunit));
-draw (2cm,0.313timeunit);label.llft(btex {\smallersize 1.063} etex, (2cm,0.313timeunit));
-draw (3cm,0.235timeunit);label.llft(btex {\smallersize 0.985} etex, (3cm,0.235timeunit));
-draw (4cm,0.114timeunit);label.llft(btex {\smallersize 0.864} etex, (4cm,0.114timeunit));
-draw (5cm,0.034timeunit);label.llft(btex {\smallersize 0.784} etex, (5cm,0.034timeunit));
+draw (0cm,0.537timeunit);label.llft(btex {\smallersize 1287} etex, (0cm,0.537timeunit));
+draw (1cm,0.435timeunit);label.llft(btex {\smallersize 1185} etex, (1cm,0.435timeunit));
+draw (2cm,0.313timeunit);label.llft(btex {\smallersize 1063} etex, (2cm,0.313timeunit));
+draw (3cm,0.235timeunit);label.llft(btex {\smallersize 985} etex, (3cm,0.235timeunit));
+draw (4cm,0.114timeunit);label.llft(btex {\smallersize 864} etex, (4cm,0.114timeunit));
+draw (5cm,0.034timeunit);label.llft(btex {\smallersize 784} etex, (5cm,0.034timeunit));
 
 
 pickup pencircle scaled thin;
@@ -68,9 +68,9 @@ draw (0,-5mm)--(-tick,-5mm);
 draw (0,0)--(-tick,0);
 draw (0,0.75timeunit)--(-tick,0.75timeunit);
 label.lft(btex 0 etex, (-tick,-5mm));
-label.lft(btex 0.75s etex, (-tick,0));
-label.lft(btex 1.5s etex, (-tick,0.75timeunit));
-label.rt(btex time etex, (0,0.75timeunit+.25cm));
+label.lft(btex 750 etex, (-tick,0));
+label.lft(btex 1500 etex, (-tick,0.75timeunit));
+label.rt(btex time (ms) etex, (0,0.75timeunit+.25cm));
 
 endfig; % 5 attributes proving SLE78
 

@@ -27,17 +27,17 @@ fill (0,-5mm)--
 --(4cm,-5mm)--cycle withcolor 0.6white;
 
 pickup pencircle scaled thick;
-draw (0cm,0.584timeunit);label.llft(btex {\smallersize 1.334} etex, (0cm,0.584timeunit));
-draw (1cm,0.453timeunit);label.llft(btex {\smallersize 1.203} etex, (1cm,0.453timeunit));
-draw (2cm,0.380timeunit);label.llft(btex {\smallersize 1.130} etex, (2cm,0.380timeunit));
-draw (3cm,0.278timeunit);label.llft(btex {\smallersize 1.028} etex, (3cm,0.278timeunit));
-draw (4cm,0.176timeunit);label.llft(btex {\smallersize 0.926} etex, (4cm,0.176timeunit));
+draw (0cm,0.584timeunit);label.llft(btex {\smallersize 1334} etex, (0cm,0.584timeunit));
+draw (1cm,0.453timeunit);label.llft(btex {\smallersize 1203} etex, (1cm,0.453timeunit));
+draw (2cm,0.380timeunit);label.llft(btex {\smallersize 1130} etex, (2cm,0.380timeunit));
+draw (3cm,0.278timeunit);label.llft(btex {\smallersize 1028} etex, (3cm,0.278timeunit));
+draw (4cm,0.176timeunit);label.llft(btex {\smallersize 926} etex, (4cm,0.176timeunit));
 
-draw (0cm,0.429timeunit);label.llft(btex {\smallersize 1.179} etex, (0cm,0.429timeunit));
-draw (1cm,0.302timeunit);label.llft(btex {\smallersize 1.052} etex, (1cm,0.302timeunit));
-draw (2cm,0.228timeunit);label.llft(btex {\smallersize 0.978} etex, (2cm,0.228timeunit));
-draw (3cm,0.127timeunit);label.llft(btex {\smallersize 0.877} etex, (3cm,0.127timeunit));
-draw (4cm,0.026timeunit);label.llft(btex {\smallersize 0.776} etex, (4cm,0.026timeunit));
+draw (0cm,0.429timeunit);label.llft(btex {\smallersize 1179} etex, (0cm,0.429timeunit));
+draw (1cm,0.302timeunit);label.llft(btex {\smallersize 1052} etex, (1cm,0.302timeunit));
+draw (2cm,0.228timeunit);label.llft(btex {\smallersize 978} etex, (2cm,0.228timeunit));
+draw (3cm,0.127timeunit);label.llft(btex {\smallersize 877} etex, (3cm,0.127timeunit));
+draw (4cm,0.026timeunit);label.llft(btex {\smallersize 776} etex, (4cm,0.026timeunit));
 
 
 pickup pencircle scaled thin;
@@ -64,9 +64,9 @@ draw (0,-5mm)--(-tick,-5mm);
 draw (0,0)--(-tick,0);
 draw (0,0.75timeunit)--(-tick,0.75timeunit);
 label.lft(btex 0 etex, (-tick,-5mm));
-label.lft(btex 0.75s etex, (-tick,0));
-label.lft(btex 1.5s etex, (-tick,0.75timeunit));
-label.rt(btex time etex, (0,0.75timeunit+.25cm));
+label.lft(btex 750 etex, (-tick,0));
+label.lft(btex 1500 etex, (-tick,0.75timeunit));
+label.rt(btex time (ms) etex, (0,0.75timeunit+.25cm));
 
 endfig; % 4 attributes proving SLE78
 
