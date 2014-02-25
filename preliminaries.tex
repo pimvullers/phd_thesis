@@ -64,9 +64,15 @@ difficult as the integer factorisation problem\index{integer factorisation
 problem}. Hence, the \emph{RSA assumption}\index{RSA assumption} states that
 the probability that an attacker can solve the RSA problem is negligible.
 
-[TODO: mention that this is just basic, and that this scheme is insecure, to
-improve security padding schemes as defined in PKCS \#1 should be used.
-Also, the same holds for signatures.]
+Note that the algorithms described in this thesis are the basic textbook
+versions, which are vulnerable to a range of attacks~\cite{Hastad1985,
+Coppersmith1997}. To prevent such attacks, practical RSA implementations
+typically include some form of randomized padding into the value $m$ before
+encrypting it. For example, for encryption one would normally use the OAEP
+padding scheme from the PKCS \#1 standard~\cite{PKCS_1}. The same holds for RSA
+signatures, as described below, where usually the PSS padding
+scheme~\cite{PKCS_1} is used to securely pad messages before signature
+generation.
 
 \subsection{Signature Schemes}
 
@@ -140,10 +146,11 @@ problem}\index{discrete logarithm problem}.
 The first discrete logarithm-based scheme was the key agreement scheme by Diffie
 and Hellman~\cite{DH1976}. In this scheme a key pair as described above can be
 used to compute a shared key with another party that uses the same group
-parameters. To this end, both parties send their public key to each other and
-compute the modular exponentiation of the received value and their private key,
-as depicted in Figure~\ref{msc:DH}. The result of this computation can then be
-used as a shared key\index{shared key} since
+parameters. To this end, both parties generate such a key pair and send their
+public key to each other. Next, they compute the modular exponentiation of the
+received value and their private key, as depicted in Figure~\ref{msc:DH}. The
+result of this computation can then be used as a shared key\index{shared key}
+since
 \begin{equation*}
   h_2^{x_1} = (g^{x_2})^{x_1} = g^{x_2 \cdot x_1}
   = k = g^{x_1 \cdot x_2} = (g^{x_1})^{x_2} = h_1^{x_2} \mod p
@@ -156,9 +163,7 @@ hence whether $y = g^{x_1 \cdot x_2}$, or not. This is known as the
 \emph{decisional Diffie-Hellman problem}\index{decisional Diffie-Hellman
 problem}.
 
-[TODO: adjust description to modified MSC protocol]
-
-\begin{figure}[hb]
+\begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/dh}
   \caption{Diffie-Hellman key agreement protocol.}
@@ -182,7 +187,7 @@ the private key $x$, must determine $h^r = g^{x \cdot r} \mod p$ based on the
 public key $h = g^x \mod p$ and the commitment $c_1 = g^r \mod p$, that is, he
 must solve the Diffie-Hellman problem.
 
-\begin{algorithm}[t]
+\begin{algorithm}[ht]
   \caption{ElGamal encryption.}
   \label{alg:ElGamal-encrypt}
   \addtolength{\baselineskip}{1mm}
@@ -195,7 +200,7 @@ must solve the Diffie-Hellman problem.
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
-\begin{algorithm}[t]
+\begin{algorithm}[ht]
   \caption{ElGamal decryption.}
   \label{alg:ElGamal-decrypt}
   \addtolength{\baselineskip}{1mm}
@@ -211,49 +216,49 @@ must solve the Diffie-Hellman problem.
 
 Many signature schemes have been based on the discrete logarithm problem, for
 example the Chaum-Pedersen scheme which is described in
-Section~\ref{sec:CP-scheme}, but also the Digital Signature Algorithm (DSA),
-which is part of the Digital Signature Standard of the United States government.
-The digital signature algorithm, described in Algorithms~\ref{alg:DSA-sign}
-and~\ref{alg:DSA-verify}, is similar to the first discrete logarithm-based
-signature scheme proposed by ElGamal~\cite{ElGamal1985}. Like the encryption
-scheme, the signature $(r, s)$ consists of two parts. The first is a commitment
-to the randomisation value, whereas the second part commits to the fingerprint
-$h$ of the message $m$ that is to be signed. This signature cannot be verified
-directly, but is based on reconstructing the commitment value using the public
-key of the signer and the fact that
+Section~\ref{sec:CP-scheme}, but also the ElGamal signature scheme~\cite{ElGamal1985}
+of which a variant, known as the Digital Signature Algorithm, is part of the
+Digital Signature Standard of the United States government.
+Like ElGamal's encryption scheme, the signature $(s_1, s_2)$ consists of two
+parts generated using Algorithm~\ref{alg:ElGamal-sign}. The first is a
+commitment to the randomisation value $r$, whereas the second part commits to
+the fingerprint $c$ of the message $m$ that is to be signed. In the unlikely
+case that the resulting $s_2$ is 0, these steps have to be repeated to obtain a
+usable signature.
+
+This signature can be verified using Algorithm~\ref{alg:ElGamal-verify}. We
+cannot recover the message fingerprint from the signature, as was the case
+with RSA, but we can check it according to the following equation:
 \begin{equation*}
-  k = s^{-1} \cdot (c + x \cdot r) \mod q\text.
+  h^{s_1} \cdot s_1^{s_2}
+  = g^{x \cdot s_1} \cdot g^{r \cdot s_2}
+  = g^{x \cdot s_1} \cdot g^{r \cdot r^{-1} \cdot (c - x \cdot s_1)}
+  = g^{x \cdot s_1} \cdot g^{c - x \cdot s_1}
+  = g^c \mod p
 \end{equation*}
 
-[TODO: explain why double mod and why the while loop.]
 \begin{algorithm}
-  \caption{DSA signature generation.}
-  \label{alg:DSA-sign}
+  \caption{ElGamal signature generation.}
+  \label{alg:ElGamal-sign}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{DSA-sign}{$(p, q, g), m, x$}
-      \State $r \gets 0$
-      \While{$r = 0 \mod p$}
-        \State $k \gets \Call{Random}{~}$
-        \State $r \gets (g^k \mod p) \mod q$
-      \EndWhile
+    \Function{ElGamal-sign}{$(p, q, g), m, x$}
       \State $c \gets \Call{Hash}{m}$
-      \State $s \gets k^{-1} \cdot (c + x \cdot r) \mod q$
-      \Return $(r, s)$
+      \State $r \gets \Call{Random}{~}$
+      \State $s_1 \gets g^r \mod p$
+      \State $s_2 \gets r^{-1} \cdot (c - x \cdot s_1) \mod (p - 1)$
+      \Return $(s_1, s_2)$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
 \begin{algorithm}
-  \caption{DSA signature verification.}
-  \label{alg:DSA-verify}
+  \caption{ElGamal signature verification.}
+  \label{alg:ElGamal-verify}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{DSA-verify}{$(p, q, g), m, (r, s), h$}
+    \Function{ElGamal-verify}{$(p, q, g), m, (s_1, s_2), h$}
       \State $c \gets \Call{Hash}{m}$
-      \State $u \gets c \cdot s^{-1} \mod q$
-      \State $v \gets r \cdot s^{-1} \mod q$
-      \State $\hat{r} \gets (g^u \cdot h^v \mod p) \mod q$
-      \If{$\hat{r} \neq r$}
+      \If{$h^{s_1} \cdot s_1^{s_2} \neq g^c \mod p$}
         \Return \Call{Invalid}{}
       \EndIf
       \Return \Call{Valid}{}
@@ -268,19 +273,23 @@ setting of a prime order subgroup of $\Z^*_p$. These techniques can, however,
 be applied to any finite cyclic group. Another popular setting for implementing
 discrete logarithm systems is the elliptic curve setting which we describe below.
 
-[TODO: mention that additive notation is common in an ECC setting, whereas multiplicative notation is used for prime order subgroups.]
+Note that it is common to use additive notation in an elliptic curve setting,
+whereas multiplicative notation is typically used to denote operations in prime
+order subgroups.
 
 \subsection{Elliptic Curves}
 
-[TODO: explain notation $\F{q}$ instead of $\Z_q$]
-
-Given a finite field $\F{q}$ containing $q$ elements, where $q$ is a prime
-power, an elliptic curve $E$ over $\F{q}$ is defined by the equation
+A finite field containing $q$ elements, where $q = p^k$ is a prime power, is
+denoted as $\F{q}$. An example of such a field is $\Z_p$, but more complex
+finite fields can also be used for elliptic curves. An elliptic curve $E$ over
+$\F{q}$ is defined by the equation
 \begin{equation}\label{eqn:elliptic_curve}
   E: y^2 = x^3 + a \cdot x + b
 \end{equation}
-where $a, b \in \F{q}$ are the curve parameters that satisfy $4 \cdot a^3 + 27 \cdot b^2 \neq 0$.
-The set of all points $P = (x, y)$ on this curve $E$ is denoted as
+where $a, b \in \F{q}$ are the curve parameters that satisfy
+$4 \cdot a^3 + 27 \cdot b^2 \neq 0$. This condition is required for E to be
+non-singular, as required for cryptographic applications. The set of all points
+$P = (x, y)$ on this curve $E$ is denoted as
 \begin{equation*}
   E(\F{q}) = \{ (x, y) \in \F{q} \times \F{q} : y^2 = x^3 + a \cdot x + b \}
                          \cup \{ \infty \}
@@ -290,7 +299,7 @@ where $\infty$ is a special point called the \emph{point at infinity}.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[scale=.4]{images/ec_math}
+  \includegraphics[scale=.5]{images/ec_math}
   \caption{Geometric visualisation of point addition ($R = P + Q$), point
     doubling ($R' = 2P'$) and point negation ($-R$) on an elliptic curve.}
   \label{fig:EC}
@@ -386,7 +395,7 @@ is a hard problem which is know as the \emph{elliptic curve discrete logarithm
 problem}.
 
 \begin{algorithm}
-  \caption{Elliptic curve point multiplication: $R = k \cdot P$ (repeated-double-and-add; right-to-left binary method)}
+  \caption{Elliptic curve point multiplication: $R = k \cdot P$}%(repeated-double-and-add; right-to-left binary method)
   \label{alg:ec_point_multiplication}
 
   \begin{algorithmic}[1]
@@ -447,7 +456,7 @@ follows:
     e(P,\; Q + Q') & = & e(P,\; Q)\cdot e(P,\; Q')
   \end{array}
 \end{equation*}
-As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n\,m}$.
+As a result, $e(n\cdot P,\; m\cdot Q) = e(P,\; Q)^{n \cdot m}$.
 
 Pairings are used for many (new) cryptographic protocols~\cite{BSS05}, such as
 short signatures~\cite{BonehLS04}, three-party one-round key
@@ -459,29 +468,27 @@ For all these pairings one often uses specific cyclic subgroups of a curve
 $E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$ and
 $\mathbb{F}_{p^k}^*$ as $\mathbb{G}_T$.
 
-\subsubsection{Barreto-Naehrig Curves}
+\subsubsection{Barreto-Naehrig Curves}\index{Barreto-Naehrig curves}
 
-Pairing friendly elliptic curves are curves with a small embedding degree and a
-large prime-order subgroup. In 2005, Barreto and Naehrig discovered a new method
+Pairing-friendly elliptic curves are curves with a small embedding degree and a
+large prime-order subgroup~\cite{FreemanST2010}. In 2005, Barreto and Naehrig
+discovered a new method
 for constructing pairing friendly elliptic curves of prime order over a prime
 field~\cite{BN06}. More precisely, Barreto-Naehrig curves are defined over
 $\F{p}$ where $p = p(u) = 36 u^4 + 36 u^3 + 24 u^2 + 6 u + 1$ for $u \in \Z$
 such that $p$ is prime. The order of such curve is a prime $n$ where
 $n = n(u) = 36 u^4 + 36 u^3 + 18 u^2 + 6 u + 1$. Hence, a Barreto-Naehrig curve
 is constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
-numbers. The embedding degree of these curves is 12 and we detail the parameters
-for our case when they are used.
-
-[TODO: embedding degree is not explained.]
+numbers.
 
 \section{Proofs of Knowledge}
 
 A cryptographic concept that is frequently used in attribute-based credential is
-a proof of knowledge. The goal of such proof is for the user, or \emph{prover},
-to convince the verifier of a given statement. For example, the often used
-challenge-response construction in which a user has to sign or decrypt a
-challenge to authenticate herself, is a proof that she knows the private key
-corresponding to the public key used by the verifier.
+a \emph{proof of knowledge}\index{proof of knowledge}. The goal of such proof is for the user, or
+\emph{prover}, to convince the verifier of a given statement. For example, the
+often used challenge-response construction in which a user has to sign or
+decrypt a challenge to authenticate herself, is a proof that she knows the
+private key corresponding to the public key used by the verifier.
 
 To describe such proofs of knowledge we use the notation introduced by Camenisch
 and Stadler~\cite{CamenischStadler1997}. For example,
@@ -541,10 +548,11 @@ Hence, $h = g^{\frac{r'-r}{c'-c}} \mod p$ which means that the user actually
 knows the private key $x$, since $x = \frac{r'-r}{c'-c} \mod q$.
 
 A similar protocol~\cite{Girault1991}, depicted in Figure~\ref{msc:schnorr_mod},
-can also be constructed for groups in which the order [TODO: of a generator?] is not known to all parties,
-which is for instance the case in an RSA setting [TODO: explain.].
-As a result the user cannot perform the modular
-reduction when computing the response, as . This means that the response no longer hides the
+can also be constructed for groups in which the order of the (sub)group is not
+known to all parties. This is for instance the case in an RSA setting where the
+order of the group is only known by the party that knows the primes $p$ and $q$.
+As a result the user cannot perform the modular reduction using the order of $g$
+when computing the response. This means that the response no longer hides the
 secret $x$ as it is not distributed uniformly. Therefore the user must choose a
 significantly larger\footnote{For instance, the length of the random value $u$
 should be 80-bits longer than the combined lengths of the modulus $n$ and the
@@ -552,8 +560,6 @@ challenge $n$. This in contrast to just the length of the prime order $q$.}
 random value $u$ such that $a$ is distributed statistically close to uniform
 over the subgroup generated by $g$ and $x$ is statistically hidden in $r$.
 Hence, this protocol is called \emph{statistical zero-knowledge}~\cite{Pointcheval2000}.
-
-[TODO: so the order of $g$ is unknown.]
 
 \begin{figure}[ht]
   \centering
