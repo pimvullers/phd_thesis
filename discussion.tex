@@ -1,9 +1,9 @@
 \chapter{Discussion\label{chp:discussion}}
 
 In the previous chapters we described the attribute-based credential
-technologies and the performance of their smart card implementations. In this
-chapter we compare them against each other to determine their strong and weak
-points.
+technologies and the performance of their smart card implementations
+individually. In this chapter we compare them with each other to determine their
+strong and weak points.
 
 \section{Attribute-based Credential Technologies}
 
@@ -81,10 +81,10 @@ protocols.
 \end{savenotes}
 
 The above mentioned differences and similarities have been summarised in
-Table~\ref{tbl:tech-comparison}. Note that this overview only focussed on the
+Table~\ref{tbl:tech-comparison}. Note that this overview only focused on the
 aspects of the technologies that we looked into. Other interesting overviews are
-provided by Lapon et al.~\cite{LaponKDN2011,Lapon2012}, focussing on revocation
-strategies, and Corella~\cite{Corella2011a,Corella2011b}, focussing on the use
+provided by Lapon et al.~\cite{LaponKDN2011,Lapon2012}, focusing on revocation
+strategies, and Corella~\cite{Corella2011a,Corella2011b}, focusing on the use
 of attribute-based credentials in the context of the United States national
 strategy for trusted identities in cyberspace.
 
@@ -113,7 +113,7 @@ between these approaches is given in Table~\ref{tbl:approaches}. This
 card, but it also solves the main disadvantage of the hardware-protection
 approach: the smart card cannot be used independently, since it is tied to
 computational (and storage) resources external to the card. This means that it
-requires a specific, card matching terminal, like the card owner's PC, to run
+requires a specific, card matching terminal, like the user's PC, to run
 the protocols.
 
 \begin{table}
@@ -156,314 +156,185 @@ a different authentication scheme is used (see Section~\ref{sec:nPA}).
 
 \section{Smart Card Performance\label{sec:perf-comparison}}
 
-For performance our primary goal was to keep the running times of the
-protocol on the card sufficient for on-line use.\footnote{The proving
-scenario should be fast (less then a second) whereas the less frequently
-run issuance scenario can take a few seconds to complete a transaction.}
-Despite the obvious
-efficiency concern caused by our choice to implement the full U-Prove
-protocols on a smart card, we managed to provide a very efficient
-implementation. Our worst-case execution time of the protocol on the card
-(with five attributes) is 0.87 seconds. Configuring the implementation for
-a smaller number of attributes improves this running time considerably.
-This makes our implementation efficient enough to be possibly considered
-also for the use in e-ticketing, where transactions with a card should be
-at or below 0.3 seconds.\footnote{
-\url{http://www.smartcardalliance.org/resources/lib/Transit_Financial_Linkages_WP.pdf}}
-This discards the disadvantage of our approach mentioned in
-Table~\ref{tab:approaches}, offering an overall better solution than
-Microsoft's approach. Thus, Microsoft is advised to change its approach to
-smart card support for U-Prove. Our good result is mostly due to the choice of the
-smart card implementation platform. Because of its more convenient API, we
-used a MULTOS smart card~\cite{MULTOS2005} in favour of the more popular
-Java Card platform~\cite{Chen00}. The former has been overlooked as a
-prototyping platform whereas the latter exhibited questionable efficiency
-in some previous privacy-friendly protocol
-implementations~\cite{BichselCGS2009,Sterckx09,TewsJacobs09}.
+When comparing the smart card implementations we have to take into account that
+they have been developed on different platforms, and more importantly on
+different hardware. To be precise, the self-blindable credentials applet runs on
+an NXP SmartMX J3A081 chip with the Java Card platform (JCOP v2.4.1 R3), the
+U-Prove application runs on an Infineon SLE66 chip with the MULTOS platform
+(I4F(1-1-2) on 360PE(M)) and the Identity Mixer application runs on the Infineon
+SLE78 chip with the MULTOS platform (ML3-36K-R1).
 
-
-To start, these values offer a clear improvement over the U-Prove issuance times
-from~\cite{MostowskiVullers11}, which take 3623 and 5489 ms for 2 and 5
-attributes respectively. Not only are the absolute values better, the extra time
-it takes to issue more attributes does not increase as much as with the U-Prove
-implementation.
-%G->P: \todo{Perhaps we could mention that this relative overhead between 2 and 5 attributes is 51.5\% vs.\! 8.6\%.}
-
-Sterckx et al.~\cite{Sterckx09} implement the Direct Anonymous Attestation (DAA)
-protocol, which is derived from the Idemix protocols on a Java~Card. They
-manage to achieve a running time of 2.4 seconds of which 19\% is overhead, which
-gives a computation time of approximately 1.9 seconds. This is good, but
-unfortunately the DAA protocol does not support any attributes as it is just
-targeted at anonymous authentication and hence only uses a secret key.
-
-Bichsel et al.~\cite{BichselCGS2009} from the Idemix team at IBM Research
-Z\"urch also implemented a variant of the DAA protocol on a Java~Card. They
-report a running time of 7.4 seconds for a modulus size of 1280 bits, which is
-slightly larger than the 1024 bits we used. It is unclear, however, which
-transaction time they measured. But again, this implementation does not include
-any attributes.
-
-
-Comparing this to the U-Prove implementation~\cite{MostowskiVullers11}, it is
-clear that U-Prove is much more efficient with running times below a second.
-At this point the multi-show unlinkability property of the Idemix technology has
-an effect on the performance. To achieve this property, the Issuer signature is
-partly randomised and for the remaining part proven using a zero-knowledge
-proof. This does not only require more computations, but it also requires more
-memory space to hold these values, space that unfortunately is not available.
-This clearly has its drawback compared to U-Prove that only requires
-computation to hide the undisclosed attributes.
-
-While the multi-show unlinkability property has a negative effect on the running
-time for Idemix, it requires less storage on the card then U-Prove. This is due
-to the fact that to achieve multi-show unlinkability the card has to store
-multiple U-Prove tokens. Given that storage space is rather
-limited on smart cards\footnote{A typical smart card only has 36 to 144 KB of
-EEPROM available for storing application data.}, this is a huge benefit of the
-Idemix technology.
-
-Comparing our work with the DAA implementations by Sterckx et
-al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes no real
-sense since they do not offer selective disclosure of attributes. It is,
-however, clear that our implementation provides a performance improvement over
-these implementations since we can even hide the secret key and two attributes
-in 1.5 seconds whereas Sterkx et al. need 4.2 seconds to hide only the secret
-key.
-\section{Results and Performance Analysis}\label{sec:results}
-
-
-
-The two most important factors for us to test in our U-Prove
-implementation were correctness of the protocol calculations
-(obviously) and the speed. Testing the correctness was fairly
-easy. Since we interfaced our card to Microsoft's U-Prove SDK we
-could simply test it by invoking the protocol runs from the SDK and
-check the results. During the first stages of the development partial
-protocol calculations were verified with the test vectors provided with the
-U-Prove SDK~\cite{U-Prove_Vectors2011}. In the whole process a few
-corner case problems with our calculations surfaced that required
-minor corrections.
-
-As we stated in the previous section, for speed we concentrated our
-implementation efforts on the every day use case of the application, i.e.\ the
-attribute proving protocol. However, we also strived to optimise the rest
-of the protocols to maintain speed also during the initialisation and
-issuance parts. For the performance analysis, we executed a number of full
-protocol runs (initialisation, issuance, proving) on the card in various
-configurations. First of all we varied the number of stored
-attributes on the card, then within this attribute range we varied the
-number of (un)disclosed attributes. As shown in Figure~\ref{fig:issue} this
-resulted in a running time of 3.6 and 5.5 seconds for the issuance of a
-U-Prove token with respectively 2 and 5 attributes.
-%The additional time needed for issuing increases
-%with each additional attribute. It takes an additional 0.5 seconds for
-%the step from 1 to 2 attributes and already 0.7 seconds extra for the
-%step from 4 to 5 attributes. .
-The dark grey area on the graph indicates the core running time of the
-protocol calculations on the card, whereas light grey indicates the
-remaining overhead. This overhead consists of transferring data to the card
-and communicating the results of the protocol run between the card and PC.
-
-Correspondingly, the cumulative results for the attribute
-proving protocol are shown in Figure~\ref{fig:total}.
-What can be seen in these graphs is that under ``full load'' our
-implementation executes the complete proving protocol in just under
-0.9 seconds (graph~\ref{fig:5attr}). In this worst-case scenario 5 attributes are
-stored on the card, none of which are disclosed during the protocol
-run. In other words, the U-Prove token is only validated for its
-authenticity without revealing any attribute data. Such a scenario is
-not very likely to occur in reality. In a more likely scenario at
-least one or two attributes are going to be disclosed and we can also
-assume that a U-Prove token will contain less attributes (or,
-that a large number of attributes can be split into several separate
-U-Prove tokens). As the graphs show, reducing the number of stored
-attributes improves the running time at a rate of 100 milliseconds per
-attribute, and also that the performance increases along with
-increasing the number of disclosed attributes, roughly 50 milliseconds
-per each extra disclosed attribute. Overall, this brings the total
-execution time for a two attribute token disclosing one attribute to under
-0.5 seconds (graph~\ref{fig:2attr}).
-
-One of the reasons to justify the Microsoft's device protected approach
-as described in Section~\ref{sec:uproveandcards} are possible resource
-issues with smart cards (limited storage space and limited speed). Our
-performance results undermine this argument. The worst case execution time
-of the proving part is 0.87 seconds. This not only makes the card
-implementation fast enough to be usable in general, it also makes it
-usable for ``field'' applications, e.g.\ dispensing machines. Even more,
-for smaller numbers of smaller attributes the running times become almost
-acceptable for use in public transport\slash e-ticketing, where the
-commonly required card transaction times should stay below 0.3 seconds. We
-also see a potential to improve the running times using faster smart card
-hardware, we elaborate on this in the upcoming section. Overall, these
-good results strongly justify the idea to use U-Prove standalone on a
-smart card rather than to use Microsoft's device-protected token approach,
-which now has no obvious functional or performance advantages over our
-approach.
-
-Furthermore, excluding our own previous work on implementing ECC-based
-self-blindable signatures on a smart card~\cite{BatinaHJMV10,HoepmanJV10}
-our performance results are by far better than all the previously reported
-results for anonymous credentials implemented on smart cards. One of the
-first attempts within our group to implement a U-Prove like protocol on a
-Java Card~\cite{TewsJacobs09} resulted in running times closing to 10
-seconds for a setup closely corresponding to ours. The DAA protocol was
-also implemented on a Java Card by Sterckx et al.~\cite{Sterckx09} with
-the running times of close to 4 seconds for the DAA signing protocol.
-In~\cite{BichselCGS2009} yet another implementation of anonymous
-credentials on a Java Card is reported with running times of around 7--10
-seconds. Our MULTOS U-Prove implementation is simply way faster.
-
-The only limitations of our implementation are imposed by the limited
-resources of the MULTOS smart card. We had to limit the prime modulus size
-to 1024 bits, use only SHA-1 hashing, and because of the available RAM
-($<$1kB) on the card we could only allow for the maximum of 5 attributes,
-each one up to 255 bytes in size. Otherwise our implementation is fully
-flexible and provides full U-Prove functionality, \emph{including} the
-smart card features described in Section~\ref{sec:uproveandcards}.
-However, it is not uncommon for modern smart cards to support up to 2048
-bits for modulus size and 2 kilobytes of RAM, only no such MULTOS cards
-were available to us. In the following we make some speculative performance
-estimations based on tests performed with Java Cards that we have.
-
-\subsection{MULTOS vs. Java Card}
-
-As we already stated in Section~\ref{sec:javacard} providing an efficient
-implementation of U-Prove on a Java Card is currently not possible, mainly
-because of the inflexible Java Card API. However, we can use Java Card to
-do further (speculative) performance analysis.
-
-Our Java Cards are implemented on the SmartMX hardware platform from
-NXP, which provides excellent hardware cryptographic support (2048 bit
-RSA and 320 bit ECC), and is considered state of the art when it
-comes to speed. By running comparative speed tests between our Infineon
-SLE66 MULTOS card and a brand new NXP SmartMX (JCOP31) Java Card we
-estimate two things:
-\begin{enumerate}
-\item How fast a sibling implementation, equal in terms of the
-  supported protocol parameters, would be on the SmartMX chip?
-\item How fast would an implementation supporting greater modulus size
-  and more attributes would be on the SmartMX chip?
-\end{enumerate}
-
-\begin{table}[b]
+\begin{table}[t]
   \centering
-  \caption{Performance comparison between \emph{MULTOS on an Infineon
-    SLE66} chip and \emph{JCOP31 on a NXP SmartMX} chip (time in
-    milliseconds for 100 successive operations).}
+  \caption{Performance comparison between the NXP SmartMX chip and the Infineon
+    SLE66 and SLE78 chips (time in milliseconds for 100 successive operations).}
   \label{tab:comparison}
   \renewcommand{\tabcolsep}{1.25mm}
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabular}{l|c|c|c|c|}
-     & \multicolumn{2}{c|}{MULTOS} & \multicolumn{2}{c|}{JCOP31} \\
-     & contact & wireless & contact & wireless \\\hline
-    SHA-1 RAM        &  5120 &  5274 & 1110 & 1136 \\\hline
-    SHA-1 EEPROM    &  6125 &  6308 & 1442 & 1466 \\\hline
-    RSA-1024 RAM     &  1016 &  1060 &  772 &  777 \\\hline
-    RSA-1024 EEPROM &  2936 &  3041 & 1941 & 1952 \\\hline
-    RSA-2048 RAM     & 14289 & 14898 & 1926 & 1950 \\\hline
-    RSA-2048 EEPROM & 17237 & 17956 & 3838 & 3865 \\\hline
+  \begin{tabular}{l|c|c|c|c|c|c|}
+     & \multicolumn{2}{c|}{SmartMX} & \multicolumn{2}{c|}{SLE66} & \multicolumn{2}{c|}{SLE78} \\
+     & contact & wireless & contact & wireless & contact & wireless \\\hline
+    SHA-1 RAM        & 1110 & 1136 &  5120 &  5274 &  866 &  943 \\\hline
+    SHA-1 EEPROM     & 1442 & 1466 &  6125 &  6308 & 1188 & 1285 \\\hline
+    RSA-1024 RAM     &  772 &  777 &  1016 &  1060 &  668 &  877 \\\hline
+    RSA-1024 EEPROM  & 1941 & 1952 &  2936 &  3041 & 2449 & 2898 \\\hline
+    RSA-2048 RAM     & 1926 & 1950 & 14289 & 14898 & 1055 & 1449 \\\hline
+    RSA-2048 EEPROM  & 3838 & 3865 & 17237 & 17956 & 3473 & 4192 \\\hline
   \end{tabular}
 \end{table}
 
-For this we simply compared the speed of raw SHA-1 and RSA operations
-between the two platforms, operating both on RAM and EEPROM.  The
-results are shown in Table~\ref{tab:comparison}, the running times are
-expressed in milliseconds for 100 iterations of each test, for example
-a single SHA-1 execution storing the results in RAM for the first case (MULTOS
-card on a contact interface) takes 51.2 milliseconds on average.
-More generally and roughly speaking,
-the JCOP31 card is 4 times faster for SHA-1, and 1.3 to 1.5 times
-faster for RSA-1024, depending on the target memory.
-Although exact estimations are not possible, we
-speculate that the attribute proving part with the same protocol
-parameters as our MULTOS implementation could be improved by a factor
-of 2 making the worst execution time for 5 attributes stay below 0.5 seconds.
-We also estimate that for the 2 attribute configuration the running times
-would drop below the 0.3 seconds required for public transport and e-ticketing applications.
-As for the implementation supporting
-larger modulus size and more attributes, the JCOP31 card drops
-its performance going from RSA-1024 to RSA-2048 by the factor of 2 to 2.5.
-Based on this we believe that the
-proving part of the protocol would be within 2 seconds realm for 2048
-bit modulus size and 10 attributes. This would still be faster
-than any of the existing Java Card anonymous credentials
-implementations that only support modulus sizes smaller than 2048
-with reasonable efficiency.
+In order to compare the raw performance of the underlying hardware we developed
+a small test application that performs some basic operations\footnote{A message
+digest computation using SHA-1; and two RSA encryptions using a random public
+key, one with a 1024 bits modulus and one with a 2048 bits modulus.} and stores
+the outcome either in RAM or EEPROM. The results of these tests are summarised
+in Table~\ref{tab:comparison}. From this we can conclude that the SLE66 is
+overall slower than the other cards, with a huge performance penalty when
+computing an RSA operation (which is basically a modular exponentiation) with a
+modulus of 2048 bits\footnote{Probably the cryptographic co-processor of the
+SLE66 chip does not support this operation directly such that a software
+solution is needed to handle operations involving a 2048 bits modulus.}. The
+timings of the SLE78 and SmartMX chips are much closer to each other. Here we
+notice that the SLE78 is in principle faster than the SmartMX, but also that
+there is a larger difference between the contact and wireless (or contactless)
+interfaces as well as between the memory used (RAM or EEPROM).
 
-Yet again this stresses the Java Card shortcoming of the limited
-hardware interface provided by the API -- had the API been more
-flexible, our speculative figures above would probably be factual.
-Although this issue has been brought up before and we know
-that the smart card industry is very well aware of this problem, we
-see hardly any improvements in this respect. The MULTOS platform
-proved itself very strong here with its flexible API design. What
-MULTOS is lacking from our point of view is wider hardware support for
-cryptography other than RSA and DES. In our own privacy-friendly protocol
-designs we rely heavily on ECC, and although the MULTOS API
-specification supports ECC, no MULTOS cards with hardware ECC support are
-currently available to us for small scale development.
-Finally, we find the size of the RAM
-(960 bytes) available on the MULTOS development cards a little bit of
-a limiting factor to fully commit to MULTOS as our prototyping
-framework.
+\subsection{Credential Issuance}
 
-\section{Ongoing Research}\label{sec:future}
+With this in mind we first look at the performance of the implementations during
+issuance. The issuance process for the self-blindable credentials does not
+involve any computations on the card, since it only has to store the credential.
+This makes it the most efficient implementation at this point since both U-Prove
+and Identity Mixer have to perform a blind signature protocol to issue
+credentials. To make the comparison between those two easier we but their
+issuance performance graphs (Figure~\ref{fig:issue} and Figure~\ref{fig:issuance})
+next to each other in Figure~\ref{fig:comparison-issuance}.
 
-In our research we continue to look for efficient solutions for
-privacy-friendly smart card applications. For this we develop our own
-protocols as well as explore the existing ones. Both require
-prototypes for feasibility and efficiency analysis. One of the
-\emph{by-products} of the work presented in this paper is the
-discovery of the MULTOS cards as an efficient implementation platform
-for this kind of protocols.
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[scale=.95]{images/uprove-issuance.mps}
+    \caption{U-Prove}
+    \label{fig:uprove-issuance}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.45\textwidth}
+  \includegraphics[scale=.95]{images/idemix-issuance.mps}
+    \caption{Identity Mixer}
+    \label{fig:idemix-issuance}
+  \end{subfigure}
 
-Hence, the obvious next step is to investigate the implementation of
-the Idemix protocol suite on a MULTOS card. Idemix has been already
-implemented on a Java Card~\cite{BichselCGS2009} and despite the best effort of the
-implementers to maintain reasonable efficiency the running times still leave
-room for improvement in our opinion. Idemix has more features and is more complex than
-U-Prove and more involved computations are required, so clearly we do
-not expect an equally fast implementation as the one we just
-presented, but we certainly believe we can considerably improve over
-the current Java Card Idemix implementation.
+  \caption[Credential issuance performance for various numbers of attributes.]{
+    Credential issuance performance for various numbers of attributes
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
+  \label{fig:comparison-issuance}
+\end{figure}
 
-In~\cite{BatinaHJMV10,HoepmanJV10} we presented an efficient Java Card
-implementation of our
-own protocol based on ECC and self-blindable signatures. This protocol
-provides a very strong anonymity property, however our implementation,
-despite the achieved efficiency, still suffers from the inability to
-fully utilise the hardware capabilities of the card hidden beyond the
-Java Card API. Here, a MULTOS card with full ECC support would provide
-further improvement possibilities. When (if at all) such cards are
-available to us we will certainly investigate these possibilities.
+Based on these graphs it is clear that the Identity Mixer implementation offers
+a clear improvement over the U-Prove issuance times. Not only are the absolute
+values better, the extra time it takes to issue more attributes does not
+increase as much as with the U-Prove implementation. However, we also need to
+take the hardware platform into account, which in this case is in favour of the
+Identity Mixer implementation. Furthermore, our U-Prove implementation is built
+according to the first revision~\cite{U-Prove_Crypto2011} of version 1.1 of the
+U-Prove cryptographic specification, whereas later revisions~\cite{U-Prove_Crypto2013},
+include an optimised issuance protocol in which the computation of $z$ is
+performed by the issuer (as described in Section~\ref{sec:UP-issuance}). Taking
+this optimisation and a switch to the SLE78 platform into account, the U-Prove
+implementation should get a reasonable improvement in its issuance performance
+bringing it closer to the results we got from the Identity Mixer implementation.
 
-In parallel to this protocol and speed quest we also develop case
-studies and a demo suite for on-line use of anonymous credentials. To
-this end, we are implementing a general framework in the form of a
-browser plug-in for smart card enabled web services. This framework
-will be targeted for the set of anonymity friendly protocols under our
-consideration and will allow us to do more practical comparative
-studies between the different anonymous credential approaches
-exemplified by suitable demos.
+\subsection{Selective Disclosure of Attributes}
 
-\section{Conclusion}\label{sec:conclusion}
+Since a self-blindable credential only contains a single attribute, there is no
+selective disclosure option in the credential verification protocol. In this
+case the user just chooses which attribute(s) to reveal, and hence which
+credential(s) to use. Thus, to show multiple attributes the protocol has to be
+performed multiple times, which also means that the transaction time is
+multiplied. This in strong contrast to the other technologies, where revealing
+more attributes, from the same credential, actually reduces the running time, as
+can be seen in Figure~\ref{fig:2attr-comparison}.
 
-We have presented an efficient MULTOS implementation of the U-Prove
-technology that allows to run the complete prover side of the protocols
-on a smart card. This provides an anonymity friendly credentials
-mechanism for users of such a smart card, with full independence from
-authentication resources external to the smart card. From the user
-perspective, the most performance sensitive part of the protocol is
-attribute proving. Here, the achieved worst-case running
-times of 0.87 seconds for
-the whole set of attributes clearly establishes the practical
-usability of our implementation. Our performance results also strongly
-support our idea to use a stand-alone U-Prove smart card rather than
-the Microsoft device-protection approach, which seems to overlook the current
-capabilities of smart cards. One other thing that seems to be overlooked by scientists and smart
-card developers is the existence of the MULTOS smart card platform.
-During our work it proved itself highly flexible and reasonably fast, hence our next steps
-are to implement and assess the performance of other anonymity
-friendly protocols, primarily Idemix, in a (MULTOS) smart card setting.
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.33\textwidth}
+    \includegraphics[scale=.95]{images/sbcred-2attr-compare.mps}
+    \caption{Self-blindable Credentials}
+    \label{fig:uprove-2attr}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[scale=.95]{images/uprove-2attr-compare.mps}
+    \caption{U-Prove}
+    \label{fig:uprove-2attr}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.32\textwidth}
+    \includegraphics[scale=.95]{images/idemix-2attr-compare.mps}
+    \caption{Identity Mixer}
+    \label{fig:idemix-2attr}
+  \end{subfigure}
 
+  \caption[Credential verification performance with two attributes.]{
+    Credential verification performance with two attributes
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
+  \label{fig:2attr-comparison}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[scale=.95]{images/uprove-5attr-compare.mps}
+    \caption{U-Prove}
+    \label{fig:uprove-5attr}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.48\textwidth}
+    \includegraphics[scale=.95]{images/idemix-5attr-compare.mps}
+    \caption{Identity Mixer}
+    \label{fig:idemix-5attr}
+  \end{subfigure}
+
+  \caption[Credential verification performance with five attributes.]{
+    Credential verification performance with five attributes
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
+  \label{fig:5attr-comparison}
+\end{figure}
+
+Comparing the results from Figures~\ref{fig:2attr-comparison}
+and~\ref{fig:5attr-comparison}, it is clear that the U-Prove technology offers
+the best verification performance. The computation time for the verification of
+a U-Prove credential is overall lower than the computation times of the other
+technologies, even when a U-Prove credential contains five attributes of which
+only a single attribute is revealed. This performance could even be improved
+when the SLE78 chip can be used instead of the SLE66. Hence we can conclude that
+the signature randomisation performed by Identity Mixer and the self-blindable
+credentials has a significant impact on the running time of the verification
+protocol.
+
+While the multi-show unlinkability property has a negative effect on the running
+time for Identity Mixer and the self-blindable credentials, it requires less
+storage on the card then U-Prove. This is due to the fact that to achieve
+multi-show unlinkability the card has to store multiple U-Prove tokens. Given
+that storage space is rather limited on smart cards\footnote{A typical smart
+card only has 36 to 144 KB of EEPROM available for storing application data.},
+this is a serious drawback of the U-Prove technology.
+
+\section{Final Remarks}
+
+Compared to the existing implementations mentioned in the previous section, we
+have made a clear performance improvement with all of our implementations. These
+implementations are not only faster, but also provide \emph{full} credentials
+on a smart card instead of the partial solutions that have been developed to
+cope with the smart card shortcomings. With transaction times around, or even
+below one second we can conclude that these are, to the best of our knowledge,
+the first implementations that offer an acceptable performance for practical
+use.
+
+\subsubsection{I Reveal My Attributes}
+
+Due to the maturity and multi-show unlinkability feature of the Identity Mixer
+technology that smart card implementation has been selected to be used in a
+pilot project called \emph{I Reveal My Attributes} or IRMA for short. The goal
+of this project is to gain more experience in actually using these kinds of
+privacy-preserving technology and the usability of such technologies on a smart
+card.
