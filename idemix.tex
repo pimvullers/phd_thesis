@@ -811,27 +811,29 @@ necessary variables in RAM.
 There are two important performance measures: the time it takes to issue a new
 credential to the card, and the running time of the verification protocol.
 
-For these performance tests we've used the same test vectors as with the U-Prove
-implementation in order to get comparable results (see
+For these performance tests we've used, where possible, the same test vectors as
+with the U-Prove implementation in order to get comparable results (see
 Chapter~\ref{chp:discussion} for a detailed comparison). Furthermore, our
 implementation uses a modulus size of 1024~bits, which provides a minimal level
 of security, but an acceptable performance. Given this size of the modulus, and
 hence the size of all group elements, we can support at most 5 attributes per
 credential in our implementation.
 
-\subsection{Credential Issuance}
-
 For issuance, we measured the running time of the protocol and determined how
 much time was actually spent on computations and which part was used to transfer
-and store the values (marked as overhead; see Figure~\ref{fig:issuance}).
+and store the values (marked as overhead; see Figure~\ref{fig:issuance}). From
+these results we can conclude that the number of attributes included in a
+credential has only a minimal effect on the computations. An increase in the
+number of attributes does, however, result in an increase of the overhead of
+approximately 100 milliseconds per attribute.
 
-\begin{figure}[b]
+\begin{figure}[t]
   \centering
   \includegraphics{images/idemix-issuance.mps}
 
-  \caption[Credential issuance times.]{
-    Credential issuance times
-    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computations,
+  \caption[Identity Mixer credential issuance times for various numbers of attributes.]{
+    Identity Mixer credential issuance times for various numbers of attributes
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
       \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
   \label{fig:issuance}
 \end{figure}
@@ -840,9 +842,9 @@ Sterckx et al.~\cite{Sterckx09} implement the direct anonymous attestation
 protocol, which is derived from the Identity Mixer protocols, on a Java~Card.
 With a 1024~bits modulus they achieve a running time of 2.4~seconds of which
 19\% is overhead, which gives a computation time of approximately 1.9~seconds.
-This is good, but unfortunately the direct anonymous attestation protocol does
-not support any attributes as it is just targeted at anonymous authentication
-and hence only uses a secret key.
+This is good, and in line with the results we got, but unfortunately the direct
+anonymous attestation protocol does not support any attributes as it is just
+targeted at anonymous authentication and hence only uses a secret key.
 
 Bichsel et al.~\cite{BichselCGS2009} from IBM Research Z\"urch also implemented
 a variant of the direct anonymous attestation protocol on a Java~Card. They
@@ -851,16 +853,16 @@ larger than the 1024~bits we used. It is unclear, however, which transaction
 time they measured. But again, this implementation does not include any
 attributes.
 
-\subsection{Selective Disclosure of Attributes}
-
 For selective disclosure, we measured the running times of four configurations
 (see Figure~\ref{fig:proving}). These configurations have been chosen because
 two is the smallest number of attributes for which selective disclosure makes
 sense and five is the largest number of attributes that we can currently keep in
-memory while not using EEPROM. By comparing these graphs, it is clear that each
-attribute that is not disclosed adds roughly 100 milliseconds of computation
-time, whereas the amount of work per undisclosed attribute remains the same.
-[TODO: rewrite this last sentence.]
+memory while not using EEPROM for computations during the transaction. By
+comparing these graphs, it is clear that each attribute that is disclosed
+reduces the computation time with roughly 100 milliseconds. Also, the scenario
+in which all attributes results in similar computation times, with only slightly
+increased overhead for the large number of attributes that have to be sent to
+the terminal.
 
 \begin{figure}[ht]
   \centering
@@ -888,21 +890,19 @@ time, whereas the amount of work per undisclosed attribute remains the same.
     \label{fig:5attr-sle78}
   \end{subfigure}
 
-  \caption[Attribute proving times.]{
-    Attribute proving times
-    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation,
+  \caption[Identity Mixer credential verification times for different configurations.]{
+    Identity Mixer credential verification times for different configurations
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
       \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
   \label{fig:proving}
 \end{figure}
 
-Comparing our work with the direct anonymous attestation implementations by
-Sterckx et al.~\cite{Sterckx09} and Bichsel et al.~\cite{BichselCGS2009} makes
-no real sense since they do not offer selective disclosure of attributes. It is,
-however, clear that our implementation provides a performance improvement over
-these implementations since we can even hide the secret key and two attributes
-of a single credential in 1.1 seconds whereas Sterckx et al. already need 4.2
-seconds to hide only the secret key.
-
-[TODO: improve this last sentence. Reversing the order would already help.]
+Comparing our work with the implementations by Sterckx et al.~\cite{Sterckx09}
+and Bichsel et al.~\cite{BichselCGS2009} makes no real sense since they do not
+offer selective disclosure of attributes. It is, however, clear that our
+implementation provides a significant performance improvement over these
+implementations. For example, Sterckx et al. need 4.2 seconds to hide only the
+secret key while our implementation can hide the secret key and two attributes
+of a single credential in 1.1 seconds.
 
 \index{Identity Mixer|)}

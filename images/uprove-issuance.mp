@@ -24,7 +24,7 @@ c_3 := (2.784/6.000*timeunit);
 c_4 := (2.933/6.000*timeunit);
 c_5 := (3.131/6.000*timeunit);
 
-%% Total: 
+%% Total:
 
 t_1 := (3.095/6.000*timeunit);
 t_2 := (3.623/6.000*timeunit);

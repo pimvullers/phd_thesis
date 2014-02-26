@@ -90,7 +90,7 @@ the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/schnorr_blind-sign}
-  \caption{Protocol for generating blind signatures.}
+  \caption{Protocol for generating blind Schnorr signatures.}
   \label{msc:schnorr_blind-sign}
 \end{figure}
 
@@ -632,10 +632,10 @@ for hashing to match with the capabilities of the card.
 \begin{figure}
   \centering
   \includegraphics{images/uprove-issuance.mps}
-  \caption[Credential issuance times.]{
-    Credential issuance times
-    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}: computation,
-      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}: overhead).}
+  \caption[U-Prove credential issuance times for various numbers of attributes.]{
+    U-Prove credential issuance times for various numbers of attributes
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
   \label{fig:issue}
 \end{figure}
 
@@ -680,17 +680,17 @@ communicating the results of the protocol run between the card and PC.
     \label{fig:5attr}
   \end{subfigure}
 
-  \caption[Credential verification times for different configurations.]{
-    Credential verification times for different configurations
-    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}: computation,
-      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}: overhead).}
+  \caption[U-Prove credential verification times for different configurations.]{
+    U-Prove credential verification times for different configurations
+    (\raisebox{-.8\dp\strutbox}{\includegraphics{images/box-dark.mps}}:~computation time,
+      \raisebox{-.8\dp\strutbox}{\includegraphics{images/box-light.mps}}:~overhead).}
   \label{fig:total}
 \end{figure}
 
 Correspondingly, the cumulative results for the attribute proving protocol are
 shown in Figure~\ref{fig:total}. What can be seen in these graphs is that under
 ``full load'' our implementation executes the complete proving protocol in just
-under 0.9 seconds (graph~\ref{fig:5attr}). In this worst-case scenario 5
+under 0.9 seconds (Figure~\ref{fig:5attr}). In this worst-case scenario 5
 attributes are stored on the card, none of which are disclosed during the
 protocol run. In other words, the U-Prove token is only validated for its
 authenticity without revealing any attributes. Such a scenario is not very
@@ -702,9 +702,9 @@ of stored attributes improves the running time at a rate of 100 milliseconds per
 attribute, and also that the performance increases along with increasing the
 number of disclosed attributes, roughly 50 milliseconds per each extra disclosed
 attribute. Overall, this brings the total execution time for a two attribute
-token disclosing one attribute to under 0.5 seconds (graph~\ref{fig:2attr}).
+token disclosing one attribute to under 0.5 seconds (Figure~\ref{fig:2attr}).
 
-One of the reasons to justify the Microsoft's device protected approach as
+One of the reasons to justify Microsoft's device protected approach as
 described in Section~\ref{sec:UP-smartcard} are possible resource issues with
 smart cards (limited storage space and limited speed). Our performance results
 undermine this argument. The worst case execution time of the proving part is

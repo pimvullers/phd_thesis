@@ -27,17 +27,17 @@ fill (0,-5mm)--
 --(4cm,-5mm)--cycle withcolor 0.6white;
 
 pickup pencircle scaled thick;
-draw (0cm,0.762timeunit);label.llft(btex {\smallersize 2.262} etex, (0cm,0.762timeunit));
-draw (1cm,0.879timeunit);label.llft(btex {\smallersize 2.379} etex, (1cm,0.879timeunit));
-draw (2cm,0.954timeunit);label.llft(btex {\smallersize 2.454} etex, (2cm,0.954timeunit));
-draw (3cm,1.022timeunit);label.llft(btex {\smallersize 2.522} etex, (3cm,1.022timeunit));
-draw (4cm,1.105timeunit);label.llft(btex {\smallersize 2.605} etex, (4cm,1.105timeunit));
+draw (0cm,0.762timeunit);label.llft(btex {\smallersize 2262} etex, (0cm,0.762timeunit));
+draw (1cm,0.879timeunit);label.llft(btex {\smallersize 2379} etex, (1cm,0.879timeunit));
+draw (2cm,0.954timeunit);label.llft(btex {\smallersize 2454} etex, (2cm,0.954timeunit));
+draw (3cm,1.022timeunit);label.llft(btex {\smallersize 2522} etex, (3cm,1.022timeunit));
+draw (4cm,1.105timeunit);label.llft(btex {\smallersize 2605} etex, (4cm,1.105timeunit));
 
-draw (0cm,0.196timeunit);label.llft(btex {\smallersize 1.696} etex, (0cm,0.196timeunit));
-draw (1cm,0.258timeunit);label.llft(btex {\smallersize 1.758} etex, (1cm,0.258timeunit));
-draw (2cm,0.281timeunit);label.llft(btex {\smallersize 1.781} etex, (2cm,0.281timeunit));
-draw (3cm,0.296timeunit);label.llft(btex {\smallersize 1.796} etex, (3cm,0.296timeunit));
-draw (4cm,0.309timeunit);label.llft(btex {\smallersize 1.809} etex, (4cm,0.309timeunit));
+draw (0cm,0.196timeunit);label.llft(btex {\smallersize 1696} etex, (0cm,0.196timeunit));
+draw (1cm,0.258timeunit);label.llft(btex {\smallersize 1758} etex, (1cm,0.258timeunit));
+draw (2cm,0.281timeunit);label.llft(btex {\smallersize 1781} etex, (2cm,0.281timeunit));
+draw (3cm,0.296timeunit);label.llft(btex {\smallersize 1796} etex, (3cm,0.296timeunit));
+draw (4cm,0.309timeunit);label.llft(btex {\smallersize 1809} etex, (4cm,0.309timeunit));
 
 
 pickup pencircle scaled thin;
@@ -64,9 +64,9 @@ draw (0,-5mm)--(-tick,-5mm);
 draw (0,0)--(-tick,0);
 draw (0,timeunit)--(-tick,timeunit);
 label.lft(btex 0 etex, (-tick,-5mm));
-label.lft(btex 1.5s etex, (-tick,0));
-label.lft(btex 2.5s etex, (-tick,timeunit));
-label.rt(btex time etex, (0,1.2timeunit+.25cm));
+label.lft(btex 1500 etex, (-tick,0));
+label.lft(btex 2500 etex, (-tick,timeunit));
+label.rt(btex time (ms) etex, (0,1.2timeunit+.25cm));
 
 endfig; % issuance SLE78
 
