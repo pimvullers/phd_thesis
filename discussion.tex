@@ -305,19 +305,28 @@ a U-Prove credential is overall lower than the computation times of the other
 technologies, even when a U-Prove credential contains five attributes of which
 only a single attribute is revealed. This performance could even be improved
 when the SLE78 chip can be used instead of the SLE66. Hence we can conclude that
-the signature randomisation performed (on the card) by Identity Mixer\index{Identity Mixer} and the self-blindable
+the signature randomisation\index{signature randomisation} performed (on the card) by Identity Mixer\index{Identity Mixer} and the self-blindable
 credentials has a significant impact on the running time of the verification
 protocol.
 
-While the multi-show unlinkability property has a negative effect on the running
-time for Identity Mixer\index{Identity Mixer} and the self-blindable credentials, it requires less
-storage on the card then U-Prove. This is due to the fact that to achieve
+While the multi-show unlinkability\index{unlinkability!multi-show} property has a negative effect on the running
+time for Identity Mixer\index{Identity Mixer} and the self-blindable credentials\index{self-blindable credentials}, it requires less
+storage on the card then U-Prove\index{U-Prove}. This is due to the fact that to achieve
 multi-show unlinkability the card has to store multiple U-Prove tokens. Given
 that storage space is rather limited on smart cards\footnote{A typical modern smart
 card only has 36 to 144 KB of EEPROM available for storing application data.},
 this is a serious drawback of the U-Prove technology.
 
 \section{Final Remarks}
+
+The goal of the research presented in this thesis has been to
+\begin{center}\it
+  develop efficient smart card implementations of attribute-based credentials
+\end{center}
+and
+\begin{center}\it
+  compare various cryptographic systems for attribute-based credentials.
+\end{center}
 
 Compared to the existing implementations mentioned in the previous section, we
 have made a clear performance improvement with all of our implementations. These
@@ -328,11 +337,20 @@ below one second we can conclude that these are, to the best of our knowledge,
 the first implementations that offer an acceptable performance for practical
 use.
 
-\subsubsection{I Reveal My Attributes}
+The development of these prototype implementations allowed us to analyse the
+different technologies both from a technical and functional perspective. Due to
+the maturity and the multi-show unlinkability feature of the Identity Mixer
+\index{Identity Mixer} technology that smart card implementation has been
+selected to be used in a pilot project called \emph{I Reveal My Attributes} or
+IRMA for short. The goal of this project is to gain more experience in actually
+using these kinds of privacy-preserving technology and the usability of such
+technologies on a smart card. Please visit \url{https://www.irmacard.org/} for
+more information and the latest news on this project.
 
-Due to the maturity and multi-show unlinkability feature of the Identity Mixer\index{Identity Mixer}
-technology that smart card implementation has been selected to be used in a
-pilot project called \emph{I Reveal My Attributes} or IRMA for short. The goal
-of this project is to gain more experience in actually using these kinds of
-privacy-preserving technology and the usability of such technologies on a smart
-card.
+The IRMA smart card is an excellent example of our innovations in the area of
+privacy-friendly identity management. It demonstrates what the attribute-based
+credential technologies are capable of and that they are a viable alternative
+for smart card-based solutions. The availability of these alternatives and the
+growing interest for privacy-by-design, in particular in privacy regulations,
+should lead to new innovations which serve as a replacement for the current
+identity solutions (based on unique identifiers).

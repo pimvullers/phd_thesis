@@ -1,6 +1,6 @@
 \chapter{Self-blindable Credentials\label{chp:self-blindable}}
 
-The drawback of using regular public-key certificates, like X.509
+The drawback of using regular public-key certificates, like X.509 \index{certificate}
 certificates~\cite{ISO9594-8}, is that they are inherently traceable. This is
 caused by the fixed public key and the signature that are contained in such a
 certificate. The public key can be used as a unique identifier\index{unique identifier} for the user and
@@ -8,7 +8,7 @@ is included in the signature, making that identifying as well.
 
 To circumvent this problem Verheul~\cite{Verheul01} proposes a
 variant~\cite{BonehLS01,BonehLS04} of the Chaum-Pedersen signature
-scheme~\cite{ChaumPedersen93} which allows these values to be randomised, or
+scheme~\cite{ChaumPedersen93} which allows these values to be randomised, or \index{signature randomisation}
 \emph{blinded}, such that they are no longer traceable, while the signature can
 still be verified for its authenticity. This signature scheme can then be used
 to implement a credential system which allows the users themselves to blind
@@ -27,7 +27,7 @@ elliptic curve setting by Boneh, Lynn and Shacham~\cite{BonehLS01,BonehLS04}
 and Verheul~\cite{Verheul01}. The elliptic curve variant of this scheme led to
 the construction of self-blindable signatures.
 
-\subsection{Chaum-Pedersen Signature Scheme\label{sec:CP-scheme}}
+\subsection{Chaum-Pedersen Signature Scheme\label{sec:CP-scheme}}\index{Chaum-Pedersen signature}
 
 The public key in this scheme is a value $h$ together with a description of the
 prime-order group in which the computations take place. As an example we use
@@ -82,7 +82,7 @@ the private key corresponding to the public key used for the verification.
   \end{algorithmic}
 \end{algorithm}
 
-\subsection{Boneh-Lynn-Shacham Signature Scheme}
+\subsection{Boneh-Lynn-Shacham Signature Scheme}\index{Boned-Lynn-Shacham signature}
 
 Since the signature scheme of Chaum and Pedersen operates in the discrete
 logarithm setting it can also be used with elliptic curve cryptography. Boneh,
@@ -92,9 +92,9 @@ and resembles the scheme by Chaum and Pedersen, but omits the equality proof in
 order to achieve short signatures.
 
 At the same time Verheul~\cite{Verheul01} gives a similar description of this
-proofless variant of the Chaum-Pedersen scheme for groups in which the
-decisional Diffie-Hellman problem is easy while the computational Diffie-Hellman
-and discrete logarithm problems are hard. Elliptic curves with bilinear pairings
+proofless variant \index{Chaum-Pedersen signature!proofless variant} of the Chaum-Pedersen scheme for groups in which the
+decisional Diffie-Hellman problem\index{Diffie-Hellman problem!decisional} is easy while the computational Diffie-Hellman\index{Diffie-Hellman problem!computational}
+and discrete logarithm\index{discrete logarithm problem} problems are hard. Elliptic curves\index{elliptic curve} with bilinear pairings\index{bilinear pairing}
 provide such groups. The proof of equality can in this case be substituted by a
 bilinear pairing equation to be checked by the verifier.
 
@@ -146,7 +146,7 @@ where $e: E_1 \times E_2 \to G$ is a bilinear pairing as described in
 Section~\ref{sec:pairings}.
 
 Verheul~\cite{Verheul01} points out a powerful aspect about these signatures:
-they are invariant under blinding. When this signature is used to sign points on
+they are invariant under blinding\index{blinding}. When this signature is used to sign points on
 the curve,  instead of arbitrary messages, there is no need to transform the
 message into a point, such that the \textsc{HashToPoint} operation can be
 omitted. Now the user can choose a random number $b$ as blinding factor, and
@@ -160,9 +160,9 @@ verification equation (\ref{eqn:BLS-verify}):
   = e(b \cdot Z, P_2)
 \end{equation*}
 Hence the signature remains valid. Since the user can perform this blinding all
-by itself Verheul calls these signatures \emph{self-blindable}.
+by itself Verheul calls these signatures \emph{self-blindable}.\index{self-blindable signature}
 
-\section{Verheul's Self-blindable Certificates}
+\section{Verheul's Self-blindable Certificates}\index{self-blindable certificate}\index{certificate!self-blindable}
 
 Verheul proposes to use the self-blindable signatures to construct public-key
 certificates which allow the user to randomise its key pair and the
@@ -173,12 +173,12 @@ takes the form
 \begin{equation*}
   \{ P_U, Sig(P_U, s_{ID}) \}\text,
 \end{equation*}
-where $s_{ID}$ is the private signing key of the identity\index{identity!provider} provider corresponding
+where $s_{ID}$ is the private signing key of the identity provider corresponding
 to $P_{ID}$.
 
-\subsection{Attribute Certificates}
+\subsection{Attribute Certificates}\index{attribute!certificate}
 
-Attribute certificates are digital certificates that bind attributes to users
+Attribute certificates are digital certificates\index{digital cerificate} that bind attributes to users
 known by a public key. Proof of possessing an attribute is given by proving
 possession of the private key related to the public key referenced in the
 certificate.
@@ -341,7 +341,7 @@ secret key.
 
 \paragraph{JCOP Extension}
 
-Luckily the NXP JCOP platform contains some extensions to the standard Java Card\index{Java Card!API}
+Luckily the NXP JCOP\index{JCOP} platform contains some extensions to the standard Java Card\index{Java Card!API}
 API. In particular there is an extension which provides an additional algorithm:
 \begin{description}
   \item[] \texttt{ALG\_EC\_SVDP\_DH\_PLAIN}: the same as
@@ -454,11 +454,11 @@ Algorithm~\ref{alg:SBC-proof}.
 \end{algorithm}
 
 
-\subsection{Terminal Application}
+\subsection{Terminal Application}\index{terminal}
 
 The terminal application needs to cope with the shortcomings of the Java Card\index{Java Card!applet}
 applet. This comes down to the fact that the terminal has to reconstruct the
-points $P_b$, $C_b$ and $R$ received from the card before they can be processed
+points\index{point reconstruction} $P_b$, $C_b$ and $R$ received from the card before they can be processed
 any further.
 
 If we know the $x$-coordinate of a point on the curve, the square of the
@@ -467,10 +467,10 @@ By taking the square root of $x^{3} + ax + b$ we find either $y$ or $-y$.
 
 This reconstruction is a simple guess work, trying different signs for the
 $y$-coordinates of the points. For the proof of possession verification this is
-not a real issue since this verification is only a single point multiplication,
+not a real issue since this verification is only a single point multiplication,\index{point multiplication}
 although this is of course not optimal. For the pairing signature verification
 (\ref{eqn:BLS-verify}) simple guessing is not desirable. Therefore we exploit
-the bilinearity of the pairing to avoid computing more than two pairings, as
+the bilinearity of the pairing\index{bilinear pairing} to avoid computing more than two pairings, as
 would be the case without point reconstruction.
 
 First we calculate $e_1 = e(P_b, Q_a)$ and $e_2 = e(C_b, P_2)$ where we take
@@ -486,7 +486,7 @@ for the negated point of $C_b$.
 
 \section{Performance Results}
 
-For our test we selected three Barreto-Naehrig curves (see Section~\ref{sec:BN}) for keys of length 128,
+For our test we selected three Barreto-Naehrig curves\index{Barreto-Naehrig curve} (see Section~\ref{sec:BN}) for keys of length 128,
 160 and 192 bits. The domain parameters $p$ and $n$ for these curves are
 generated by the Barreto-Naehrig indices $u=1678770247$, $u=448873116367$ and
 $u=105553250485267$ respectively. The curve $E$ is
@@ -526,7 +526,7 @@ required point multiplications. The blinding in the latter, which requires a
 modular multiplication, has to be calculated \emph{without} the help of the
 coprocessor.
 
-In theory it is possible to abuse the RSA cipher (and hence use the coprocessor)
+In theory it is possible to abuse the RSA cipher\index{RSA!cipher} (and hence use the coprocessor)
 to do large part of the modular multiplication by using the fact that
 $4ab = (a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. The squares in
 this equation can be performed by doing an RSA encryption\slash exponentiation
@@ -550,7 +550,7 @@ Table~\ref{tab:primitives}. The columns indicate the time needed to perform a
 single operation. The processing overhead is determined by subtracting one key
 generation and three key agreements from the protocol duration.
 
-On the one hand, performing a scalar point multiplication (a key agreement
+On the one hand, performing a scalar point multiplication\index{point multiplication} (a key agreement
 operation) is quite efficient, using less then 100 milliseconds for the
 calculation. On the other hand, performing a scalar point multiplication,
 combined with generating a random value, (a key generation operation) is
@@ -575,7 +575,7 @@ agreement can only return the $x$-coordinate.
   \end{tabular}
 \end{table}
 
-A large benefit of our use of ECC is the small amount of data that needs to be
+A large benefit of our use of elliptic curve cryptography is the small amount of data that needs to be
 exchanged between the terminal and the card. For key lengths of 192, 160 and 128
 bits the total amount of bytes exchanged is 155, 135 and 115 respectively. This
 would allow an implementation to use a \emph{single} APDU pair (command and
