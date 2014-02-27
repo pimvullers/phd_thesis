@@ -3,7 +3,7 @@
 
 Identity Mixer~\cite{CamenischLysyanskaya2001,IdemixCrypto2012} is an
 attribute-based credential system, developed at IBM Research in Z\"urich, that
-enables strong authentication and privacy at the same time. The first
+enables strong authentication\index{authentication} and privacy at the same time. The first
 prototype~\cite{CamenischH02} was developed in 2002 and has been improved over
 the years~\cite{BrickellCC2004,CamenischGroth2004}. An open source Java
 implementation\footnote{\url{http://prime.inf.tu-dresden.de/idemix/}} was
@@ -687,7 +687,7 @@ Identity Mixer, but it omits the attributes, hence $\M = \M_H$ and
 $\M_D = \emptyset$. It allows a user to convince a verifier that she uses a
 platform that has embedded a certified hardware module\footnote{Direct anonymous attestation has been adopted in 2004
 by the Trusted Computing Group in the Trusted Platform Module specification as
-the method for remote authentication of a hardware module.} by proving knowledge
+the method for remote authentication\index{authentication!remote} of a hardware module.} by proving knowledge
 of the signature that certifies the module. The protocol protects the user's
 privacy: if she talks to the same verifier twice, the verifier is not able to
 tell whether or not he communicates with the same user as before or with a
@@ -697,7 +697,7 @@ different one.
 
 We are not the first develop an implementation of the Identity Mixer on a smart
 card. In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented a minimal
-Identity Mixer system on a Java Card whereas Sterckx et al.~\cite{Sterckx09}
+Identity Mixer system on a Java Card\index{Java Card} whereas Sterckx et al.~\cite{Sterckx09}
 did the same for direct anonymous attestation. They provide the first
 implementations of this technology on smart cards. The major drawback of these
 implementations is the running time of several seconds which is still too much
@@ -748,7 +748,7 @@ responsible for is providing the data in the correct format.
 
 \subsection{Smart Card Implementation}
 
-Just as with the U-Prove implementation, we have chosen to use the MULTOS C
+Just as with the U-Prove implementation, we have chosen to use the MULTOS\index{MULTOS} C
 interface to do our prototype implementation of Identity Mixer. The programming
 environment is convenient for smart card programming and allows us some more
 flexibility for memory management. It will be explained below why this is
@@ -838,16 +838,16 @@ approximately 100 milliseconds per attribute.
   \label{fig:issuance}
 \end{figure}
 
-Sterckx et al.~\cite{Sterckx09} implement the direct anonymous attestation
-protocol, which is derived from the Identity Mixer protocols, on a Java~Card.
+Sterckx et al.~\cite{Sterckx09} implement the direct anonymous attestation\index{direct anonymous attestation}
+protocol, which is derived from the Identity Mixer protocols, on a Java~Card\index{Java Card}.
 With a 1024~bits modulus they achieve a running time of 2.4~seconds of which
 19\% is overhead, which gives a computation time of approximately 1.9~seconds.
 This is good, and in line with the results we got, but unfortunately the direct
-anonymous attestation protocol does not support any attributes as it is just
-targeted at anonymous authentication and hence only uses a secret key.
+anonymous attestation\index{direct anonymous attestation} protocol does not support any attributes as it is just
+targeted at anonymous authentication\index{authentication!anonymous} and hence only uses a secret key.
 
 Bichsel et al.~\cite{BichselCGS2009} from IBM Research Z\"urch also implemented
-a variant of the direct anonymous attestation protocol on a Java~Card. They
+a variant of the direct anonymous attestation\index{direct anonymous attestation} protocol on a Java~Card\index{Java Card}. They
 report a running time of 7.4~seconds for a modulus size of 1280~bits, which is
 larger than the 1024~bits we used. It is unclear, however, which transaction
 time they measured. But again, this implementation does not include any

@@ -9,7 +9,7 @@ U-Prove_Crypto2013} under the Open Specification Promise\footnote{%
 software development kits in C\# and Java.
 
 The U-Prove technology is centred around a so-called U-Prove token. This token
-serves as a pseudonym for the user. It contains a number of attributes which can
+serves as a pseudonym\index{pseudonym} for the user. It contains a number of attributes which can
 be selectively disclosed to a verifier. Hence the user decides which attributes
 to show and which to withhold (for example, one can reveal the birth date, but
 not the residence address). Finally there is the token's public-key, which
@@ -18,11 +18,11 @@ this public-key to ensure the authenticity.
 
 A previous attempt to implement this technology on a smart card by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
-resulted in a highly involved Java Card applet with running times in the order
+resulted in a highly involved Java Card\index{Java Card!applet} applet with running times in the order
 of 5--10 seconds which make it not really usable in practice. They concluded
-that the lack of cryptographic hardware support through the Java Card API was
+that the lack of cryptographic hardware support through the Java Card\index{Java Card!API} API was
 the main cause of the slow performance. Therefore, we decided to develop our
-application using the MULTOS platform, which offers a much more suitable API.
+application using the MULTOS\index{MULTOS} platform, which offers a much more suitable API.
 Our implementation, which we describe in Section~\ref{sec:UP-smartcard}, not
 only has a much better performance but is also, except from some minimal
 limitations, compatible with the development kits released by Microsoft.
@@ -202,11 +202,11 @@ issuer's public key:
 The corresponding token private key $s' = s^{-1} \mod q$. Together with the
 issuer's signature $(z', c', r')$, generated during the issuance process (see
 Section~\ref{sec:UP-issuance}), these values form a U-Prove token. Such a token
-serves as a pseudonym for the user. A collection of U-Prove tokens, where only
+serves as a pseudonym\index{pseudonym} for the user. A collection of U-Prove tokens, where only
 the signatures differ, can be seen as a U-Prove credential.
 
 A U-Prove credential usually consist of multiple tokens to achieve anonymity,
-since a single token acts as a pseudonym for the user. This means that whenever
+since a single token acts as a pseudonym\index{pseudonym} for the user. This means that whenever
 the user does not want to be traced during a credential verification (see
 Section~\ref{sec:UP-verification}) she should use a fresh token to prevent the
 verifier from linking the token to previous transactions.
@@ -514,7 +514,7 @@ overview~\cite{U-Prove_Overview2011} describes a number of other benefits
 gained when using device-protected tokens. For example, a device can be used to
 enforce dynamic policies or prevent the use of a token at a blacklisted website.
 It also helps to enforce non-transferability of tokens by having the user
-authenticate to the device before allowing it to be used in a transaction.
+authenticate\index{authentication} to the device before allowing it to be used in a transaction.
 Another option, especially interesting for smart cards, is to use the device as
 a carrier, or secure roaming store, for entire U-Prove credentials and not just
 one attribute. This way the U-Prove credentials are always available when needed.
@@ -545,7 +545,7 @@ over numbers in a large prime field have to be calculated during a verification
 protocol run.
 
 Considering the size of the U-Prove data that is used in the protocols and the
-requirements of the MULTOS cryptographic routines (all data for a cryptographic
+requirements of the MULTOS\index{MULTOS} cryptographic routines (all data for a cryptographic
 operation needs to be in one continuous array) the first thing to take care of
 is a careful split of the card data between EEPROM and RAM. Only 960
 \emph{bytes} of RAM are available on our development cards, compared to
@@ -566,7 +566,7 @@ number of times.
 
 This completes the efficiency considerations for our implementation. Otherwise
 the implementation of the U-Prove protocols is rather straightforward in the
-MULTOS environment and mostly entails direct calls to the MULTOS API.
+MULTOS\index{MULTOS} environment and mostly entails direct calls to the MULTOS\index{MULTOS!API} API.
 
 \subsection{Integration into the Microsoft U-Prove SDK}
 
@@ -602,7 +602,7 @@ have to be divided into the individual APDU instructions, for example the
 All this functionality has been combined into a single Java class which provides
 setters and getters for the data stored on the card as well as methods for the
 protocol steps. Using the Java built-in smart card library it serves as an
-interface between our MULTOS implementation and the U-Prove software development
+interface between our MULTOS\index{MULTOS} implementation and the U-Prove software development
 kit.
 
 \section{Performance Results\label{sec:UP-performance}}
@@ -616,7 +616,7 @@ calculations were verified with the test vectors provided with the U-Prove
 SDK~\cite{U-Prove_Vectors2011}. In the whole process a few corner case problems
 with our calculations surfaced that required minor corrections.
 
-For the performance tests we are restricted by the limits of our MULTOS
+For the performance tests we are restricted by the limits of our MULTOS\index{MULTOS}
 implementation platform. Namely, on our development cards we are limited to a
 modulus size of 1024~bits for modular arithmetic,\footnote{The card actually
 supports up to 2048~bits, but then during exponentiation only small enough
@@ -720,11 +720,11 @@ on a smart card rather than to use Microsoft's device-protected token approach,
 which now has no obvious functional or performance advantages over our approach.
 
 The only limitations of our implementation are imposed by the limited resources
-of the MULTOS smart card. We had to limit the prime modulus size to 1024 bits,
+of the MULTOS\index{MULTOS} smart card. We had to limit the prime modulus size to 1024 bits,
 use only SHA-1 hashing, and because of the available RAM (less than 1kB) on the
 card we could only allow for the maximum of 5 attributes, each one up to 255
 bytes in size. Otherwise our implementation is fully flexible and provides full
 U-Prove functionality, \emph{including} the smart card features described in
 Section~\ref{sec:UP-smartcard}. However, it is not uncommon for modern smart
 cards to support up to 2048 bits for modulus size and 2 kilobytes of RAM, only
-no such MULTOS cards were available to us.
+no such MULTOS\index{MULTOS} cards were available to us.

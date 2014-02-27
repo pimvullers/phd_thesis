@@ -3,24 +3,24 @@
 In the previous chapters we described the attribute-based credential
 technologies and the performance of their smart card implementations
 individually. In this chapter we compare them with each other to determine their
-strong and weak points.
+(relative) strong and weak points.
 
 \section{Attribute-based Credential Technologies}
 
 When we compare the technologies on the cryptographic level it is clear that
 different approaches can be taken to achieve the same goal. During issuance both
-U-Prove and Identity Mixer use a blind signature protocol to construct a
+U-Prove and Identity Mixer\index{Identity Mixer} use a blind signature protocol to construct a
 credential, whereas the self-blindable credentials use a regular signature
 scheme. This can be explained by the fact that in the latter case the user's
 public key is used for issuing the credential, whereas the former involves the
-user's secret. Another difference at this stage is that Identity Mixer supports
+user's secret. Another difference at this stage is that Identity Mixer\index{Identity Mixer} supports
 committed values to be include in the credential while U-Prove and the
 self-blindable credentials require all the attribute values to be known to the
 issuer\footnote{The U-Prove technology does provide an information field that
 is hidden from the issuer, but this field is always disclosed during
 verification which makes it different form a regular attribute.}.
 
-Issuer unlinkability is satisfied by each of the technologies. Identity Mixer
+Issuer unlinkability is satisfied by each of the technologies. Identity Mixer\index{Identity Mixer}
 and the self-blindable credentials require the issuer's signature in the
 credential to be randomised to achieve this, while the U-Prove issuance protocol
 results in an unlinkable signature. The signature randomisation also provides
@@ -29,22 +29,23 @@ multiple signatures in order to provide this privacy property.
 
 When it comes to credential verification the self-blindable credentials provide
 the most basic scheme. Selective disclosure of attributes is not applicable
-since a credential only contains a single attribute statement. Also, because the
-attribute statement is contained in a regular certificate it cannot be used to
-proof properties of the attribute value. Both U-Prove and Identity Mixer offer
+since a credential only contains a single attribute statement\index{attribute!statement}. Also, because the
+attribute statement\index{attribute!statement} is contained in a regular certificate it cannot be used to
+prove properties of the attribute value, such as proving that the current date
+is within the validity period specified in the attribute. Both U-Prove and Identity Mixer\index{Identity Mixer} offer
 selective disclosure of attributes and support the construction of
 zero-knowledge proofs in which properties of the attributes can be proved.
 
 Another aspect is the type of cryptography used by the different technologies.
 Because the self-blindable credentials are based on elliptic curve cryptography
-they are rather compact and required less communication between card and
+they are rather compact and require less communication between card and
 terminal. U-Prove can also be implemented using elliptic curve cryptography,
 since it relies on the discrete logarithm problem. While this would have been
 an ideal solution to eliminate the communication overhead, we do not have any
 cards that provide a proper interface which would allow us to implement U-Prove
 based on elliptic curve cryptography. Still, the prime-order subgroup
 construction used by U-Prove provides an advantage over the RSA-based approach
-used by Identity Mixer: it allows for modular reduction of the exponents in the
+used by Identity Mixer\index{Identity Mixer}: it allows for modular reduction of the exponents in the
 protocols.
 
 \begin{savenotes}
@@ -59,7 +60,7 @@ protocols.
       & \,Self-blindable\, & \multirow{2}{*}{~~~~U-Prove~~~~} & \multirow{2}{*}{Identity Mixer} \\
       & Credentials & & \\\hline\hline
     issuer unlinkability     & \checkmark & \checkmark & \checkmark \\\hline
-    multi-show unlinkability & \checkmark & \footnote{Multi-show unlinkability
+    multi-show unlinkability & \checkmark & indirectly\footnote{Multi-show unlinkability
       for U-Prove can be realised by issuing multiple credentials for the same
       set of attributes which can later be verified independently.} &
       \checkmark \\\hline\hline
@@ -68,11 +69,8 @@ protocols.
     signature randomisation  & \checkmark &             & \checkmark \\\hline
     selective disclosure     &             & \checkmark & \checkmark \\\hline
     zero-knowledge proofs    &             & \checkmark & \checkmark \\\hline\hline
-    elliptic curve cryptography & \checkmark & ~\checkmark\footnote{While the
-      U-Prove cryptographic specification~\cite{U-Prove_Crypto2013} also
-      provides the option to use elliptic curves, we did not use it due to the
-      lack of (proper) elliptic curve support on our smart cards.} &
-      \footnote{Camenisch and Lysyanskaya~\cite{CamenischLysyanskaya04} also
+    elliptic curve cryptography & \checkmark & not used & not supported\footnote{%
+      Camenisch and Lysyanskaya~\cite{CamenischLysyanskaya04} also
       describe an elliptic curve based signature scheme which can serve as a
       basis for attribute-based credentials, but this is not used in Identity
       Mixer.}\\\hline
@@ -80,8 +78,8 @@ protocols.
 \end{table}
 \end{savenotes}
 
-The above mentioned differences and similarities have been summarised in
-Table~\ref{tbl:tech-comparison}. Note that this overview only focused on the
+The above mentioned differences and similarities are summarised in
+Table~\ref{tbl:tech-comparison}. Note that this overview only focuses on the
 aspects of the technologies that we looked into. Other interesting overviews are
 provided by Lapon et al.~\cite{LaponKDN2011,Lapon2012}, focusing on revocation
 strategies, and Corella~\cite{Corella2011a,Corella2011b}, focusing on the use
@@ -103,7 +101,7 @@ resources of smart cards. Brands~\cite[Chapter 6]{Brands2000} proposes to use
 this method for smart card integration in the U-Prove
 technology~\cite{U-Prove_Overview2011} (see Section~\ref{sec:UP-smartcard}),
 whereas Bichsel~\cite{Bichsel2007} uses a similar construction to implement
-protection for Identity Mixer credentials.
+protection for Identity Mixer\index{Identity Mixer!credential} credentials.
 
 In strong contrast to the minimalistic hardware-protection implementation, Tews
 and Jacobs~\cite{TewsJacobs09} developed an implementation of attribute-based
@@ -144,25 +142,25 @@ the protocols.
   \end{tabular}
 \end{table}
 
-The remaining implementations are based on \emph{anonymous authentication} of
-the smart card after which it is trusted to provide valid attribute statements.
+The remaining implementations are based on \emph{anonymous authentication}\index{authentication!anonymous} of
+the smart card after which it is trusted to provide valid attribute statements\index{attribute!statement}.
 To this end, Balasch~\cite{Balasch2008} and Sterckx~\cite{Sterckx09} have
-implemented direct anonymous attestation (see Section~\ref{sec:DAA}) and
-Bichsel et~al.~\cite{BichselCGS2009} have chosen to implement Identity Mixer
+implemented direct anonymous attestation\index{direct anonymous attestation} (see Section~\ref{sec:DAA}) and
+Bichsel et~al.~\cite{BichselCGS2009} have chosen to implement Identity Mixer\index{Identity Mixer}
 without any attributes. These solutions use the unlinkability properties of the
-Camenisch-Lysyanskaya signature scheme to achieve the anonymous authentication
-of the card. This approach is also used in the German identity card, except that
-a different authentication scheme is used (see Section~\ref{sec:nPA}).
+Camenisch-Lysyanskaya signature scheme to achieve the anonymous authentication\index{authentication!anonymous}
+of the card. This approach is also used in the German identity card (nPA)~\cite{Kugler2010}, except that
+a different authentication\index{authentication} scheme is used (see Section~\ref{sec:nPA}).
 
 \section{Smart Card Performance\label{sec:perf-comparison}}
 
 When comparing the smart card implementations we have to take into account that
 they have been developed on different platforms, and more importantly on
 different hardware. To be precise, the self-blindable credentials applet runs on
-an NXP SmartMX J3A081 chip with the Java Card platform (JCOP v2.4.1 R3), the
-U-Prove application runs on an Infineon SLE66 chip with the MULTOS platform
-(I4F(1-1-2) on 360PE(M)) and the Identity Mixer application runs on the Infineon
-SLE78 chip with the MULTOS platform (ML3-36K-R1).
+an NXP SmartMX J3A081 chip with the Java Card\index{Java Card} platform (JCOP v2.4.1 R3), the
+U-Prove application runs on an Infineon SLE66 chip with the MULTOS\index{MULTOS} platform
+(I4F(1-1-2) on 360PE(M)) and the Identity Mixer\index{Identity Mixer!application} application runs on the Infineon
+SLE78 chip with the MULTOS\index{MULTOS} platform (ML3-36K-R1).
 
 \begin{table}[t]
   \centering
@@ -205,8 +203,8 @@ With this in mind we first look at the performance of the implementations during
 issuance. The issuance process for the self-blindable credentials does not
 involve any computations on the card, since it only has to store the credential.
 This makes it the most efficient implementation at this point since both U-Prove
-and Identity Mixer have to perform a blind signature protocol to issue
-credentials. To make the comparison between those two easier we but their
+and Identity Mixer\index{Identity Mixer} have to perform a blind signature protocol to issue
+credentials. To make the comparison between those two easier we put their
 issuance performance graphs (Figure~\ref{fig:issue} and Figure~\ref{fig:issuance})
 next to each other in Figure~\ref{fig:comparison-issuance}.
 
@@ -230,19 +228,19 @@ next to each other in Figure~\ref{fig:comparison-issuance}.
   \label{fig:comparison-issuance}
 \end{figure}
 
-Based on these graphs it is clear that the Identity Mixer implementation offers
+Based on these graphs it is clear that the Identity Mixer\index{Identity Mixer!implementation} implementation offers
 a clear improvement over the U-Prove issuance times. Not only are the absolute
 values better, the extra time it takes to issue more attributes does not
 increase as much as with the U-Prove implementation. However, we also need to
 take the hardware platform into account, which in this case is in favour of the
-Identity Mixer implementation. Furthermore, our U-Prove implementation is built
+Identity Mixer\index{Identity Mixer!implementation} implementation. Furthermore, our U-Prove implementation is built
 according to the first revision~\cite{U-Prove_Crypto2011} of version 1.1 of the
 U-Prove cryptographic specification, whereas later revisions~\cite{U-Prove_Crypto2013},
-include an optimised issuance protocol in which the computation of $z$ is
-performed by the issuer (as described in Section~\ref{sec:UP-issuance}). Taking
+include an optimised issuance protocol in which the computation of the signature
+value $z'$ is mostly performed by the issuer (as described in Section~\ref{sec:UP-issuance}). Taking
 this optimisation and a switch to the SLE78 platform into account, the U-Prove
 implementation should get a reasonable improvement in its issuance performance
-bringing it closer to the results we got from the Identity Mixer implementation.
+bringing it closer to the results we got from the Identity Mixer\index{Identity Mixer!implementation} implementation.
 
 \subsection{Selective Disclosure of Attributes}
 
@@ -307,15 +305,15 @@ a U-Prove credential is overall lower than the computation times of the other
 technologies, even when a U-Prove credential contains five attributes of which
 only a single attribute is revealed. This performance could even be improved
 when the SLE78 chip can be used instead of the SLE66. Hence we can conclude that
-the signature randomisation performed by Identity Mixer and the self-blindable
+the signature randomisation performed (on the card) by Identity Mixer\index{Identity Mixer} and the self-blindable
 credentials has a significant impact on the running time of the verification
 protocol.
 
 While the multi-show unlinkability property has a negative effect on the running
-time for Identity Mixer and the self-blindable credentials, it requires less
+time for Identity Mixer\index{Identity Mixer} and the self-blindable credentials, it requires less
 storage on the card then U-Prove. This is due to the fact that to achieve
 multi-show unlinkability the card has to store multiple U-Prove tokens. Given
-that storage space is rather limited on smart cards\footnote{A typical smart
+that storage space is rather limited on smart cards\footnote{A typical modern smart
 card only has 36 to 144 KB of EEPROM available for storing application data.},
 this is a serious drawback of the U-Prove technology.
 
@@ -332,7 +330,7 @@ use.
 
 \subsubsection{I Reveal My Attributes}
 
-Due to the maturity and multi-show unlinkability feature of the Identity Mixer
+Due to the maturity and multi-show unlinkability feature of the Identity Mixer\index{Identity Mixer}
 technology that smart card implementation has been selected to be used in a
 pilot project called \emph{I Reveal My Attributes} or IRMA for short. The goal
 of this project is to gain more experience in actually using these kinds of

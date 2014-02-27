@@ -3,7 +3,7 @@
 The drawback of using regular public-key certificates, like X.509
 certificates~\cite{ISO9594-8}, is that they are inherently traceable. This is
 caused by the fixed public key and the signature that are contained in such a
-certificate. The public key can be used as a unique identifier for the user and
+certificate. The public key can be used as a unique identifier\index{unique identifier} for the user and
 is included in the signature, making that identifying as well.
 
 To circumvent this problem Verheul~\cite{Verheul01} proposes a
@@ -168,12 +168,12 @@ Verheul proposes to use the self-blindable signatures to construct public-key
 certificates which allow the user to randomise its key pair and the
 corresponding certificate. Such certificates can be used to circumvent
 traceability based on the public key or the signature. A certificate of a user's
-public key $P_U$ from an identity provider with public verification key $P_{ID}$
+public key $P_U$ from an identity\index{identity!provider} provider with public verification key $P_{ID}$
 takes the form
 \begin{equation*}
   \{ P_U, Sig(P_U, s_{ID}) \}\text,
 \end{equation*}
-where $s_{ID}$ is the private signing key of the identity provider corresponding
+where $s_{ID}$ is the private signing key of the identity\index{identity!provider} provider corresponding
 to $P_{ID}$.
 
 \subsection{Attribute Certificates}
@@ -188,12 +188,12 @@ $$\{P_U, [Sig(P_U, s_a), Cert(Q_a, \text{"Attribute statement"})]\}$$
 Here, the public key $P_U$ of the user is signed using a private key $s_a$ of
 the issuer of the attribute. The corresponding public key $Q_a$ of the issuer is
 included in a (conventional PKI) certificate which contains the attribute
-statement corresponding to this public key. In the context of attribute-based
+statement\index{attribute!statement} corresponding to this public key. In the context of attribute-based
 credentials such a self-blindable attribute certificate can be considered as a
 self-blindable credential.
 
-When we consider only a single attribute statement per public key, the
-certificates with the statements can be stored in a public database and can be
+When we consider only a single attribute statement\index{attribute!statement} per public key, the
+certificates with the statements\index{attribute!statement} can be stored in a public database and can be
 omitted from the credential, given that the corresponding public key can be
 identified. This allows the credentials to be compact which is beneficial for
 devices with limited storage capacities, like smart cards.
@@ -209,7 +209,7 @@ devices with limited storage capacities, like smart cards.
 Figure~\ref{fig:SBC-credential}, will consist of:
 \begin{itemize}
   \item the user's public key $P_U$,
-  \item a reference to the attribute statement $a$, and
+  \item a reference to the attribute statement\index{attribute!statement} $a$, and
   \item a signature $C_a = Sig(P_U, s_a) = s_a \cdot P_U$ over the public key
     using the attribute signing key $s_a$.
 \end{itemize}
@@ -217,7 +217,7 @@ The database will then contain:
 \begin{itemize}
   \item a reference $a$,
   \item the public verification key $Q_a$ corresponding to $s_a$, and
-  \item the actual attribute statement.
+  \item the actual attribute statement\index{attribute!statement}.
 \end{itemize}
 
 \section{Credential Issuance}
@@ -231,7 +231,7 @@ The database will then contain:
 
 To obtain a self-blindable credential from a credential issuer the user must
 provide the issuer with its public key and proof possession of the corresponding
-private key. This public key can be signed by an identity provider in order to
+private key. This public key can be signed by an identity\index{identity!provider} provider in order to
 increase the trust level of the system. When the credential issuer has verified
 the authenticity of the user he will verify eligibility for the requested
 attribute. Once this has been verified the issuer signs the user's public key
@@ -260,13 +260,13 @@ signature using the public key it received earlier.
 
 To understand the practical limitations and estimate the performance of our
 protocols, we implemented the protocol from Figure~\ref{fig:SBC-verification}
-in Java (for the terminal-side application) and Java Card~\cite{Chen00} (for the
+in Java (for the terminal-side application) and Java Card~\cite{Chen00}\index{Java Card} (for the
 card-side application). Our implementation involves the following components:
 \begin{savenotes}
 \begin{description}
-  \item[Java Card applet\footnote{\url{https://github.com/pimvullers/sbcred_javacard/}
+  \item[Java Card\index{Java Card!applet} applet\footnote{\url{https://github.com/pimvullers/sbcred_javacard/}
     }\textsuperscript{,}\footnote{An implementation of self-blindable
-    credentials for the MULTOS platform is under development at:
+    credentials for the MULTOS\index{MULTOS} platform is under development at:
     \url{https://github.com/pimvullers/sbcred_multos/}}] ~\\
     The protocol on the card-side is implemented as a Java Card applet and
     loaded onto a development smart card. This implementation will be explained
@@ -298,15 +298,15 @@ card-side application). Our implementation involves the following components:
     Java Development Kit\footnote{Since version 6.0.}. This library offers
     support for communication with smart cards by providing the
     \texttt{javax.smartcardio} package. We used it for the protocol communication
-    with the Java Card smart card on which our client applet was installed.
+    with the Java Card\index{Java Card} smart card on which our client applet was installed.
 \end{description}
 \end{savenotes}
 
 \subsection{Available Elliptic Curve Operations on Java Card}
 
-In order to implement the verification protocol on Java Card we need support for
+In order to implement the verification protocol on Java Card\index{Java Card} we need support for
 elliptic curve cryptography. In this section we summarise the operations
-available on the Java Card platform and how they can be used to implement the
+available on the Java Card\index{Java Card} platform and how they can be used to implement the
 protocol.
 
 \subsubsection{Elliptic Curve Diffie-Hellman}\label{sec:ecdh-api}
@@ -330,7 +330,7 @@ Unfortunately for us, the implementation of these algorithms has two drawbacks:
   \item According to the IEEE P1363 standard~\cite{IEEE_P1363} the shared
     secret computation by means of ECSVDP-DH and ECSVDP-DHC only returns the
     $x$-coordinate of the computed point.
-  \item The Java Card implementation of these algorithms computes the SHA-1
+  \item The Java Card\index{Java Card} implementation of these algorithms computes the SHA-1
     message digest of the output of the derivation primitive to yield a 20 byte
     result~\cite{jcapi222}.
 \end{enumerate}
@@ -341,7 +341,7 @@ secret key.
 
 \paragraph{JCOP Extension}
 
-Luckily the NXP JCOP platform contains some extensions to the standard Java Card
+Luckily the NXP JCOP platform contains some extensions to the standard Java Card\index{Java Card!API}
 API. In particular there is an extension which provides an additional algorithm:
 \begin{description}
   \item[] \texttt{ALG\_EC\_SVDP\_DH\_PLAIN}: the same as
@@ -385,14 +385,14 @@ standard challenge-response exchange, for example using ECDSA.
 
 \subsubsection{Using the ECDSA Signature Scheme}
 
-As the ECDSA digital signature algorithm is supported by the Java Card API, it
+As the ECDSA digital signature algorithm is supported by the Java Card\index{Java Card!API} API, it
 has been our first choice for implementing the challenge-response protocol to
 establish proof of possession. As input for this algorithm we need the blinded
 private key $k_b = b \cdot k_U$.
 
-Since modular multiplication is not provided by the Java Card API we used the
+Since modular multiplication is not provided by the Java Card\index{Java Card!API} API we used the
 NatLib library developed by Hendrik Tews~\cite{TewsJacobs09}. This library
-implements modular arithmetic on Java Card using basic byte operations as the
+implements modular arithmetic on Java Card\index{Java Card} using basic byte operations as the
 RSA operations available on the platform do not support the short values used in
 our protocol. The resulting proof of possession protocol is depicted in
 Figure~\ref{fig:SBC-proof-ECDSA} and the implementation is described by Batina
@@ -431,7 +431,7 @@ the elliptic curve cryptographic key generation functionality\footnote{Using
 the Diffie-Hellman operation twice is not an option due to the first drawback
 mentioned in Section~\ref{sec:ecdh-api}: the function does not return a point
 that can be used for another point multiplication directly, and performing the
-point reconstruction on the card would be to costly.} provided by the Java Card
+point reconstruction on the card would be to costly.} provided by the Java Card\index{Java Card!API}
 API. This functionality is used to generate the blinding factor and blind the
 received challenge at the same time. This allows us to simply sign the blinded
 challenge with the private key using the Diffie-Hellman operation, as shown in
@@ -456,7 +456,7 @@ Algorithm~\ref{alg:SBC-proof}.
 
 \subsection{Terminal Application}
 
-The terminal application needs to cope with the shortcomings of the Java Card
+The terminal application needs to cope with the shortcomings of the Java Card\index{Java Card!applet}
 applet. This comes down to the fact that the terminal has to reconstruct the
 points $P_b$, $C_b$ and $R$ received from the card before they can be processed
 any further.
@@ -532,7 +532,7 @@ $4ab = (a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. The squares in
 this equation can be performed by doing an RSA encryption\slash exponentiation
 with a suitable RSA public key, that is, one with the exponent 2 and the
 required modulus. The numbers $a+b$ and $a-b$ are then just messages to be
-encrypted using the RSA cipher, which is provided by the Java Card API.
+encrypted using the RSA cipher, which is provided by the Java Card\index{Java Card!API} API.
 
 We tried this approach, but unfortunately with no success. The main obstacle is
 that the RSA cipher on the card operates only within valid bit lengths for RSA
