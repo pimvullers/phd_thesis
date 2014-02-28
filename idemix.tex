@@ -8,7 +8,7 @@ prototype~\cite{CamenischH02} was developed in 2002 and has been improved over
 the years~\cite{BrickellCC2004,CamenischGroth2004}. An open source Java
 implementation\footnote{\url{http://prime.inf.tu-dresden.de/idemix/}} was
 released in 2010 as part of IBM's open innovation
-initiavive\footnote{\url{http://www.zurich.ibm.com/news/10/innovation.html}}.
+initiative\footnote{\url{http://www.zurich.ibm.com/news/10/innovation.html}}.
 
 The core of the Identity Mixer technology is the Camenisch-Lysyanskaya signature
 scheme~\cite{CamenischLysyanskaya2003,Lysyanskaya2002}. This scheme is an ideal
@@ -30,7 +30,7 @@ In this chapter we focus on the core features of the Identity Mixer system:
 credential issuance and selective disclosure of attributes. The technology
 offers many more features that might be interesting to users of an
 attribute-based credential system, but we focus on what can be achieved on a
-smart card with an acceptable performance~\cite{VullersAlpar2013}. Additional
+smart card\index{smart card} with an acceptable performance~\cite{VullersAlpar2013}. Additional
 options can still be added, but at the cost of an increased transaction time.
 
 \section{Camenisch-Lysyanskaya Signature Scheme\label{sec:CL-scheme}}
@@ -261,7 +261,7 @@ inverse:
 \end{figure}
 
 Figure~\ref{msc:cl_blind-sign} depicts the protocol for generating blind
-Camenisch-Lysyanskaya signatures. This protocol hides the messages
+Camenisch-Lysyanskaya signatures. This protocol hides\index{hiding} the messages
 $m_i \in \M_H$, where $\M_H \subseteq \M$, from the signer by generating a
 commitment to these values and blinding them according to
 Algorithm~\ref{alg:CL-blind-commit}. During this commitment phase these
@@ -477,7 +477,7 @@ signature as described in the following section.
 
 \subsection{Proving Knowledge of a Signature\label{sec:cl_proof}}
 \index{Camenisch-Lysyanskaya!signature!proving knowledge|(}
-Blind signatures hide (a number of) the messages from the signer during
+Blind signatures hide\index{hiding} (a number of) the messages from the signer during
 signature generation. The goal of proving knowledge of a signature is to hide
 (a number of) the messages from the verifier during signature verification as
 well as to hide the actual value of the signature to prevent traceability. This
@@ -526,7 +526,7 @@ adjusted such that the signature remains valid, that is, it still satisfies
 This randomisation operation only effectively randomises the $A$ value of the
 signature. Hence it is required to hide the $e$ and $v'$ values using a
 zero-knowledge proof when revealing this randomised signature and the messages
-$m_i \in \M_D$ disclosed to the verifier. Furthermore the following proof hides the messages
+$m_i \in \M_D$ disclosed to the verifier. Furthermore the following proof hides\index{hiding} the messages
 $m_i \in \M \setminus \M_D$ that the user does not wish to disclose to the
 verifier.
 \begin{equation*}
@@ -643,7 +643,7 @@ verification protocol.
 An Identity Mixer credential contains a master secret $s$, which belongs to the
 user and is never revealed, and a collection of attributes
 $\{a_i\}_{i \in \mathcal{A}}$, where $\mathcal{A}$ denotes the set of
-attribute indices. Hence, the sets of message indices for the issuance protocol
+attribute indices.\index{attribute!index set} Hence, the sets of message indices for the issuance protocol
 become $\M_H = \{s\}$ and $\M = \M_H \cup \mathcal{A}$. As a result of the
 issuance protocol the user obtains a signature $(A, e, v)$ over these values
 which completes the credential.
@@ -676,7 +676,7 @@ user can now generate a proof of knowledge that can be sent to the verifier in
 order to reveal the attributes and to prove that they are signed by the issuer.
 
 This is the core of the Identity Mixer system that we have implemented on a
-smart card, for extensions of this proof which provide more features we refer
+smart card,\index{smart card} for extensions of this proof which provide more features we refer
 the reader to the specification of the Identity Mixer
 technology~\cite{IdemixCrypto2012}.
 
@@ -694,6 +694,7 @@ tell whether or not he communicates with the same user as before or with a
 different one.
 
 \section{Identity Mixer on Smart Cards}
+\index{smart card}
 
 We are not the first develop an implementation of the Identity Mixer on a smart
 card. In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented a minimal
@@ -722,7 +723,7 @@ for being really practical.
 
 Our system consists of two parts, depicted in Figure~\ref{fig:architecture}, a
 terminal~(\subref{fig:terminal-architecture}) which interacts with a
-card~(\subref{fig:card-architecture}) using APDUs. The terminal application is
+card~(\subref{fig:card-architecture}) using APDUs.\index{APDU} The terminal application is
 written in Java and uses the Identity Mixer cryptographic library\footnote{The
 library is available for download at \url{https://prime.inf.tu-dresden.de/idemix/}
 while our patches can be found at \url{https://github.com/credentials/idemix_library}.}
@@ -738,7 +739,7 @@ library into the corresponding APDU commands and converting the Java data types
 to raw byte arrays, suitable for APDU communication.
 
 The Identity Mixer application\footnote{\url{https://github.com/pimvullers/idemix_multos/}}
-on the card takes care of handling the incoming APDUs and storing the values
+on the card takes care of handling the incoming APDUs\index{APDU} and storing the values
 into the internal data structures. While handling the communication with the
 terminal is the largest part of the application, the main part is the
 implementation of the cryptographic operations for the Identity Mixer protocols.
@@ -769,8 +770,8 @@ this method for the base $S$.} exponentiations and one multiplication.
 
 Our initial implementation only used static memory to store the variables. This
 allowed us to work without thinking about which memory segment to use. The
-drawback of this approach was a bad performance caused by the EEPROM memory
-which takes a long time, compared to RAM, to write new values.
+drawback of this approach was a bad performance caused by the EEPROM\index{EEPROM} memory
+which takes a long time, compared to RAM,\index{RAM} to write new values.
 
 Once we had a functionally correct implementation, we started to optimise. This
 was done by moving the buffer, which stores the intermediate results for larger
@@ -791,7 +792,7 @@ for session variables.
 To improve this situation, we reduced the number of function calls by inlining
 some convenience functions. We also switched to using global variables instead
 of function parameters, such that when we use a function, it does not require
-much space on the stack. To get the last few, often used, variables into RAM,
+much space on the stack. To get the last few, often used, variables into RAM,\index{RAM}
 we decided to split up some computations into smaller parts such that the
 values to be put on the stack also get smaller. For example, additions can be
 computed using addition with carry, and multiplications using grade-school
@@ -804,7 +805,7 @@ operations during calculations. This was required since the provided C-functions
 moved the values from the stack to the variable locations, while they are needed
 again in the next operation. By doing this we could reduce the amount of memory
 required for intermediate values which in the end allowed us to get all
-necessary variables in RAM.
+necessary variables in RAM.\index{RAM}
 
 \section{Performance Results\label{sec:IM-performance}}
 
@@ -857,7 +858,7 @@ For selective disclosure, we measured the running times of four configurations
 (see Figure~\ref{fig:proving}). These configurations have been chosen because
 two is the smallest number of attributes for which selective disclosure makes
 sense and five is the largest number of attributes that we can currently keep in
-memory while not using EEPROM for computations during the transaction. By
+memory while not using EEPROM\index{EEPROM} for computations during the transaction. By
 comparing these graphs, it is clear that each attribute that is disclosed
 reduces the computation time with roughly 100 milliseconds. Also, the scenario
 in which all attributes results in similar computation times, with only slightly

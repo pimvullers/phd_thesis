@@ -10,7 +10,7 @@ To circumvent this problem Verheul~\cite{Verheul01} proposes a
 variant~\cite{BonehLS01,BonehLS04} of the Chaum-Pedersen signature
 scheme~\cite{ChaumPedersen93} which allows these values to be randomised, or \index{signature randomisation}
 \emph{blinded}, such that they are no longer traceable, while the signature can
-still be verified for its authenticity. This signature scheme can then be used
+still be verified for its authenticity.\index{authenticity} This signature scheme can then be used
 to implement a credential system which allows the users themselves to blind
 their credentials in order to prevent traceability.
 
@@ -21,7 +21,7 @@ implementations~\cite{BatinaHJMV10,HoepmanJV10}.
 \section{Self-blindable Signatures}
 
 Chaum and Pedersen~\cite{ChaumPedersen93} describe a basic signature scheme
-which is intended to be used in combination with smart cards. This scheme
+which is intended to be used in combination with smart cards.\index{smart card} This scheme
 originally operates in the discrete logarithm setting, but is translated to the
 elliptic curve setting by Boneh, Lynn and Shacham~\cite{BonehLS01,BonehLS04}
 and Verheul~\cite{Verheul01}. The elliptic curve variant of this scheme led to
@@ -85,15 +85,15 @@ the private key corresponding to the public key used for the verification.
 \subsection{Boneh-Lynn-Shacham Signature Scheme}\index{Boned-Lynn-Shacham signature}
 
 Since the signature scheme of Chaum and Pedersen operates in the discrete
-logarithm setting it can also be used with elliptic curve cryptography. Boneh,
+logarithm setting it can also be used with elliptic curve cryptography.\index{elliptic curve cryptography} Boneh,
 Lynn and Shacham~\cite{BonehLS01,BonehLS04} present a signature scheme that
-works on elliptic curves with bilinear pairings (see Section~\ref{sec:pairings})
+works on elliptic curves with bilinear pairings (see Section~\ref{sec:pairings})\index{bilinear pairing}
 and resembles the scheme by Chaum and Pedersen, but omits the equality proof in
 order to achieve short signatures.
 
 At the same time Verheul~\cite{Verheul01} gives a similar description of this
 proofless variant \index{Chaum-Pedersen signature!proofless variant} of the Chaum-Pedersen scheme for groups in which the
-decisional Diffie-Hellman problem\index{Diffie-Hellman problem!decisional} is easy while the computational Diffie-Hellman\index{Diffie-Hellman problem!computational}
+decisional Diffie-Hellman problem\index{Diffie-Hellman problem} is easy while the computational Diffie-Hellman
 and discrete logarithm\index{discrete logarithm problem} problems are hard. Elliptic curves\index{elliptic curve} with bilinear pairings\index{bilinear pairing}
 provide such groups. The proof of equality can in this case be substituted by a
 bilinear pairing equation to be checked by the verifier.
@@ -142,7 +142,7 @@ in Algorithm~\ref{alg:BLS-verify}):
 \begin{equation}\label{eqn:BLS-verify}
   e(P_m, Q) = e(P_m, x \cdot P_2) = e(x \cdot P_m, P_2) = e(Z, P_2)
 \end{equation}
-where $e: E_1 \times E_2 \to G$ is a bilinear pairing as described in
+where $e: E_1 \times E_2 \to G$ is a bilinear pairing\index{bilinear pairing} as described in
 Section~\ref{sec:pairings}.
 
 Verheul~\cite{Verheul01} points out a powerful aspect about these signatures:
@@ -178,7 +178,7 @@ to $P_{ID}$.
 
 \subsection{Attribute Certificates}\index{attribute!certificate}
 
-Attribute certificates are digital certificates\index{digital cerificate} that bind attributes to users
+Attribute certificates are digital certificates\index{digital certificate} that bind attributes to users
 known by a public key. Proof of possessing an attribute is given by proving
 possession of the private key related to the public key referenced in the
 certificate.
@@ -233,7 +233,7 @@ To obtain a self-blindable credential from a credential issuer the user must
 provide the issuer with its public key and proof possession of the corresponding
 private key. This public key can be signed by an identity\index{identity!provider} provider in order to
 increase the trust level of the system. When the credential issuer has verified
-the authenticity of the user he will verify eligibility for the requested
+the authenticity\index{authenticity} of the user he will verify eligibility for the requested
 attribute. Once this has been verified the issuer signs the user's public key
 using the private key corresponding to the requested attribute and send this
 signature to the user as depicted in Figure~\ref{fig:SBC-issuance}.
@@ -278,8 +278,8 @@ card-side application). Our implementation involves the following components:
     The Bouncy Castle library is a collection of
     cryptographic APIs for the C\# and Java programming languages. It provides
     full support for elliptic curve cryptography and an interface to the common
-    Java Cryptography Extension API. However, it does not implement pairings or
-    elliptic curves over fields other than $\mathbb{F}_p$ and
+    Java Cryptography Extension API. However, it does not implement bilinear
+    pairings\index{bilinear pairing} or elliptic curves over fields other than $\mathbb{F}_p$ and
     $\mathbb{F}_{2^m}$. Thus we have added our own implementations of
     $\mathbb{F}_{p^2}$ and $\mathbb{F}_{p^{12}}$, and the Tate, ate, and R-ate
     pairings.
@@ -470,7 +470,7 @@ $y$-coordinates of the points. For the proof of possession verification this is
 not a real issue since this verification is only a single point multiplication,\index{point multiplication}
 although this is of course not optimal. For the pairing signature verification
 (\ref{eqn:BLS-verify}) simple guessing is not desirable. Therefore we exploit
-the bilinearity of the pairing\index{bilinear pairing} to avoid computing more than two pairings, as
+the bilinearity\index{bilinearity} of the pairing\index{bilinear pairing} to avoid computing more than two pairings, as
 would be the case without point reconstruction.
 
 First we calculate $e_1 = e(P_b, Q_a)$ and $e_2 = e(C_b, P_2)$ where we take
@@ -578,7 +578,7 @@ agreement can only return the $x$-coordinate.
 A large benefit of our use of elliptic curve cryptography is the small amount of data that needs to be
 exchanged between the terminal and the card. For key lengths of 192, 160 and 128
 bits the total amount of bytes exchanged is 155, 135 and 115 respectively. This
-would allow an implementation to use a \emph{single} APDU pair (command and
+would allow an implementation to use a \emph{single} APDU\index{APDU} pair (command and
 response) for all communication. This is in strong contrast with discrete
 logarithm or RSA-based protocols~\cite{Sterckx09,TewsJacobs09} which already
 require multiple APDUs to transfer a single command.

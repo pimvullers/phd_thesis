@@ -179,7 +179,7 @@ following four security aspects.
   \item A credential is \emph{non-transferable}\index{non-transferability} as
     it is bound to the secret key of the person involved in the issuance
     protocol. This secret key should be well protected, for instance via storage
-    in the secure memory of a smart card with a PIN.
+    in the secure memory of a smart card\index{smart card} with a PIN.
   \item A credential \emph{hides}\index{hiding} its content, so it does not
     reveal the attributes it contains.
 \end{itemize}
@@ -206,7 +206,7 @@ A number of technologies have been developed based on ideas described above, but
 the main focus has been on the cryptography that enables such systems and less
 on (efficient) implementations and their use cases. The implementations which
 have been developed are mainly for ordinary computers, while our research
-focuses on implementing such technologies on smart cards. This approach offers
+focuses on implementing such technologies on smart cards.\index{smart card} This approach offers
 various new usage scenarios, like privacy-friendly public transport cards and
 identity\index{identity!documents} documents, but also faces difficulties due
 to the limited capabilities of smart card platforms and hardware (see
@@ -238,7 +238,7 @@ cryptography.
 
 Another approach is to use single-show credentials\index{single-show
 credentials} in combination with a blind signature protocol\index{blind
-signatures}. Here the issuance involves creating a blind signature which
+signature}. Here the issuance involves creating a blind signature which
 conceals the resulting credential from the issuer. Therefore, the verification
 instances of this credential cannot be related to the issuing phase. These
 credentials are called single-show since they do not provide the multi-show
@@ -309,6 +309,7 @@ for the \textsf{over~18} attribute). Signed attributes are partly anonymous
 batches of cards, such that a signature cannot be linked to a single card.
 
 \section{Smart Cards\label{sec:smartcards}}
+\index{smart card|(}
 
 One of the goals of our research is to assess how fast privacy-friendly
 protocols are when run on a modern smart card\index{smart card}. Hence
@@ -374,8 +375,7 @@ during the applet life-cycle. To promote reuse, objects should remain in scope
 or referenced for the life of the applet, and their state reset as appropriate
 before reuse.
 
-\subsubsection{Application Programming Interface}\index{API}
-\index{application programming interface|see{API}}
+\subsubsection{Application Programming Interface}
 
 The Java Card API\index{Java Card!API} is carefully designed to support the
 smart card environment and has several built-in security features. For example,
@@ -465,14 +465,14 @@ applications will need to ensure that their use of dynamic memory does not
 exceed the limit imposed by the chip~\cite{MIR2012} on which the application
 will reside.
 
-\subsubsection{Application Programming Interface}\index{API}
+\subsubsection{Application Programming Interface}
 
 Similar to the Java Card API\index{Java Card!API} routines, some of the
 instructions are specified to be optional, mostly ones responsible for
 cryptographic operations. A particular MULTOS card may or may not support the
 optional instructions. For our implementation we used development cards based on
 the SLE66 and SLE78 chips from Infineon. These particular
-cards~\cite{MULTOS_Implementation2010} support a wide range of modulo arithmetic
+cards~\cite{MIR2012} support a wide range of modulo arithmetic
 operations, a range which is sufficient to fully support all of the required
 calculations. The more low-level and flexible MULTOS\index{MULTOS!API} API, as
 opposed to less flexible and more high level Java Card API, is the main reason
@@ -487,6 +487,7 @@ Java), per application memory safety is guaranteed by the MULTOS platform,
 regardless of the high-level language used during development.
 
 \index{MULTOS|)}
+\index{smart card|)}
 
 \section{Contributions}
 

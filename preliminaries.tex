@@ -21,7 +21,7 @@ $e \cdot d = 1 \mod \phi(n)$, hence it can be computed as
 $d = e^{-1} \mod \phi(n)$. When $p$ and $q$ are know, this computation is easy,
 but computing $d$ based on just $n$ and $e$ is proved to be computationally
 equivalent to determining the prime factors $p$ and $q$ of $n$, which is known
-as the integer factorisation problem, a number-theoretic problem which is
+as the integer factorisation problem,\index{integer factorisation problem} a number-theoretic problem which is
 considered intractable for large integers.
 
 \subsection{Encryption Scheme}\index{RSA!encryption}
@@ -67,7 +67,7 @@ the probability that an attacker can solve the RSA problem is negligible.
 Note that the algorithms described in this thesis are the basic textbook
 versions, which are vulnerable to a range of attacks~\cite{Hastad1985,
 Coppersmith1997}. To prevent such attacks, practical RSA implementations
-typically include some form of randomized padding into the value $m$ before
+typically include some form of randomised padding into the value $m$ before
 encrypting it. For example, for encryption one would normally use the OAEP
 padding scheme from the PKCS \#1 standard~\cite{PKCS_1}. The same holds for RSA
 signatures, as described below, where usually the PSS padding
@@ -160,8 +160,7 @@ group description $(p, q, g)$, is assumed to be as difficult as the discrete
 logarithm problem and is called the \emph{(computational) Diffie-Hellman problem}\index{Diffie-Hellman problem}. A related
 problem is to determine whether a value $y$ is created using $h_1$ and $h_2$,
 hence whether $y = g^{x_1 \cdot x_2}$, or not. This is known as the
-\emph{decisional Diffie-Hellman problem}\index{decisional Diffie-Hellman
-problem}.
+\emph{decisional Diffie-Hellman problem}.
 
 \begin{figure}[ht]
   \centering
@@ -267,6 +266,7 @@ with RSA, but we can check it according to the following equation:
 \end{algorithm}
 
 \section{Elliptic Curve Cryptography}
+\index{elliptic curve cryptography|(}
 
 In the previous section we described the discrete logarithm cryptography in a
 setting of a prime order subgroup of $\Z^*_p$. These techniques can, however,
@@ -277,7 +277,7 @@ Note that it is common to use additive notation in an elliptic curve setting,
 whereas multiplicative notation is typically used to denote operations in prime
 order subgroups.
 
-\subsection{Elliptic Curves}
+\subsection{Elliptic Curves}\index{elliptic curve}
 
 A finite field containing $q$ elements, where $q = p^k$ is a prime power, is
 denoted as $\F{q}$. An example of such a field is $\Z_p$, but more complex
@@ -443,11 +443,11 @@ that $K$ is now a point instead of an integer.
 
 Besides an alternative implementation for discrete logarithm-based cryptography,
 elliptic curves also offer additional functionality, such as efficiently
-computable bilinear pairings.
+computable bilinear pairings.\index{bilinear pairing}\index{pairing|see{bilinear pairing}}
 
 A bilinear pairing is a map of the form $e: \mathbb{G}_1 \times \mathbb{G}_2 \to
 \mathbb{G}_T$ where $\mathbb{G}_1$ and $\mathbb{G}_2$ are typically additive
-groups and $\mathbb G_T$ is a multiplicative group. Bilinearity means that the
+groups and $\mathbb G_T$ is a multiplicative group. Bilinearity\index{bilinearity} means that the
 map is linear in both components. This bilinearity property can be written as
 follows:
 \begin{equation*}
@@ -469,7 +469,7 @@ For all these pairings one often uses specific cyclic subgroups of a curve
 $E(\mathbb{F}_{p^k})$ as $\mathbb{G}_1$ and $\mathbb{G}_2$ and
 $\mathbb{F}_{p^k}^*$ as $\mathbb{G}_T$.
 
-\subsubsection{Barreto-Naehrig Curves\label{sec:BN}}\index{Barreto-Naehrig curves}
+\subsubsection{Barreto-Naehrig Curves\label{sec:BN}}\index{Barreto-Naehrig curve}
 
 Pairing-friendly elliptic curves are curves with a small embedding degree and a
 large prime-order subgroup~\cite{FreemanST2010}. In 2005, Barreto and Naehrig
@@ -481,6 +481,8 @@ such that $p$ is prime. The order of such curve is a prime $n$ where
 $n = n(u) = 36 u^4 + 36 u^3 + 18 u^2 + 6 u + 1$. Hence, a Barreto-Naehrig curve
 is constructed by generating integers $u$ until both $p(u)$ and $n(u)$ are prime
 numbers.
+
+\index{elliptic curve cryptography|)}
 
 \section{Proofs of Knowledge}
 
@@ -605,3 +607,12 @@ since:
 \begin{equation*}
   \hat{a} = g^r \cdot h^{-c} = g^{u + c \cdot x} \cdot h^{-c} = g^{u + c\cdot x} \cdot (g^x)^{-c} = g^u = a \mod p\text.
 \end{equation*}
+
+Such a non-interactive zero-knowledge proof is often called a signature proof of
+knowledge, because of the message that is included in the proof. To describe
+such proof we use the following notation:
+\begin{equation*}
+  SPK\{(\alpha) : h = g^{\alpha} \mod p \}(m)
+\end{equation*}
+where $m$ is the message that is included in the non-interactive proof of
+knowledge of the private key corresponding to the public key $h$.

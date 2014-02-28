@@ -25,7 +25,15 @@
 \usepackage{amsmath,amsfonts,graphicx,caption,subcaption,wrapfig}
 
 %%% Support for (clickable) references
-\usepackage[hidelinks]{hyperref}
+\usepackage[hidelinks,backref=page]{hyperref}
+
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+  \ifcase #1 (Not cited)%
+  \or (Cited on page~#2)%
+  \else (Cited on pages~#2)%
+  \fi
+}
 
 %%% Load xcolor package used by colortbl before footnote to avoid issues
 %\usepackage{xcolor}

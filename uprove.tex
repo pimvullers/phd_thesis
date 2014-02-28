@@ -14,9 +14,9 @@ be selectively disclosed to a verifier. Hence the user decides which attributes
 to show and which to withhold (for example, one can reveal the birth date, but
 not the residence address). Finally there is the token's public-key, which
 aggregates all information in the token, and a signature from the issuer over
-this public-key to ensure the authenticity.
+this public-key to ensure the authenticity.\index{authenticity}
 
-A previous attempt to implement this technology on a smart card by Tews and
+A previous attempt to implement this technology on a smart card\index{smart card} by Tews and
 Jacobs~\cite{TewsJacobs09}, based on Brands' description~\cite{Brands2000},
 resulted in a highly involved Java Card\index{Java Card!applet} applet with running times in the order
 of 5--10 seconds which make it not really usable in practice. They concluded
@@ -27,14 +27,14 @@ Our implementation, which we describe in Section~\ref{sec:UP-smartcard}, not
 only has a much better performance but is also, except from some minimal
 limitations, compatible with the development kits released by Microsoft.
 
-\section{Schnorr Signature Scheme}
+\section{Schnorr Signature Scheme}\index{signature!Schnorr|see{Schnorr siganture}}
 
-The Schnorr signature scheme~\cite{Schnorr1989,Schnorr1991} relies on the
-Schnorr identification protocol~\cite{Schnorr1989} which is a special instance
+The Schnorr\index{Schnorr signature} signature scheme~\cite{Schnorr1989,Schnorr1991} relies on the
+Schnorr\index{Schnorr identification protocol} identification protocol~\cite{Schnorr1989} which is a special instance
 of the interactive protocol of Chaum, Evertse and Van de
 Graaf~\cite{ChaumEvdG1988} that proves knowledge of a discrete logarithm key
 pair. It is derived from this identification scheme by replacing the verifier's
-challenge by a hash value according to the Fiat-Shamir
+challenge by a hash value according to the Fiat-Shamir\index{Fiat-Shamir heuristic}
 heuristic~\cite{FiatShamir1987} as can be seen in
 Algorithm~\ref{alg:Schnorr-sign}.
 
@@ -70,13 +70,13 @@ Algorithm~\ref{alg:Schnorr-sign}.
   \end{algorithmic}
 \end{algorithm}
 
-The private key is a random value $x$. The corresponding public key is a value
+The private key\index{private key} is a random value $x$. The corresponding public key\index{public key} is a value
 $h = g^x \mod p$ together with a description of the prime-order group in which
 the computations take place. As an example we use $(p, q, g)$, which denotes a
 subgroup of $\Z^*_p$ of prime-order $q$ with generator $g$. The signature over
 a message $m$ is the resulting pair $(c, r)$.
 
-Verification of such a Schnorr signature $(c, r)$ starts with the reconstruction
+Verification of such a Schnorr\index{Schnorr signature} signature $(c, r)$ starts with the reconstruction
 of the input value for the hash function based on $r$, according to the
 following equation:
 \begin{equation}\label{eqn:Schnorr-verify}
@@ -85,7 +85,7 @@ following equation:
 If the signature is valid, that is, this equation holds, the resulting output of
 the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
 
-\subsection{Blind Signatures}
+\subsection{Blind Signatures}\index{Schnorr signature!blind}
 
 \begin{figure}[ht]
   \centering
@@ -94,13 +94,13 @@ the hash function matches $c$ (see Algorithm~\ref{alg:Schnorr-verify}).
   \label{msc:schnorr_blind-sign}
 \end{figure}
 
-Figure~\ref{msc:schnorr_blind-sign} depicts the protocol for generating blind
+Figure~\ref{msc:schnorr_blind-sign} depicts the protocol for generating blind\index{blind signature}
 signatures~\cite{PointchevalStern1996}. The steps executed by the signer are
 similar to the original signing protocol. In Algorithm~\ref{alg:Schnorr-prepare}
 the signer constructs a commitment $a$, to the randomisation value $u$, which is
 sent to the recipient of the signature.
 
-The recipient generates blinding values $v$ and $w$ to hide the message $m$ that
+The recipient generates blinding values $v$ and $w$ to hide\index{hiding} the message $m$ that
 it whats to get signed. A (blinded) commitment $c$ to this message is generated
 (see Algorithm~\ref{alg:Schnorr-commit}) and sent to the signer.
 
@@ -186,32 +186,32 @@ verification procedure, Algorithm~\ref{alg:Schnorr-verify}. This works since:
 
 \section{U-Prove Credentials}
 
-The U-Prove technology is built around U-Prove tokens. These tokens are in
-principle a collection of attributes signed by an issuer. The issuer's public
+The U-Prove technology is built around U-Prove\index{U-Prove token} tokens. These tokens are in
+principle a collection of attributes signed by an issuer. The issuer's public\index{U-Prove!issuer public key}
 key $(g_0, \{g_i\}_{i \in \A})$ consists of a value $g_0 = g^x \mod p$ which
-commits to the private key $x$ and a random generator $g_i$ for each possible
-attribute ($\A$ denotes the set of attribute indices).
+commits to the private\index{U-Prove!issuer private key} key $x$ and a random generator $g_i$ for each possible
+attribute ($\A$ denotes the set of attribute indices).\index{attribute!index set}
 
 In order for the attributes $\{a_i\}_{i \in \A}$, to be signed they are
-aggregated into what is called the token public key $h = h'^s \mod p$ where $s$
+aggregated into what is called the token public\index{U-Prove!token public key} key $h = h'^s \mod p$ where $s$
 is the user's secret and $h'$ is the aggregation of the attributes using the
 issuer's public key:
 \begin{equation}\label{eqn:UP-attribute-aggregation}
   h' = g_0 \cdot \textstyle\prod_{i \in \A} g_i^{a_i} \mod p
 \end{equation}
-The corresponding token private key $s' = s^{-1} \mod q$. Together with the
+The corresponding token private\index{U-Prove!token private key} key $s' = s^{-1} \mod q$. Together with the
 issuer's signature $(z', c', r')$, generated during the issuance process (see
 Section~\ref{sec:UP-issuance}), these values form a U-Prove token. Such a token
 serves as a pseudonym\index{pseudonym} for the user. A collection of U-Prove tokens, where only
 the signatures differ, can be seen as a U-Prove credential.
 
-A U-Prove credential usually consist of multiple tokens to achieve anonymity,
+A U-Prove\index{U-Prove!credential} credential usually consist of multiple tokens to achieve anonymity,
 since a single token acts as a pseudonym\index{pseudonym} for the user. This means that whenever
 the user does not want to be traced during a credential verification (see
 Section~\ref{sec:UP-verification}) she should use a fresh token to prevent the
 verifier from linking the token to previous transactions.
 
-To summarise, a U-Prove credential, as depicted in
+To summarise, a U-Prove\index{U-Prove!credential} credential, as depicted in
 Figure~\ref{fig:uprove-credential}, consists of:
 \begin{itemize}
   \item a collection of attributes $\{a_i\}_{i \in \mathcal{A}}$ aggregated in $h'$,
@@ -226,6 +226,7 @@ Figure~\ref{fig:uprove-credential}, consists of:
 \end{figure}
 
 \section{Credential Issuance}\label{sec:UP-issuance}
+\index{U-Prove!issuance|(}
 
 \begin{figure}[ht]
   \centering
@@ -345,9 +346,10 @@ also verify whether the values received from the issuer are correct:
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+\index{U-Prove!issuance|)}
 
 \section{Credential Verification}\label{sec:UP-verification}
-
+\index{U-Prove!verification|(}
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{mscs/uprove-verification}
@@ -408,6 +410,7 @@ $\hat{b}$ for the hash function according to the following equations:
 If the signature is valid, that is, both equations hold, the resulting output of
 the hash function matches $c'$.
 
+\index{U-Prove!selective disclosure|(}
 The second part of the credential verification protocol of
 Figure~\ref{msc:uprove-verification} consists of selective disclosure of the
 attributes and a proof of knowledge of the token private key. In this part the
@@ -495,14 +498,17 @@ reconstruction works because of the following equation:
   & = a \mod p
 \end{align*}
 
+\index{U-Prove!selective disclosure|)}
+\index{U-Prove!verification|)}
 
 \section{U-Prove on Smart Cards}\label{sec:UP-smartcard}
+\index{smart card}
 
 The use of U-Prove in combination with a smart card was already envisioned by
 Brands~\cite{Brands2000} and published by Microsoft in version~1.1 of the
 U-Prove cryptographic specification~\cite{U-Prove_Crypto2011}. Their idea is to
 use a smart card (or even any trusted computing device) as a manner of
-protecting U-Prove tokens, which they then call device-protected tokens. This is
+\index{hardware-protection}protecting U-Prove tokens, which they then call device-protected tokens. This is
 achieved by having the device contribute one attribute to the token. The actual
 value of this attribute is, like a private key, only known by the device and
 will always be hidden. Therefore the device is required during the verification
@@ -513,7 +519,7 @@ Besides adding an additional layer of protection the U-Prove technology
 overview~\cite{U-Prove_Overview2011} describes a number of other benefits
 gained when using device-protected tokens. For example, a device can be used to
 enforce dynamic policies or prevent the use of a token at a blacklisted website.
-It also helps to enforce non-transferability of tokens by having the user
+It also helps to enforce non-transferability\index{non-transferability} of tokens by having the user
 authenticate\index{authentication} to the device before allowing it to be used in a transaction.
 Another option, especially interesting for smart cards, is to use the device as
 a carrier, or secure roaming store, for entire U-Prove credentials and not just
@@ -547,7 +553,7 @@ protocol run.
 Considering the size of the U-Prove data that is used in the protocols and the
 requirements of the MULTOS\index{MULTOS} cryptographic routines (all data for a cryptographic
 operation needs to be in one continuous array) the first thing to take care of
-is a careful split of the card data between EEPROM and RAM. Only 960
+is a careful split of the card data between EEPROM\index{EEPROM} and RAM.\index{RAM} Only 960
 \emph{bytes} of RAM are available on our development cards, compared to
 36 \emph{kilo}bytes of EEPROM. The most frequent use case of the card is the
 execution of the proving protocol, hence this is where good use of RAM is highly
@@ -556,7 +562,7 @@ then we ensured that all variables used in the verification protocol are
 allocated in RAM.
 
 The initialisation and issuance protocol require more scratch-pad memory than
-the available RAM, hence we were forced to use EEPROM there. Moreover, the
+the available RAM,\index{RAM} hence we were forced to use EEPROM\index{EEPROM} there. Moreover, the
 issuance protocol makes use of EEPROM for permanent storage of the issued
 U-Prove token and other permanent protocol parameters (prime numbers $p$, $q$,
 etc.). The use of EEPROM for computations has an impact on the running time for
@@ -574,10 +580,10 @@ The previous section described the implementation of the U-Prove protocols which
 mainly concerns storage and the mathematical computations. This is, however, not
 sufficient to use it in combination with Microsoft's U-Prove software
 development kit. We need to bridge between the high-level Java interfaces
-defined in this development kit and the low-level APDU interface of the smart
+defined in this development kit and the low-level APDU\index{APDU} interface of the smart
 card.
 
-We designed the low-level APDU interface to be as simple as possible.
+We designed the low-level APDU\index{APDU} interface to be as simple as possible.
 Essentially it has to provide three types of functionality:
 \begin{enumerate}
   \item sending data to the card,
@@ -591,7 +597,7 @@ can be transferred in one APDU (255 bytes). This allows us to just define one
 APDU instruction per variable, parametrised only with the index if needed (for
 example $g_i$), for setting or getting a value.
 
-Finally we need to bind this low level APDU API to the interfaces and data types
+Finally we need to bind this low level APDU\index{APDU} API to the interfaces and data types
 provided by the U-Prove software development kit. Luckily the development kit
 just uses byte arrays for the external access to the data types such that no
 additional conversion is needed. The only thing that needs to be done for a data
@@ -693,7 +699,7 @@ shown in Figure~\ref{fig:total}. What can be seen in these graphs is that under
 under 0.9 seconds (Figure~\ref{fig:5attr}). In this worst-case scenario 5
 attributes are stored on the card, none of which are disclosed during the
 protocol run. In other words, the U-Prove token is only validated for its
-authenticity without revealing any attributes. Such a scenario is not very
+authenticity\index{authenticity} without revealing any attributes. Such a scenario is not very
 likely to occur in reality. In a more likely scenario at least one or two
 attributes are going to be disclosed and we can also assume that a U-Prove token
 will contain less attributes (or, that a large number of attributes can be split
