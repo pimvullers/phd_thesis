@@ -76,15 +76,15 @@ example one can think of the following scenarios\index{scenarios}:
   \item If you wish to get a cheaper meal, show the \textsf{student} attribute,
     and for cheaper public transport you show that you are a \textsf{senior
     citizen}.
-  \item If you buy an item in a on-line shop you need to reveal your
+  \item If you buy an item in an on-line shop you need to reveal your
     \textsf{bank account} and \textsf{address} attributes, and possibly also
     your \textsf{loyalty status} attribute.
   \item When you buy a certain type of game or video on-line, you need to
     prove that you possess the attribute \textsf{over~12}, or \textsf{over~18}.
 \end{itemize}
 Note that in the last scenario, instead of using an attribute with the
-\textsf{over~12} or \textsf{over~18} statement\index{attribute!statement}
-\index{statement|see{attribute, statement}}, this property can also be proved
+\textsf{over~12} or \textsf{over~18} statement,\index{attribute!statement}
+\index{statement|see{attribute, statement}} this property can also be proved
 based on the \textsf{date of birth} attribute. This is then called a
 \emph{derived attribute}.\index{attribute!derived}
 \index{derived attribute|see{attribute, derived}}
@@ -102,6 +102,8 @@ credential as depicted in Figure~\ref{fig:Credential}.
   \caption{A visual representation of an attribute-based credential.}
   \label{fig:Credential}
 \end{figure}
+
+\todo{EP: Add definition of a credential and some examples.}
 
 \subsection{Credential Issuance and Verification}
 
@@ -127,10 +129,10 @@ depicted in Figure~\ref{fig:Credential}).
 
 The fact that the attributes\index{attribute} hold for the owner of a
 credential is guaranteed both by the issuer's signature and by the embedded
-personal key of the owner. The secret key embedded in the credential is only
-known by the credential owner and plays an essential role in the verification
-procedure\index{verification procedure} of the credential. It ensures that a
-credential cannot be transferred from one user to another.
+personal key of the owner. The secret key embedded in the credential plays an 
+essential role in the verification procedure\index{verification procedure} of 
+the credential, since it is only known by the credential owner. Therefore it 
+ensures that a credential cannot be transferred from one user to another.
 
 \subsection{Selective Disclosure of Attributes}
 
@@ -141,8 +143,8 @@ of her credentials. In the verification process the user can choose to only
 provide certain credentials; also, given a specific credential, the user may
 choose to reveal only a selection\index{selection} of the attributes
 \index{attribute} contained in the credential. By doing this, authentication
-\index{authentication} becomes more privacy friendly. This latter process is
-called \emph{selective disclosure}\index{selective disclosure}, involving
+\index{authentication} becomes more privacy friendly. This verification process
+is called \emph{selective disclosure}\index{selective disclosure}, involving
 a verification protocol in which only a subset of the credential attributes
 is revealed to the verifier while the other attributes are only proved to be
 present in the credential. This allows a user to reveal only the necessary
@@ -181,15 +183,16 @@ following four security aspects.
     protocol. This secret key should be well protected, for instance via storage
     in the secure memory of a smart card\index{smart card} with a PIN.
   \item A credential \emph{hides}\index{hiding} its content, so it does not
-    reveal the attributes it contains.
+    reveal the attributes it contains, unless these attributes are revealed
+    during verification.
 \end{itemize}
 Furthermore, a credential protects the privacy\index{privacy} of its owner
 through the following two cryptographic properties.
 \begin{itemize}
   \item \emph{Issuer unlinkability}\index{unlinkability!issuer}
     \index{issuer unlinkability|see{unlinkability!issuer}} ensures that any
-    information gathered during issuing cannot be used to link a verification of
-    the credential to its issuance.
+    information that the issuer gathers during the issuing proedure cannot be 
+    used to link a verification of the credential to its issuance.
   \item \emph{Multi-show unlinkability}\index{unlinkability!multi-show}
     \index{multi-show unlinkability|see{unlinkability, multi-show}} guarantees
     that when a credential is verified multiple times, these sessions cannot be

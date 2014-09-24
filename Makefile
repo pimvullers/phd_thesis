@@ -9,7 +9,7 @@ SVG_SRC=$(shell ls images/*.svg)
 SVG_PDF=$(SVG_SRC:.svg=.pdf)
 IMG=images/*
 
-all: manuscript thesis
+all: thesis
 
 manuscript: manuscript.pdf
 

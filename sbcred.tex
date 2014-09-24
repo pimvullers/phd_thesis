@@ -160,7 +160,7 @@ verification equation (\ref{eqn:BLS-verify}):
   = e(b \cdot Z, P_2)
 \end{equation*}
 Hence the signature remains valid. Since the user can perform this blinding all
-by itself Verheul calls these signatures \emph{self-blindable}.\index{self-blindable signature}
+by itself, Verheul calls these signatures \emph{self-blindable}.\index{self-blindable signature}
 
 \section{Verheul's Self-blindable Certificates}\index{self-blindable certificate}\index{certificate!self-blindable}
 
@@ -192,11 +192,13 @@ statement\index{attribute!statement} corresponding to this public key. In the co
 credentials such a self-blindable attribute certificate can be considered as a
 self-blindable credential.
 
-When we consider only a single attribute statement\index{attribute!statement} per public key, the
-certificates with the statements\index{attribute!statement} can be stored in a public database and can be
-omitted from the credential, given that the corresponding public key can be
-identified. This allows the credentials to be compact which is beneficial for
-devices with limited storage capacities, like smart cards.
+When we consider only a single attribute statement\index{attribute!statement} 
+per public key, the certificates with the statements\index{attribute!statement}
+can be stored in a public database. This allows for more compact credentials, 
+since this information can be omitted from the credential, given that the 
+corresponding public key can be identified through some reference. Such compact 
+credentials are beneficial for devices with limited storage capacities, like 
+smart cards.
 
 \begin{figure}[ht]
   \centering

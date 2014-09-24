@@ -12,7 +12,8 @@
 
 \usepackage[papersize={17cm,24cm},margin=2cm,bindingoffset=2mm,twoside]{geometry}
 
-\usepackage[a4,center]{crop}\crop[frame,noinfo]
+%\usepackage[a4,center]{crop}\crop[frame,noinfo]
+\usepackage[export]{adjustbox}
 
 \usepackage{fancyhdr}\pagestyle{plain}
 
@@ -25,7 +26,12 @@
 \usepackage{amsmath,amsfonts,graphicx,caption,subcaption,wrapfig}
 
 %%% Support for (clickable) references
-\usepackage[hidelinks,backref=page]{hyperref}
+\usepackage[hidelinks,backref=page,pdftex,
+            pdfauthor={Pim Vullers},
+            pdftitle={Efficient Implementations of Attribute-based Credentials on Smart Cards},
+            pdfsubject={Attribute-based Credentials},
+            pdfkeywords={attributes, credentials, smart cards}
+	    ]{hyperref}
 
 \renewcommand*{\backref}[1]{}
 \renewcommand*{\backrefalt}[4]{%
@@ -54,6 +60,7 @@
 
 %%% Get proper underscores in text without the need to escape them
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 
 \usepackage{multicol}
 \usepackage{multirow}
