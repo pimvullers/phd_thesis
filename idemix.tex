@@ -70,11 +70,11 @@ In order to guarantee that such a public key has been constructed correctly,
 that is, all values are elements of $\langle S \rangle$, a proof of
 correctness can be constructed (Algorithm~\ref{alg:CL-prove-key}, based
 on~\cite[Appendix A]{BrickellCC2004}):
-\begin{equation*}
+\begin{multline*}
   SPK \{ (\alpha_z, (\alpha_i)_{i \in \M}) : Z = S^{\alpha_z} \mod n
-    \:\land\: \forall_{i \in \M} R_i = S^{\alpha_i} \mod n
+    \:\land\: \\ \forall_{i \in \M} R_i = S^{\alpha_i} \mod n
   \}(n, S, Z, \{R_i\}_{i \in \M})
-\end{equation*}
+\end{multline*}
 
 \begin{algorithm}
   \caption{Proof correctness of a Camenisch-Lysyanskaya public key.}
@@ -696,8 +696,8 @@ different one.
 \section{Identity Mixer on Smart Cards}
 \index{smart card}
 
-We are not the first develop an implementation of the Identity Mixer on a smart
-card. In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented a minimal
+We are not the first to develop an implementation of the Identity Mixer on a 
+smart card. In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented a minimal
 Identity Mixer system on a Java Card\index{Java Card} whereas Sterckx et al.~\cite{Sterckx09}
 did the same for direct anonymous attestation. They provide the first
 implementations of this technology on smart cards. The major drawback of these

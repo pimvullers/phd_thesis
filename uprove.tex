@@ -101,7 +101,7 @@ the signer constructs a commitment $a$, to the randomisation value $u$, which is
 sent to the recipient of the signature.
 
 The recipient generates blinding values $v$ and $w$ to hide\index{hiding} the message $m$ that
-it whats to get signed. A (blinded) commitment $c$ to this message is generated
+it wants to get signed. A (blinded) commitment $c$ to this message is generated
 (see Algorithm~\ref{alg:Schnorr-commit}) and sent to the signer.
 
 \begin{algorithm}[H]
@@ -515,7 +515,7 @@ will always be hidden. Therefore the device is required during the verification
 protocol, since the user has to prove knowledge of \emph{all} undisclosed
 attributes.
 
-Besides adding an additional layer of protection the U-Prove technology
+Besides adding an additional layer of protection, the U-Prove technology
 overview~\cite{U-Prove_Overview2011} describes a number of other benefits
 gained when using device-protected tokens. For example, a device can be used to
 enforce dynamic policies or prevent the use of a token at a blacklisted website.
@@ -617,7 +617,7 @@ The two most important factors for us to test in our U-Prove implementation were
 correctness of the protocol calculations (obviously) and the speed. Testing the
 correctness was fairly easy. Since we interfaced our card to Microsoft's U-Prove
 SDK we could simply test it by invoking the protocol runs from the SDK and check
-the results. During the first stages of the development partial protocol
+the results. During the first stages of the development, partial protocol
 calculations were verified with the test vectors provided with the U-Prove
 SDK~\cite{U-Prove_Vectors2011}. In the whole process a few corner case problems
 with our calculations surfaced that required minor corrections.
@@ -703,15 +703,15 @@ authenticity\index{authenticity} without revealing any attributes. Such a scenar
 likely to occur in reality. In a more likely scenario at least one or two
 attributes are going to be disclosed and we can also assume that a U-Prove token
 will contain less attributes (or, that a large number of attributes can be split
-into several separate U-Prove tokens). As the graphs show, reducing the number
+into several separate U-Prove tokens). The graphs show that reducing the number
 of stored attributes improves the running time at a rate of 100 milliseconds per
-attribute, and also that the performance increases along with increasing the
+attribute. Furthermore, the performance increases along with increasing the
 number of disclosed attributes, roughly 50 milliseconds per each extra disclosed
 attribute. Overall, this brings the total execution time for a two attribute
 token disclosing one attribute to under 0.5 seconds (Figure~\ref{fig:2attr}).
 
 One of the reasons to justify Microsoft's device protected approach as
-described in Section~\ref{sec:UP-smartcard} are possible resource issues with
+described in Section~\ref{sec:UP-smartcard} is possible resource issues with
 smart cards (limited storage space and limited speed). Our performance results
 undermine this argument. The worst case execution time of the proving part is
 869 milliseconds. This not only makes the card implementation fast enough to be
@@ -723,7 +723,7 @@ below 350 milliseconds. We also see a potential to improve the running times
 using faster smart card hardware, we elaborate on this in the upcoming section.
 Overall, these good results strongly justify the idea to use U-Prove standalone
 on a smart card rather than to use Microsoft's device-protected token approach,
-which now has no obvious functional or performance advantages over our approach.
+which has no obvious functional or performance advantages over our approach.
 
 The only limitations of our implementation are imposed by the limited resources
 of the MULTOS\index{MULTOS} smart card. We had to limit the prime modulus size to 1024 bits,

@@ -232,7 +232,7 @@ The database will then contain:
 \end{figure}
 
 To obtain a self-blindable credential from a credential issuer the user must
-provide the issuer with its public key and proof possession of the corresponding
+provide the issuer with its public key and prove possession of the corresponding
 private key. This public key can be signed by an identity\index{identity!provider} provider in order to
 increase the trust level of the system. When the credential issuer has verified
 the authenticity\index{authenticity} of the user he will verify eligibility for the requested
@@ -246,7 +246,7 @@ When the user wants to utilise an attribute stored in a credential it has to
 show the credential to a verifier. To prevent the verifier from tracing her
 based on the public key the user first blinds her key pair and the credential as
 shown in Figure~\ref{fig:SBC-verification}. Next, she sends the results from
-this blinding operation to the verifier and proofs possession of the (blinded)
+this blinding operation to the verifier and proves possession of the (blinded)
 private key. This last step is easily achieved by signing a challenge received
 from the verifier using this private key. The verifier can then verify this
 signature using the public key it received earlier.
@@ -327,7 +327,7 @@ The standard Java Card API provides two algorithms~\cite{jcapi222}:
     Diffie-Hellman version, with cofactor multiplication, as
     per IEEE~P1363.
 \end{description}
-Unfortunately for us, the implementation of these algorithms has two drawbacks:
+Unfortunately, the implementation of these algorithms has two drawbacks:
 \begin{enumerate}
   \item According to the IEEE P1363 standard~\cite{IEEE_P1363} the shared
     secret computation by means of ECSVDP-DH and ECSVDP-DHC only returns the
@@ -369,8 +369,8 @@ blinded values $P_b$ and $C_b$ are then returned to the terminal.
   \label{alg:SBC-blind}
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
-    \Function{SBC-blind}{$b, P_c, C_a$}
-      \State $P_b \gets \Call{generateSecret}{P_c, b}$
+    \Function{SBC-blind}{$b, P_U, C_a$}
+      \State $P_b \gets \Call{generateSecret}{P_U, b}$
       \State $C_b \gets \Call{generateSecret}{C_a, b}$
 
       \Return $P_b, C_b$
@@ -392,15 +392,17 @@ has been our first choice for implementing the challenge-response protocol to
 establish proof of possession. As input for this algorithm we need the blinded
 private key $k_b = b \cdot k_U$.
 
-Since modular multiplication is not provided by the Java Card\index{Java Card!API} API we used the
-NatLib library developed by Hendrik Tews~\cite{TewsJacobs09}. This library
-implements modular arithmetic on Java Card\index{Java Card} using basic byte operations as the
-RSA operations available on the platform do not support the short values used in
-our protocol. The resulting proof of possession protocol is depicted in
+Since modular multiplication is not provided by the Java 
+Card\index{Java Card!API} API we used the NatLib library developed by Hendrik 
+Tews~\cite{TewsJacobs09}. This library implements modular arithmetic on Java 
+Card\index{Java Card} using basic byte operations as the RSA operations 
+available on the platform do not support the short values used in our protocol.
+The resulting proof of possession protocol is depicted in
 Figure~\ref{fig:SBC-proof-ECDSA} and the implementation is described by Batina
-et~al.~\cite{BatinaHJMV10}. Unfortunately the use of the NatLib library has an
-impact on the performance of the application which made us look into other
-alternatives for this protocol.
+et~al.~\cite{BatinaHJMV10}. However, the NatLib library causes most of the 
+running time of the protocol, as discussed in Section~\ref{sec:sbc-performance}.
+This made us look into other alternatives for this protocol, where the use of
+this library is no longer needed.
 
 \begin{figure}[ht]
   \centering
@@ -418,10 +420,10 @@ alternatives for this protocol.
   \label{fig:SBC-proof-BLS}
 \end{figure}
 
-Our search led us to, what we denote as, a minimal variant of the
-Boneh-Lynn-Shacham signature scheme. Since it consists of only a single point
-multiplication using the private key the workload on the card is minimal. We can
-also exploit the structure of the message to be signed to reduce the
+A feasible alternative to the ECDSA scheme is what we call a minimal variant of
+the Boneh-Lynn-Shacham signature scheme. Since it consists of only a single 
+point multiplication using the private key the workload on the card is minimal.
+We can also exploit the structure of the message to be signed to reduce the
 verification algorithm to a single point multiplication as well. The resulting
 proof of possession protocol is depicted in Figure~\ref{fig:SBC-proof-BLS}.
 
@@ -468,12 +470,14 @@ corresponding $y$-coordinate is known, namely as $y^{2} = x^{3} + ax + b$.
 By taking the square root of $x^{3} + ax + b$ we find either $y$ or $-y$.
 
 This reconstruction is a simple guess work, trying different signs for the
-$y$-coordinates of the points. For the proof of possession verification this is
-not a real issue since this verification is only a single point multiplication,\index{point multiplication}
-although this is of course not optimal. For the pairing signature verification
-(\ref{eqn:BLS-verify}) simple guessing is not desirable. Therefore we exploit
-the bilinearity\index{bilinearity} of the pairing\index{bilinear pairing} to avoid computing more than two pairings, as
-would be the case without point reconstruction.
+$y$-coordinates of the points. For the proof of possession verification guessing
+the sign is not a real issue since this verification is only a single point 
+multiplication,\index{point multiplication} although performing this 
+multiplication twice is of course not optimal. For the pairing signature 
+verification (\ref{eqn:BLS-verify}) simple guessing is not desirable. Therefore
+we exploit the bilinearity\index{bilinearity} of the pairing\index{bilinear 
+pairing} to avoid computing more than two pairings, as would be the case 
+without point reconstruction.
 
 First we calculate $e_1 = e(P_b, Q_a)$ and $e_2 = e(C_b, P_2)$ where we take
 any sign for the $y$-coordinate of $C_b$. If $e_1 = e_2$, which happens if we
@@ -486,7 +490,7 @@ being the inverse of the other, that is, $e_2 = e_1^{-1}$. Here we can use that
 $e_1 \cdot e_2 = e_1 \cdot e_1^{-1} = 1$ to avoid an extra pairing calculation
 for the negated point of $C_b$.
 
-\section{Performance Results}
+\section{Performance Results}\label{sec:sbc-performance}
 
 For our test we selected three Barreto-Naehrig curves\index{Barreto-Naehrig curve} (see Section~\ref{sec:BN}) for keys of length 128,
 160 and 192 bits. The domain parameters $p$ and $n$ for these curves are
@@ -524,17 +528,18 @@ ECDSA variant is significantly larger than the minimal Boneh-Lynn-Shacham
 solution. This contrast can be explained by the available support from the
 cryptographic coprocessor. For the blinding operations in the latter the applet
 only uses elliptic curve primitives provided by the coprocessor to perform the
-required point multiplications. The blinding in the latter, which requires a
-modular multiplication, has to be calculated \emph{without} the help of the
-coprocessor.
+required point multiplications. The blinding for the ECDSA variant, which 
+requires a modular multiplication, has to be calculated \emph{without} the help
+of the coprocessor.
 
-In theory it is possible to abuse the RSA cipher\index{RSA!cipher} (and hence use the coprocessor)
-to do large part of the modular multiplication by using the fact that
-$4ab = (a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. The squares in
-this equation can be performed by doing an RSA encryption\slash exponentiation
-with a suitable RSA public key, that is, one with the exponent 2 and the
-required modulus. The numbers $a+b$ and $a-b$ are then just messages to be
-encrypted using the RSA cipher, which is provided by the Java Card\index{Java Card!API} API.
+In theory it is possible to abuse the RSA cipher\index{RSA!cipher} (and hence 
+use the coprocessor) to do large part of the modular multiplication by using 
+the fact that $4ab = (a+b)^2 - (a-b)^2$, as in \cite{Sterckx09,TewsJacobs09}. 
+The squares in this equation can be performed by doing an RSA encryption\slash 
+exponentiation with a suitable RSA public key, that is, one with the exponent 2
+and the required modulus. The numbers $a+b$ and $a-b$ are then just messages to
+be encrypted using the RSA cipher, which is provided by the Java 
+Card\index{Java Card!API} API.
 
 We tried this approach, but unfortunately with no success. The main obstacle is
 that the RSA cipher on the card operates only within valid bit lengths for RSA
@@ -552,14 +557,15 @@ Table~\ref{tab:primitives}. The columns indicate the time needed to perform a
 single operation. The processing overhead is determined by subtracting one key
 generation and three key agreements from the protocol duration.
 
-On the one hand, performing a scalar point multiplication\index{point multiplication} (a key agreement
-operation) is quite efficient, using less then 100 milliseconds for the
-calculation. On the other hand, performing a scalar point multiplication,
-combined with generating a random value, (a key generation operation) is
-disappointing, taking more than a factor three longer than just the
-multiplication. A possible explanation is a different calculation which explains
-the fact that a key generation can return a complete point, whereas a key
-agreement can only return the $x$-coordinate.
+On the one hand, performing a scalar point multiplication\index{point 
+multiplication} (a key agreement operation) is quite efficient, using less then
+100 milliseconds for the calculation. On the other hand, performing a scalar 
+point multiplication, combined with generating a random value, (a key generation
+operation) is disappointing, taking more than a factor three longer than just 
+the multiplication. A possible explanation for this difference is that a 
+different calculation method is used, which might also explain the fact that a 
+key generation can return a complete point, whereas a key agreement can only 
+return the $x$-coordinate.
 
 \begin{table}[H]
   \centering

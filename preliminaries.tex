@@ -57,7 +57,7 @@ that
   \end{algorithmic}
 \end{algorithm}
 
-The problem of recovering the message $m$ based on the ciphertext $m^e \mod n$
+The problem of recovering a random message $m$ based on the ciphertext $m^e \mod n$
 and public key $(n, e)$ is known as the \emph{RSA problem}\index{RSA problem}.
 This is equivalent to finding $e$th roots modulo $n$ which is assumed to be as
 difficult as the integer factorisation problem\index{integer factorisation
@@ -299,7 +299,7 @@ where $\infty$ is a special point called the \emph{point at infinity}.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[scale=.5]{images/ec_math}
+  \includegraphics{images/elliptic-curve.mps}
   \caption[Geometric visualisation of point operations on an elliptic curve.]{
     Geometric visualisation of point addition ($R = P + Q$), point doubling
     ($R' = 2P'$) and point negation ($-R$) on an elliptic curve.}
@@ -553,7 +553,7 @@ knows the private key $x$, since
   x = \frac{r'-r}{c'-c} \mod q\text.
 \end{equation*}
 
-A similar protocol~\cite{Girault1991}, depicted in Figure~\ref{msc:schnorr_mod},
+A similar protocol~\cite[Section~3.5]{Camenisch2007}, depicted in Figure~\ref{msc:schnorr_mod},
 can also be constructed for groups in which the order of the (sub)group is not
 known to all parties. This is for instance the case in an RSA setting where the
 order of the group is only known by the party that knows the primes $p$ and $q$.

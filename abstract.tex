@@ -2,51 +2,56 @@
 \addcontentsline{toc}{chapter}{Abstract}
 
 In a world where computers are involved in most aspects of our lives, it
-becomes more and more important to digitally identify entities. Many
-existing systems use unique identifiers to achieve this goal, which is a
-simple solution, but also easily allows for privacy infringements. A
-more privacy-preserving alternative is to use attribute-based
-credentials as a basis for authentication and authorization. Such
-credentials serve as a (certified) cryptographic container for
-attributes, that is, properties of the user. With these attributes the
-user can be authenticated  solely on the properties that are relevant to
-access a resource or receive a service.
+becomes more and more important to digitally identify entities. To achieve 
+this goal, many existing systems use unique identifiers. This is a simple
+solution, but also makes it easy to trace the user's actions. A 
+privacy-friendly alternative is to use attribute-based credentials as a 
+basis for authentication and authorization. Such credentials serve as a 
+cryptographic container for attributes, that is, properties of the user,
+which are certified by an authority. With these attributes the user can 
+be authenticated to access a resource or receive a service solely on the 
+properties that are relevant for that specific resource or service.
 
-In this thesis we describe the three attribute-based credential
-technologies for which we have developed efficient smart card
-implementations. These technologies are:
-\begin{itemize}
-  \item Self-blindable credentials, by Verheul, which are based on elliptic
-   curve cryptography with bilinear pairings. In this technology the
-   computational burden is shifted to the terminal which makes a very
-   compact smart card implementation possible. Unfortunately the
-   elliptic curve support on smart cards is limited to standard
-   algorithms which made it hard to develop other variants of this
-   technology, which results in a few features compared to the other
-   technologies.
+In this thesis we discuss three attribute-based credential technologies 
+for which we have developed efficient smart card implementations. These 
+technologies are:
 
-  \item U-Prove, by Brands and Microsoft, is based on Schnorr's blind
-   signature scheme for credential issuance and zero-knowledge proofs
-   for attribute verification. This technology offers the fastest
-   implementation, but has one important drawback: it does not provide
-   multi-show unlinkability, which means that multiple attribute
-   verifications using the same credential can be linked to each other.
+\paragraph{Self-blindable Credentials}
+These credentials are based on elliptic curve cryptography with bilinear 
+pairings. This technology shifts the computational burden to the terminal 
+which makes a very compact smart card implementation possible. 
+Unfortunately the support for elliptic curve cryptography on smart cards 
+is limited to standard algorithms, which made it hard to develop other 
+variants of this technology. This results in a minimal feature set 
+compared to the other technologies.
 
-  \item Identity Mixer, by IBM, is based on the Camenisch-Lysyanskaya
-   signature scheme which provides a blind signature protocol for
-   credential issuance and zero-knowledge proofs for attribuet
-   verification. While it's performance is less that U-Prove, due to
-   the cryptographic primitives involved, it does offer multi-show
-   unlinkability which makes it possible to use a credential multiple
-   times without becoming traceable.
-\end{itemize}
+\paragraph{U-Prove}
+The U-Prove issuance and verification protocols are, respectively, based 
+on Schnorr's blind signature scheme and zero-knowledge proofs. This 
+technology offers the fastest implementation for attribute verification. 
+With respect to privacy there is only one important drawback: U-Prove 
+does not protect against linking multiple verification sessions to each 
+other. This means that these credentials basically act as a pseudonym for 
+the user.
 
+\paragraph{Identity Mixer}
+This technology is based on the Camenisch-Lysyanskaya signature scheme 
+which provides a blind signature protocol, which can be used for 
+credential issuance, and zero-knowledge proofs for attribute verification. 
+The performance of this implementation is not the best among these 
+technologies, but this technology provides a broad feature set and offers 
+proper unlinkability. This makes it possible to use a credential 
+multiple times without becoming traceable.
+
+\paragraph{}
 The goal of the research presented in this thesis has been to \emph{develop 
 efficient smart card implementations of attribute-based credentials} and 
 \emph{compare various cryptographic systems for attribute-based credentials}. 
 This has resulted in a detailed description and discussion of the
-technologies listed above and the efficient smart card implementations
-for each of these technologies.
+technologies listed above and the smart card implementations\footnote{The
+source code of the smart card implementations is available at 
+\url{http://github.com/pimvullers/}.} for each of these technologies, which are
+the most efficient implementations at the time of writing.
 
 Furthermore, the successful development of these implementations laid
 the foundation for the IRMA project. This is an on-going research and

@@ -11,7 +11,7 @@ with electronic chips to hold digital copies of the identity data printed on the
 document. Sometimes even additional information is stored in these chips, such
 as fingerprints or other biometric data.
 
-Unfortunately, most digital systems use a simple approach to identify entities;
+Unfortunately, most digital systems use a simple approach to identify entities, including users;
 they just associate them with a unique identifier\index{unique identifier}.
 While this is convenient for bookkeeping, it also has a big drawback with
 respect to privacy. Using these unique identifiers\index{unique identifier}, it
@@ -131,8 +131,9 @@ The fact that the attributes\index{attribute} hold for the owner of a
 credential is guaranteed both by the issuer's signature and by the embedded
 personal key of the owner. The secret key embedded in the credential plays an 
 essential role in the verification procedure\index{verification procedure} of 
-the credential, since it is only known by the credential owner. Therefore it 
-ensures that a credential cannot be transferred from one user to another.
+the credential, since it is supposed to be only known by the credential owner. 
+Therefore this secret key, if properly protected, ensures that a credential 
+cannot be transferred from one user to another.
 
 \subsection{Selective Disclosure of Attributes}
 
@@ -186,7 +187,7 @@ following four security aspects.
     reveal the attributes it contains, unless these attributes are revealed
     during verification.
 \end{itemize}
-Furthermore, a credential protects the privacy\index{privacy} of its owner
+Furthermore, a credential can protect the privacy\index{privacy} of its owner
 through the following two cryptographic properties.
 \begin{itemize}
   \item \emph{Issuer unlinkability}\index{unlinkability!issuer}
@@ -302,7 +303,7 @@ the German national identity card (nPA)\footnote{%
 \url{http://www.personalausweisportal.de/}}, where a limited form of (anonymous)
 \index{attribute!anonymous} attribute use is achieved by altering the existing
 elliptic curve based electronic identity protocols by sharing private keys
-\index{shared keys} across large batches of cards~\cite{Kugler2010}. The
+\index{shared keys} across large batches\footnote{The size of these batches is in the order of a million cards per batch.} of cards~\cite{Kugler2010}. The
 protocol itself provides restricted access to the card by means of the so-called
 card verifiable certificate mechanism~\cite{EAC20} and allows for selective
 disclosure of attributes, depending on the rights specified in the certificate
@@ -314,14 +315,16 @@ batches of cards, such that a signature cannot be linked to a single card.
 \section{Smart Cards\label{sec:smartcards}}
 \index{smart card|(}
 
-One of the goals of our research is to assess how fast privacy-friendly
-protocols are when run on a modern smart card\index{smart card}. Hence
+During our research we try to assess how fast privacy-friendly protocols can be
+executed when run on a modern smart card\index{smart card}. Hence
 implementing our prototypes requires an open smart card platform\index{smart
 card!platform} that also provides the necessary cryptographic hardware support,
 as previous research~\cite{TewsJacobs09} clearly shows that, in terms of
-performance, purely software based prototypes are not sufficient for realistic
-use. In practice that leaves us with two possible smart card platforms, Java
-Card\index{Java Card} and MULTOS\index{MULTOS}, described below.
+performance, purely software-based prototypes\footnote{These prototypes are 
+implemented without the use of dedicated cryptographic routines.} are not 
+sufficient for realistic use. In practice that leaves us with two possible 
+smart card platforms, Java Card\index{Java Card} and MULTOS\index{MULTOS}, 
+described below.
 
 Regardless of the software platform operating the card, all smart cards provide
 the same external functionality. A smart card is an embedded device that
@@ -361,13 +364,16 @@ the Java classes in a card applet for on-card execution.
 
 \subsubsection{Memory Management}
 
-On a Java Card device, memory is the most valuable resource. In most Java Card
-implementations a garbage collector is not available. When an object is
-created, the object and its contents are preserved in non-volatile memory
-\index{non-volatile memory} (EEPROM\index{EEPROM}), making it available across
-sessions. Access to the volatile memory\index{volatile memory} (RAM\index{RAM})
-is provided through the Java Card API, which defines methods that allow you to
-create transient data storage at runtime.
+On a Java Card device, memory is the most valuable resource\footnote{A typical 
+modern smart card only has 36 to 144 KB of EEPROM for storing data and 4 to 8KB
+of RAM (which is only partially available to an application developer) for
+session data and computations.}. In most Java Card implementations a garbage
+collector is not available. When an object is created, the object and its
+contents are preserved in non-volatile 
+memory\index{non-volatile memory} (EEPROM\index{EEPROM}), making it available 
+across sessions. Access to the volatile memory\index{volatile memory} 
+(RAM\index{RAM}) is provided through the Java Card API, which defines methods 
+that allow you to create transient data storage at runtime.
 
 In a Java Card environment a few rules should be taken into account to prevent
 wasting memory at runtime. Arrays and primitive types should be declared at
@@ -400,7 +406,7 @@ underlying mathematical operations, such as modular exponentiation, are not
 available to a developer. Since all of the protocols that we are interested in
 require access to such cryptographic operations (in large modulo prime and/or
 elliptic curve domains), this is a practical show stopper. Similar problems have
-been reported by others~\cite{Sterckx09} regarding the implementation of
+been reported by others~\cite{BichselCGS2009,Sterckx09} regarding the implementation of
 cryptographic protocols on a Java Card. Even more, an efficient implementation
 of the e-passport standard~\cite{EAC20} on a Java Card also requires
 cryptographic routines not anticipated by the standard Java Card API. In this
@@ -412,7 +418,7 @@ the platform non-interoperable.
 
 \subsection{MULTOS}\label{sec:multos}\index{MULTOS|(}
 
-The goal of the MULTOS platform is to provide a secure hardware independent
+The goal of the MULTOS platform is to provide a secure hardware-independent
 execution platform for smart cards. To this end, they developed a specification
 for the execution and memory models, explained in more detail below, that all
 MULTOS implementations must provide. Besides this mandatory part of the
@@ -478,8 +484,8 @@ the SLE66 and SLE78 chips from Infineon. These particular
 cards~\cite{MIR2012} support a wide range of modulo arithmetic
 operations, a range which is sufficient to fully support all of the required
 calculations. The more low-level and flexible MULTOS\index{MULTOS!API} API, as
-opposed to less flexible and more high level Java Card API, is the main reason
-to choose the MULTOS platform for the prototype implementations of the
+opposed to the less flexible and more high level Java Card API, is the main 
+reason to choose the MULTOS platform for the prototype implementations of the
 cryptographic protocols discussed in this thesis.
 
 For our prototypes we used the MULTOS C interface. For simple smart card
@@ -582,9 +588,10 @@ Conference on Policies and Research in Identity Management (IDMAN 2013).
 \paragraph{Contribution}
 
 My contribution in this chapter is the development and analysis of the efficient
-smart card implementation of the Identity Mixer\index{Identity Mixer} technology, which is the first
-to include \emph{selective disclosure} of the attributes, as well as the
-implementation of the corresponding host software. This consists of:
+smart card implementation of the Identity Mixer\index{Identity Mixer} technology, 
+which is the first smart card implementation to include \emph{selective 
+disclosure} of the attributes, as well as the implementation of the corresponding 
+host software. This consists of:
 \begin{itemize}
   \item the MULTOS application\index{MULTOS!application}\footnote{This has evolved into the IRMA
     application (\url{https://github.com/pimvullers/irma_card/}) which provides
