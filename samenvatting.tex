@@ -1,4 +1,50 @@
 \chapter*{Samenvatting}
 \addcontentsline{toc}{chapter}{Samenvatting}
 
-[TODO: Verplichte samenvating in het Nederlands.]
+We leven in een wereld waarin computers een steeds grotere rol spelen. Daarom 
+wordt het alsmaar belangrijker om digitale entiteiten te identificeren. Om dit
+te bereiken gebruiken veel bestaande systemen unieke herkenningspunten. Dit is
+een eenvoudige oplossing, maar dit maakt het ook gemakkelijk om iemands 
+handelingen te volgen. Een privacy-vriendelijk alternatief is om 
+verificatiegegevens op basis van attributen te gebruiken voor authenticatie en
+autorisatie. Zulke verificatiegegevens zijn een soort cryptografische container
+voor attributen, ook wel gebruikerseigenschappen, welke gecertificeerd zijn 
+door een autoriteit. Met behulp van deze attributen kan een gebruiker 
+geauthentiseerd worden om toegang te krijgen tot bepaalde informatie of gebruik
+te maken van een dienst door alleen de relevante gebruikerseigenschappen te 
+delen.
+
+In dit proefschrift bespreken we drie technologieën betreffende 
+verificatiegegevens gebaseerd op attributen, waarvoor we efficiënte smartcard
+implementaties hebben ontwikkeld. Deze technologieën zijn:
+
+\paragraph{Self-blindable Credentials}
+Deze verificatiegegevens zijn gebaseerd op elliptische kromme cryptografie met 
+bilineaire paren. Deze technologie laat de terminal de berekeningen doen, wat 
+een zeer compacte implementatie op de smartcard mogelijk maakt. Helaas is de 
+ondersteuning voor elliptische kromme cryptografie beperkt tot de standaard 
+algoritmes. Dit maakt de ontwikkeling van andere varianten op deze technologie
+moeilijk. In vergelijking met de andere technologieën heeft de self-blindable 
+credentials beperkte mogelijkheden.
+
+\paragraph{U-Prove}
+De uitgifte en verificatieprotocollen zijn respectievelijk gebaseerd op de 
+blind signature scheme van Schnorr en de zero-knowledge proofs. Deze 
+technologie biedt de snelste implementatie voor verificatie met attributen. 
+Met betrekking tot privacy is er een groot probleem: U-Prove beschermt niet 
+tegen het aan elkaar koppelen van meerdere verificatiesessies. Dit betekent
+dat deze verificatiegegevens werken als een pseudoniem van de gebruiker.
+
+\paragraph{Identity Mixer}
+Deze technologie is gebaseerd op de signature scheme van Camenisch-Lysyanskaya,
+welke een blind signature protocol bevat, dat gebruikt kan worden voor de 
+uitgifte van de verificatiegegevens, en zero-knowledge proofs voor de 
+verificatie van attributen. De prestaties van deze implementatie zijn niet de 
+beste vergeleken met de andere, maar deze technologie biedt uitgebreide 
+mogelijkheden en heeft een goede bescherming. Verificatiegegevens kunnen 
+hierbij meerdere keren gebruikt worden zonder dat het traceerbaar wordt.
+
+\paragraph{}
+Het doel van het onderzoek was om efficiënte smartcard implementaties te maken 
+voor verificatiegegevens op basis van attributen en
+
