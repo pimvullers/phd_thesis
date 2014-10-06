@@ -2,42 +2,44 @@
 \addcontentsline{toc}{chapter}{Samenvatting}
 
 We leven in een wereld waarin computers een steeds grotere rol spelen. Daarom 
-wordt het alsmaar belangrijker om digitale entiteiten te identificeren. Om dit
-te bereiken gebruiken veel bestaande systemen unieke herkenningspunten. Dit is
-een eenvoudige oplossing, maar dit maakt het ook gemakkelijk om iemands 
-handelingen te volgen. Een privacy-vriendelijk alternatief is om 
-verificatiegegevens op basis van attributen te gebruiken voor authenticatie en
-autorisatie. Zulke verificatiegegevens zijn een soort cryptografische container
-voor attributen, ook wel gebruikerseigenschappen, welke gecertificeerd zijn 
-door een autoriteit. Met behulp van deze attributen kan een gebruiker 
-geauthentiseerd worden om toegang te krijgen tot bepaalde informatie of gebruik
+wordt het alsmaar belangrijker om gebruikersen objecten digitaal te kunnen
+identificeren. Om dit te bereiken gebruiken veel bestaande systemen unieke 
+nummers, denk bijvoorbeeld aan je burgerservicenummer (BSN). Dit is een 
+eenvoudige oplossing, maar dit maakt het ook gemakkelijk om iemands handelingen
+te volgen. Een privacy-vriendelijker alternatief is om verificatiegegevens op 
+basis van attributen te gebruiken voor authenticatie en autorisatie in de 
+digitale wereld. Zulke verificatiegegevens zijn een soort cryptografische 
+container voor attributen, of eigenschappen, die gecertificeerd zijn door een 
+bevoegde autoriteit. Met behulp van deze attributen kan een gebruiker 
+geauthentiseerd worden om toegang te krijgen tot bepaalde systemen of gebruik
 te maken van een dienst door alleen de relevante gebruikerseigenschappen te 
 delen.
 
-In dit proefschrift bespreken we drie technologieën betreffende 
-verificatiegegevens gebaseerd op attributen, waarvoor we efficiënte smartcard
-implementaties hebben ontwikkeld. Deze technologieën zijn:
+In dit proefschrift bespreken we drie technologie\"{e}n van op attributen 
+gebaseerde verificatiegegevens, waarvoor we effici\"{e}nte smartcard
+implementaties ontwikkeld hebben. Deze technologie\"{e}n zijn:
 
 \paragraph{Self-blindable Credentials}
-Deze verificatiegegevens zijn gebaseerd op elliptische kromme cryptografie met 
-bilineaire paren. Deze technologie laat de terminal de berekeningen doen, wat 
-een zeer compacte implementatie op de smartcard mogelijk maakt. Helaas is de 
-ondersteuning voor elliptische kromme cryptografie beperkt tot de standaard 
-algoritmes. Dit maakt de ontwikkeling van andere varianten op deze technologie
-moeilijk. In vergelijking met de andere technologieën heeft de self-blindable 
-credentials beperkte mogelijkheden.
+Deze technologie maakt gebruik van cryptografie op basis van elliptische
+krommen. Het systeem laat de meeste berekeningen door de terminal uitvoeren, 
+wat een zeer compacte implementatie op de smartcard mogelijk maakt. Helaas is 
+de ondersteuning voor elliptische kromme cryptografie op smartcards beperkt tot
+de standaard algoritmen. Dit maakt de ontwikkeling van andere varianten van 
+deze technologie lastig. De self-blindable credentials hebben slechts beperkte 
+mogelijkheden in vergelijking met de andere technologie\"{e}n.
 
 \paragraph{U-Prove}
-De uitgifte en verificatieprotocollen zijn respectievelijk gebaseerd op de 
-blind signature scheme van Schnorr en de zero-knowledge proofs. Deze 
-technologie biedt de snelste implementatie voor verificatie met attributen. 
-Met betrekking tot privacy is er een groot probleem: U-Prove beschermt niet 
-tegen het aan elkaar koppelen van meerdere verificatiesessies. Dit betekent
-dat deze verificatiegegevens werken als een pseudoniem van de gebruiker.
+De uitgifte- en verificatieprotocollen van U-Prove zijn, respectievelijk,
+gebaseerd op de geblindeerde handtekening methode van Schnorr en Schnorr's 
+zero-knowledge proofs. Deze technologie biedt de snelste implementatie voor 
+verificatie met attributen. Met betrekking tot privacy is er echter een groot 
+probleem: U-Prove beschermt niet tegen het aan elkaar koppelen van meerdere 
+verificatiesessies. Dit betekent dat deze verificatiegegevens functioneren als
+een pseudoniem voor de gebruiker.
 
 \paragraph{Identity Mixer}
-Deze technologie is gebaseerd op de signature scheme van Camenisch-Lysyanskaya,
-welke een blind signature protocol bevat, dat gebruikt kan worden voor de 
+Deze technologie is gebaseerd op de digitale handtekening methode van 
+Camenisch-Lysyanskaya, welke een blind signature protocol bevat, dat gebruikt kan worden voor de 
 uitgifte van de verificatiegegevens, en zero-knowledge proofs voor de 
 verificatie van attributen. De prestaties van deze implementatie zijn niet de 
 beste vergeleken met de andere, maar deze technologie biedt uitgebreide 
