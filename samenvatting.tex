@@ -1,52 +1,67 @@
+\begin{otherlanguage}{dutch}
+
 \chapter*{Samenvatting}
 \addcontentsline{toc}{chapter}{Samenvatting}
 
 We leven in een wereld waarin computers een steeds grotere rol spelen. Daarom 
-wordt het alsmaar belangrijker om gebruikersen objecten digitaal te kunnen
+wordt het alsmaar belangrijker om gebruikers en objecten digitaal te kunnen
 identificeren. Om dit te bereiken gebruiken veel bestaande systemen unieke 
 nummers, denk bijvoorbeeld aan je burgerservicenummer (BSN). Dit is een 
 eenvoudige oplossing, maar dit maakt het ook gemakkelijk om iemands handelingen
-te volgen. Een privacy-vriendelijker alternatief is om verificatiegegevens op 
-basis van attributen te gebruiken voor authenticatie en autorisatie in de 
-digitale wereld. Zulke verificatiegegevens zijn een soort cryptografische 
-container voor attributen, of eigenschappen, die gecertificeerd zijn door een 
-bevoegde autoriteit. Met behulp van deze attributen kan een gebruiker 
-geauthentiseerd worden om toegang te krijgen tot bepaalde systemen of gebruik
-te maken van een dienst door alleen de relevante gebruikerseigenschappen te 
-delen.
+te volgen. Een privacyvriendelijker alternatief is om attributen te gebruiken 
+voor authenticatie en autorisatie in de digitale wereld. Deze attributen, of 
+eigenschappen, kunnen gecombineerd worden in een soort cryptografische container
+die dan gecertificeerd wordt door een bevoegde autoriteit. Met behulp van deze 
+attributen kan een gebruiker dan geauthentiseerd worden, om toegang te krijgen 
+tot bepaalde systemen of om gebruik te maken van een dienst, door enkel de 
+relevante gebruikerseigenschappen te delen.
 
-In dit proefschrift bespreken we drie technologie\"{e}n van op attributen 
-gebaseerde verificatiegegevens, waarvoor we effici\"{e}nte smartcard
-implementaties ontwikkeld hebben. Deze technologie\"{e}n zijn:
+In dit proefschrift bespreken we drie privacyvriendelijke technologie\"{e}n die
+authenticatie op basis van attributen mogelijk maken. Deze technologie\"{e}n, 
+waarvoor we effici\"{e}nte implementaties voor op een chipkaart hebben 
+ontwikkeld, zijn:
 
 \paragraph{Self-blindable Credentials}
 Deze technologie maakt gebruik van cryptografie op basis van elliptische
-krommen. Het systeem laat de meeste berekeningen door de terminal uitvoeren, 
-wat een zeer compacte implementatie op de smartcard mogelijk maakt. Helaas is 
-de ondersteuning voor elliptische kromme cryptografie op smartcards beperkt tot
-de standaard algoritmen. Dit maakt de ontwikkeling van andere varianten van 
-deze technologie lastig. De self-blindable credentials hebben slechts beperkte 
-mogelijkheden in vergelijking met de andere technologie\"{e}n.
+krommen. Het systeem laat de meeste berekeningen door de kaartlezer uitvoeren, 
+wat een zeer compacte implementatie op de chipkaart mogelijk maakt. Helaas is 
+de ondersteuning voor elliptische kromme cryptografie op chipkaarten beperkt 
+tot de standaard algoritmen. Dit maakt de ontwikkeling van varianten op 
+deze technologie lastig. In vergelijking met de andere technologie\"{e}n bieden
+de Self-blindable Credentials slechts beperkte mogelijkheden.
 
 \paragraph{U-Prove}
-De uitgifte- en verificatieprotocollen van U-Prove zijn, respectievelijk,
-gebaseerd op de geblindeerde handtekening methode van Schnorr en Schnorr's 
-zero-knowledge proofs. Deze technologie biedt de snelste implementatie voor 
-verificatie met attributen. Met betrekking tot privacy is er echter een groot 
-probleem: U-Prove beschermt niet tegen het aan elkaar koppelen van meerdere 
-verificatiesessies. Dit betekent dat deze verificatiegegevens functioneren als
-een pseudoniem voor de gebruiker.
+De uitgifte- en verificatieprotocollen van U-Prove zijn gebaseerd op de methode
+voor geblindeerde handtekeningen van Schnorr en zijn zero-knowledge proofs 
+(bewijzen waarbij geen kennis overgedragen wordt). Deze technologie biedt op dit
+moment de snelste implementatie voor verificatie met attributen. Met
+betrekking tot privacy is er echter een groot probleem: U-Prove beschermt niet 
+tegen het aan elkaar koppelen van meerdere verificatiesessies. Dit betekent dat de verificatiegegevens functioneren als een pseudoniem voor de gebruiker.
 
 \paragraph{Identity Mixer}
-Deze technologie is gebaseerd op de digitale handtekening methode van 
-Camenisch-Lysyanskaya, welke een blind signature protocol bevat, dat gebruikt kan worden voor de 
-uitgifte van de verificatiegegevens, en zero-knowledge proofs voor de 
-verificatie van attributen. De prestaties van deze implementatie zijn niet de 
-beste vergeleken met de andere, maar deze technologie biedt uitgebreide 
-mogelijkheden en heeft een goede bescherming. Verificatiegegevens kunnen 
-hierbij meerdere keren gebruikt worden zonder dat het traceerbaar wordt.
+Deze technologie is gebaseerd op het werk van Camenisch en Lysyanskaya dat een 
+methode voor digitale handtekeningen definieert. Deze methode bevat protocollen
+voor geblindeerde handtekeningen en zero-knowledge proofs, die gebruikt worden 
+voor de uitgifte en verificatie van de attributen. In vergelijking met de andere
+implementaties behalen we hier niet de beste prestaties, maar deze technologie 
+biedt wel uitgebreide mogelijkheden en geeft een goede bescherming. Zo kunnen de
+attributen bijvoorbeeld meerdere keren gebruikt worden zonder dat de 
+verschillende verificatiesessies traceerbaar worden.
 
 \paragraph{}
-Het doel van het onderzoek was om efficiënte smartcard implementaties te maken 
-voor verificatiegegevens op basis van attributen en
+Het doel van het onderzoek in dit proefschrift was om \emph{effici\"{e}nte 
+chipkaart implementaties te ontwikkelen voor op attributen gebaseerde 
+authenticatie} en \emph{het vergelijken van de verschillende technologie\"{e}n}.
+Dit heeft geresulteerd in een gedetailleerde beschrijving en bespreking van de 
+bovengenoemde technologie\"{e}n en de bijbehorende chipkaart implementaties\footnote{De broncode van de chipkaart implementaties is beschikbaar op \url{https://github.com/pimvullers/}.}. Deze implementaties bieden, ten tijden van het schrijven van dit proefschrift, de beste prestaties voor 
+attributen op een chipkaart.
 
+Daarnaast heeft de succesvolle ontwikkeling van deze implementaties de basis
+gelegd voor het IRMA project. Dit is een lopend onderzoeks- en 
+ontwikkelingsproject dat zich richt op authenticatie op basis van attributen en 
+de toepassing daarvan in de praktijk. Voor meer informatie over het IRMA 
+project, zie \url{https://www.irmacard.org/}.
+
+\end{otherlanguage}
+
+\cleardoublepage
