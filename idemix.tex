@@ -262,11 +262,11 @@ inverse:
 
 Figure~\ref{msc:cl_blind-sign} depicts the protocol for generating blind
 Camenisch-Lysyanskaya signatures. This protocol hides\index{hiding} the messages
-$m_i \in \M_H$, where $\M_H \subseteq \M$, from the signer by generating a
+$\{m_i\}_{i \in \M_H}$, where $\M_H \subseteq \M$, from the signer by generating a
 commitment to these values and blinding them according to
 Algorithm~\ref{alg:CL-blind-commit}. During this commitment phase these
 messages are aggregated into a single element $U$ and hidden by the blinding
-value $v'$. Note that the remaining messages $\{m_i\}_{\M \setminus \M_H}$,
+value $v'$. Note that the remaining messages $\{m_i\}_{i \in \M \setminus \M_H}$,
 that are not hidden during this phase, are known by the signer.\index{Camenisch-Lysyanskaya!message aggregation}
 
 \begin{algorithm}
@@ -290,7 +290,7 @@ that are not hidden during this phase, are known by the signer.\index{Camenisch-
 In order to prove to the signer that the user actually knows the hidden
 messages, the following proof of knowledge has to be carried out.
 \begin{equation*}
-  PK\{(\nu, \mu_{i \in \M_H}) :
+  PK\{(\nu, \{\mu_i\}_{i \in \M_H}) :
     U = S^{\nu} \cdot \textstyle\prod_{i \in \M_H} R_i^{\mu_i} \mod n\}
 \end{equation*}
 This proof not only proves that the user knows the hidden messages, but also
@@ -526,11 +526,11 @@ adjusted such that the signature remains valid, that is, it still satisfies
 This randomisation operation only effectively randomises the $A$ value of the
 signature. Hence it is required to hide the $e$ and $v'$ values using a
 zero-knowledge proof when revealing this randomised signature and the messages
-$m_i \in \M_D$ disclosed to the verifier. Furthermore the following proof hides\index{hiding} the messages
-$m_i \in \M \setminus \M_D$ that the user does not wish to disclose to the
+$\{m_i\}_{i \in \M_D}$ disclosed to the verifier. Furthermore the following proof hides\index{hiding} the messages
+$\{m_i\}_{i \in \M \setminus \M_D}$ that the user does not wish to disclose to the
 verifier.
 \begin{equation*}
-  PK\{(\epsilon, \nu, \mu_{i \in \M \setminus \M_D}) :
+  PK\{(\epsilon, \nu, \{\mu_i\}_{i \in \M \setminus \M_D}) :
     Z = A'^{\epsilon} \cdot S^{\nu}
     \cdot \textstyle\prod_{i \in \M \setminus \M_D} R_i^{\mu_i}
     \cdot \textstyle\prod_{i \in \M_D} R_i^{m_i} \mod n \}
@@ -644,7 +644,7 @@ An Identity Mixer credential contains a master secret $s$, which belongs to the
 user and is never revealed, and a collection of attributes
 $\{a_i\}_{i \in \mathcal{A}}$, where $\mathcal{A}$ denotes the set of
 attribute indices.\index{attribute!index set} Hence, the sets of message indices for the issuance protocol
-become $\M_H = \{s\}$ and $\M = \M_H \cup \mathcal{A}$. As a result of the
+become $\{m_i\}_{i \in \M_H} = \{s\}$ and $\M = \M_H \cup \mathcal{A}$. As a result of the
 issuance protocol the user obtains a signature $(A, e, v)$ over these values
 which completes the credential.
 

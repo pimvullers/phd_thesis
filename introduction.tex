@@ -15,8 +15,8 @@ Unfortunately, most digital systems use a simple approach to identify entities, 
 they just associate them with a unique identifier\index{unique identifier}.
 While this is convenient for bookkeeping, it also has a big drawback with
 respect to privacy. Using these unique identifiers\index{unique identifier}, it
-is easy to trace the user. This was already the case for tracking user
-activities on the world wide web, but now real world actions can be easily be
+is easy to trace the user. This was already the case for tracking 
+activities on the Internet, but now real world actions can easily be
 traced as well through the use of public transport cards or digital identity
 documents.\index{identity!documents}
 
@@ -94,7 +94,20 @@ There are several cryptographic systems for dealing with identities
 distinguish attributes and credentials. Informally, a credential
 \index{credential} is a \emph{cryptographic container \index{cryptographic
 container} of attributes}. As a first approximation, one can think of a
-credential as depicted in Figure~\ref{fig:Credential}.
+credential as depicted in Figure~\ref{fig:Credential}. Examples of credentials
+are~\cite{AlparJacobs2013}:
+\begin{itemize}
+  \item An \textbf{address} credential, containing for example the 
+    \textsf{street}, \textsf{zipcode}, \textsf{city} and \textsf{country} 
+    attributes.
+  \item A (citizen) \textbf{identity} credential, containing for example the 
+    \textsf{name}, \textsf{gender}, \textbf{date of birth}, and \textsf{social
+    security number} attributes.
+  \item A \textbf{student} credential, containing for example the 
+    \textsf{student number}, \textsf{field of study}, \textsf{enrollment year} 
+    and \textsf{university/college} attributes.
+  \item A \textbf{festival} credential, containing for example the \textsf{festival name} and \textsf{date/time} attributes.
+\end{itemize}
 
 \begin{figure}[ht]
   \centering
@@ -102,8 +115,6 @@ credential as depicted in Figure~\ref{fig:Credential}.
   \caption{A visual representation of an attribute-based credential.}
   \label{fig:Credential}
 \end{figure}
-
-\todo{EP: Add definition of a credential and some examples.}
 
 \subsection{Credential Issuance and Verification}
 
@@ -376,13 +387,13 @@ across sessions. Access to the volatile memory\index{volatile memory}
 that allow you to create transient data storage at runtime.
 
 In a Java Card environment a few rules should be taken into account to prevent
-wasting memory at runtime. Arrays and primitive types should be declared at
-object declaration, and object instantiation should be minimised in favour of
-object reuse. Objects should be instantiated only once during the applet
-lifetime, preferably at applet initialisation, which is performed only once
-during the applet life-cycle. To promote reuse, objects should remain in scope
-or referenced for the life of the applet, and their state reset as appropriate
-before reuse.
+wasting memory at runtime. Arrays and primitive types should be allocated at
+object creation time, and object creation should be minimised in favour of
+object reuse. All arrays and objects that an applet needs during its lifetime 
+should be created all in one go, when an applet is installed, such that no 
+additional dynamic memory allocation is needed once the applet is up and 
+running. To promote reuse, objects should remain in scope or referenced for the
+life of the applet, and their state reset as appropriate before reuse.
 
 \subsubsection{Application Programming Interface}
 
@@ -468,11 +479,10 @@ when an application is loaded onto a card and it depends on the number of
 variables declared. Furthermore, the dynamic memory contains the stack, which
 is the application's work area. As mentioned before, the application abstract
 machine operates as a stack machine, which means that this memory area is used
-to perform many functions (and provide input for these functions). The maximum
-size of the stack is fixed by the amount of dynamic memory available. Therefore,
-applications will need to ensure that their use of dynamic memory does not
-exceed the limit imposed by the chip~\cite{MIR2012} on which the application
-will reside.
+to perform many functions (and provide input for these functions). The size of 
+the stack is limited by the size of the session data in the dynamic memory. 
+Therefore, applications have to ensure that their dynamic memory use does not 
+exceed the the limit of the used chip~\cite{MIR2012}. 
 
 \subsubsection{Application Programming Interface}
 
