@@ -38,15 +38,15 @@ zero-knowledge proofs\index{zero-knowledge proof} in which properties of the att
 
 Another aspect is the type of cryptography used by the different technologies.
 Because the self-blindable credentials\index{self-blindable credentials} are based on elliptic curve cryptography,\index{elliptic curve cryptography}
-they are rather compact and require less communication between card and
+they are rather compact and require less communication between smart card and
 terminal. U-Prove\index{U-Prove} can also be implemented using elliptic curve cryptography,
 since it relies on the discrete logarithm\index{discrete logarithm problem} problem. While this would have been
 an ideal solution to eliminate the communication overhead, we do not have any
 cards that provide a proper interface which would allow us to implement U-Prove
 based on elliptic curve cryptography. Still, the prime-order subgroup
 construction used by U-Prove provides an advantage over the RSA-based approach
-used by Identity Mixer\index{Identity Mixer}: it allows for modular reduction of the exponents in the
-protocols.
+used by Identity Mixer\index{Identity Mixer}: it allows for modular reduction 
+of the exponents in the protocols, which results in smaller session variables.
 
 \begin{savenotes}
 \begin{table}[t]
@@ -184,14 +184,15 @@ SLE78 chip with the MULTOS\index{MULTOS} platform (ML3-36K-R1).
 
 In order to compare the raw performance of the underlying hardware we developed
 a small test application that performs some basic operations\footnote{A message
-digest computation using SHA-1; and two RSA\index{RSA!encryption} encryptions using a random public
-key, one with a 1024 bits modulus and one with a 2048 bits modulus.} and stores
-the outcome either in RAM\index{RAM} or EEPROM.\index{EEPROM} The results of these tests are summarised
-in Table~\ref{tab:comparison}. From this we can conclude that the SLE66 is
-overall slower than the other cards, with a huge performance penalty when
-computing an RSA operation (which is basically a modular exponentiation) with a
-modulus of 2048 bits\footnote{Probably the cryptographic co-processor of the
-SLE66 chip does not support this operation directly such that a software
+digest computation using SHA-1; and two RSA\index{RSA!encryption} encryptions 
+using a random public key (with random exponents), one with a 1024 bits modulus
+and one with a 2048 bits modulus.} and stores the outcome either in 
+RAM\index{RAM} or EEPROM.\index{EEPROM} The results of these tests are 
+summarised in Table~\ref{tab:comparison}. From this we can conclude that the 
+SLE66 is overall slower than the other cards, with a huge performance penalty 
+when computing an RSA operation (which is basically a modular exponentiation)
+with a modulus of 2048 bits\footnote{Probably the cryptographic co-processor of
+the SLE66 chip does not support this operation directly such that a software
 solution is needed to handle operations involving a 2048 bits modulus.}. The
 timings of the SLE78 and SmartMX chips are much closer to each other. Here we
 notice that the SLE78 is in principle faster than the SmartMX, but also that
@@ -306,7 +307,7 @@ a U-Prove credential is overall lower than the computation times of the other
 technologies, even when a U-Prove credential contains five attributes of which
 only a single attribute is revealed. This performance could even be improved
 when the SLE78 chip can be used instead of the SLE66. Hence we can conclude that
-the signature randomisation\index{signature randomisation} performed (on the card) by Identity Mixer\index{Identity Mixer} and the self-blindable
+the signature randomisation\index{signature randomisation} performed by Identity Mixer\index{Identity Mixer} and the self-blindable
 credentials has a significant impact on the running time of the verification
 protocol.
 
@@ -315,10 +316,8 @@ time for Identity Mixer\index{Identity Mixer} and the self-blindable credentials
 storage on the card then U-Prove\index{U-Prove}. This is due to the fact that to achieve
 multi-show unlinkability the card has to store multiple U-Prove tokens. Given
 that storage space is rather limited on smart cards\footnote{A typical modern smart
-card only has 36 to 144 KB of EEPROM available for storing application data.},
+card only has 36 to 144 KB of EEPROM for storing application data.},
 this is a serious drawback of the U-Prove technology.
-
-\clearpage
 
 \section{Final Remarks}
 
@@ -331,14 +330,14 @@ and
   compare various cryptographic systems for attribute-based credentials.
 \end{center}
 
-Compared to the existing implementations mentioned in the previous section, we
-have made a clear performance improvement with all of our implementations. These
-implementations are not only faster, but also provide \emph{full} credentials
-on a smart card instead of the partial solutions that have been developed to
-cope with the smart card shortcomings. With transaction times around, or even
-below one second we can conclude that these are, to the best of our knowledge,
-the first implementations that offer an acceptable performance for practical
-use.
+Compared to the existing smart card implementations mentioned in the previous 
+section, we have made a clear performance improvement with all of our 
+implementations. These implementations are not only faster, but also provide 
+\emph{full} credentials on a smart card instead of the partial solutions that
+have been developed to cope with the smart card shortcomings. With transaction
+times around, or even below one second we can conclude that these are, to the 
+best of our knowledge, the first implementations that offer an acceptable 
+performance for practical use.
 
 The development of these prototypes allowed us to analyse the different
 technologies both from a technical and functional perspective. Due to the
