@@ -447,7 +447,7 @@ applications are portable, that is, independent of the actual chip
 used\footnote{Application portability can be limited due to specific memory
 requirements or dependencies on optional parts of the MULTOS specification.}.
 The application abstract machine is a stack machine\index{stack machine} that
-interprets instructions from the MULTOS executable language.
+interprets instructions from the MULTOS executable language (MEL).
 
 \subsubsection{Memory Model}
 
@@ -498,12 +498,13 @@ opposed to the less flexible and more high level Java Card API, is the main
 reason to choose the MULTOS platform for the prototype implementations of the
 cryptographic protocols discussed in this thesis.
 
-For our prototypes we used the MULTOS C interface. For simple smart card
-applications the C interface seems to provide an easier programming environment
-than Java, and allows for a more flexible (byte-level) memory management.
-Although C programming platforms are not type safe by definition (as opposed to
-Java), per application memory safety is guaranteed by the MULTOS platform,
-regardless of the high-level language used during development.
+For our prototypes we used the MULTOS C interface and bits of MEL assembly. For
+simple smart card applications the C interface seems to provide an easier 
+programming environment than Java, and allows for a more flexible (byte-level) 
+memory management. Although C programming platforms are not type safe by 
+definition (as opposed to Java), per application memory safety is guaranteed by
+the MULTOS platform, regardless of the high-level language used during 
+development.
 
 \index{MULTOS|)}
 \index{smart card|)}

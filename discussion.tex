@@ -14,7 +14,7 @@ credential, whereas the self-blindable credentials\index{self-blindable credenti
 scheme. This can be explained by the fact that in the latter case the user's
 public key is used for issuing the credential, whereas the former involves the
 user's secret. Another difference at this stage is that Identity Mixer\index{Identity Mixer} supports
-committed values to be include in the credential while U-Prove and the
+committed values to be included in the credential while U-Prove and the
 self-blindable credentials require all the attribute values to be known to the
 issuer\footnote{The U-Prove technology does provide an information field that
 is hidden from the issuer, but this field is always disclosed during
@@ -37,7 +37,7 @@ selective disclosure of attributes and support the construction of
 zero-knowledge proofs\index{zero-knowledge proof} in which properties of the attributes can be proved.
 
 Another aspect is the type of cryptography used by the different technologies.
-Because the self-blindable credentials\index{self-blindable credentials} are based on elliptic curve cryptography\index{elliptic curve cryptography}
+Because the self-blindable credentials\index{self-blindable credentials} are based on elliptic curve cryptography,\index{elliptic curve cryptography}
 they are rather compact and require less communication between card and
 terminal. U-Prove\index{U-Prove} can also be implemented using elliptic curve cryptography,
 since it relies on the discrete logarithm\index{discrete logarithm problem} problem. While this would have been
@@ -61,7 +61,7 @@ protocols.
       & Credentials & & \\\hline\hline
     issuer unlinkability     & \checkmark & \checkmark & \checkmark \\\hline
     multi-show unlinkability & \checkmark & indirectly\footnote{Multi-show unlinkability
-      for U-Prove can be realised by issuing multiple credentials for the same
+      for U-Prove can be realised by issuing multiple tokens for the same
       set of attributes which can later be verified independently.} &
       \checkmark \\\hline\hline
     blind signatures         &             & \checkmark & \checkmark \\\hline
@@ -107,7 +107,7 @@ In strong contrast to the minimalist hardware-protection\index{hardware-protecti
 and Jacobs~\cite{TewsJacobs09} developed an implementation of attribute-based
 credentials that performs \emph{all} operations on a smart card. A comparison
 between these approaches is given in Table~\ref{tbl:approaches}. This
-\emph{credentials on a smart card} approach does requires more resources on the
+\emph{credentials on a smart card} approach does require more resources on the
 card, but it also solves the main disadvantage of the hardware-protection
 approach: the smart card cannot be used independently, since it is tied to
 computational (and storage) resources external to the card. This means that it
@@ -149,7 +149,8 @@ implemented direct anonymous attestation\index{direct anonymous attestation} (se
 Bichsel et~al.~\cite{BichselCGS2009} have chosen to implement Identity Mixer\index{Identity Mixer}
 without any attributes. These solutions use the unlinkability properties of the
 Camenisch-Lysyanskaya signature\index{Camenisch-Lysyanskaya signature} scheme to achieve the anonymous authentication\index{authentication!anonymous}
-of the card. This approach is also used in the German identity card (nPA)~\cite{Kugler2010}, except that
+of the card. This anonymous authentication approach is also used in the German 
+identity card (nPA)~\cite{Kugler2010}, except that
 a different authentication\index{authentication} scheme is used (see Section~\ref{sec:nPA}).
 
 \section{Smart Card Performance\label{sec:perf-comparison}}
@@ -232,7 +233,7 @@ Based on these graphs it is clear that the Identity Mixer\index{Identity Mixer!i
 a clear improvement over the U-Prove\index{U-Prove!issuance} issuance times. Not only are the absolute
 values better, the extra time it takes to issue more attributes does not
 increase as much as with the U-Prove\index{U-Prove!implementation} implementation. However, we also need to
-take the hardware platform into account, which in this case is in favour of the
+take the hardware platform (Infineon SLE66 vs SLE78) into account, which in this case is in favour of the
 Identity Mixer implementation. Furthermore, our U-Prove implementation is built
 according to the first revision~\cite{U-Prove_Crypto2011} of version 1.1 of the
 U-Prove cryptographic specification, whereas later revisions~\cite{U-Prove_Crypto2013},

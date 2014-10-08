@@ -1,7 +1,7 @@
 \chapter{Identity Mixer\label{chp:idemix}}
 \index{Identity Mixer|(}
 
-Identity Mixer~\cite{CamenischLysyanskaya2001,IdemixCrypto2012} is an
+Identity Mixer~\cite{CamenischLysyanskaya2001,IdemixCrypto2012} (also known as Idemix) is an
 attribute-based credential system, developed at IBM Research in Z\"urich, that
 enables strong authentication\index{authentication} and privacy at the same time. The first
 prototype~\cite{CamenischH02} was developed in 2002 and has been improved over
@@ -24,14 +24,17 @@ Furthermore this scheme supports multiple messages to be signed at once. This
 allows a number of attributes to be combined into a single credential. In
 contrast to the U-Prove technology, an Identity Mixer credential can be
 randomised (like the self-blindable credentials) allowing it to be used multiple
-times while remaining anonymous.
+times while remaining anonymous. This is also the only technology that offers 
+provable security. This means that all protocols have been proven formally to 
+be secure.
 
 In this chapter we focus on the core features of the Identity Mixer system:
 credential issuance and selective disclosure of attributes. The technology
 offers many more features that might be interesting to users of an
-attribute-based credential system, but we focus on what can be achieved on a
-smart card\index{smart card} with an acceptable performance~\cite{VullersAlpar2013}. Additional
-options can still be added, but at the cost of an increased transaction time.
+attribute-based credential system, but we focus on what can currently be 
+achieved on a smart card\index{smart card} with an acceptable
+performance~\cite{VullersAlpar2013}. Additional options can still be added, but
+at the cost of an increased transaction time.
 
 \section{Camenisch-Lysyanskaya Signature Scheme\label{sec:CL-scheme}}
 \index{Camenisch-Lysyanskaya!signature scheme|(}
@@ -46,10 +49,11 @@ Chen~\cite{BrickellCC2004} and by Camenisch and Groth~\cite{CamenischGroth2004}.
 
 \subsection{Keys}\label{sec:cl_keys}
 
-The private key\index{Camenisch-Lysyanskaya!private key} in this scheme comprises two Sophie Germain primes $p'$ and $q'$.
-The public key \index{Camenisch-Lysyanskaya!public key} consists of a special RSA modulus $n = p \cdot q$ where
-$p = 2 \cdot p' + 1$ and $q = 2 \cdot q' + 1$ are safe primes. Furthermore we
-need the following parameters from
+The private key\index{Camenisch-Lysyanskaya!private key} in this scheme 
+comprises two Sophie Germain primes $p'$ and $q'$. The public key 
+\index{Camenisch-Lysyanskaya!public key} consists of a special RSA modulus 
+$n = p \cdot q$ where $p = 2 \cdot p' + 1$ and $q = 2 \cdot q' + 1$ are safe 
+primes. Furthermore we need the following parameters from
 $QR_n = \{ x \in \Z_n: y \in Z_n \land x = y^2 \mod n \}$, the group of
 quadratic residues modulo $n$:
 \begin{itemize}
@@ -63,20 +67,16 @@ quadratic residues modulo $n$:
     $\langle S \rangle$.
 \end{itemize}
 Hence the resulting public key is $(n, S, Z, \{R_i\}_{i \in \M})$ where $\M$
-denotes the set of message indices supported by this key.
+denotes the set of message indices, and hence the maximum number of messages,
+supported by this key.
 
 \index{Camenisch-Lysyanskaya!public key!proof|(}
 In order to guarantee that such a public key has been constructed correctly,
 that is, all values are elements of $\langle S \rangle$, a proof of
 correctness can be constructed (Algorithm~\ref{alg:CL-prove-key}, based
 on~\cite[Appendix A]{BrickellCC2004}):
-\begin{multline*}
-  SPK \{ (\alpha_z, (\alpha_i)_{i \in \M}) : Z = S^{\alpha_z} \mod n
-    \:\land\: \\ \forall_{i \in \M} R_i = S^{\alpha_i} \mod n
-  \}(n, S, Z, \{R_i\}_{i \in \M})
-\end{multline*}
 
-\begin{algorithm}
+\begin{algorithm}[ht]
   \caption{Proof correctness of a Camenisch-Lysyanskaya public key.}
   \label{alg:CL-prove-key}
   \addtolength{\baselineskip}{1mm}
@@ -104,6 +104,12 @@ on~\cite[Appendix A]{BrickellCC2004}):
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+
+\begin{multline*}
+  SPK \{ (\alpha_z, \{\alpha_i\}_{i \in \M}) : Z = S^{\alpha_z} \mod n
+    \:\land\: \\ \forall_{i \in \M} R_i = S^{\alpha_i} \mod n
+  \}(n, S, Z, \{R_i\}_{i \in \M})
+\end{multline*}
 
 This proof uses binary challenges, hence we need to generate commitments and
 responses for all bits of the challenge $\{c_j\}_{j \in \H}$, where $\H$
@@ -192,8 +198,6 @@ computed. Finally, $A = Q^d \mod n$ is the RSA signature over the aggregated
 messages. As a result the Camenisch-Lysyanskaya signature over the messages
 $\{m_i\}_{i \in \M}$ is the triple $(A, e, v)$ (see
 Algorithm~\ref{alg:CL-sign}).
-
-\clearpage
 
 \begin{algorithm}
   \caption{Generate a basic Camenisch-Lysyanskaya signature.}
@@ -345,7 +349,7 @@ on $U$. This reconstruction works because of the following equation.
   \addtolength{\baselineskip}{1mm}
   \begin{algorithmic}[1]
 
-    \Function{CL-verify-U}{$U, (c, \hat{v}', \hat{m}_{i \in \M_H}), n_U, (n, S, Z, \{R_i\}_{i \in \M})$}
+    \Function{CL-verify-U}{$U, (c, \hat{v}', \{\hat{m}_i\}_{i \in \M_H}), n_U, (n, S, Z, \{R_i\}_{i \in \M})$}
       \State $\hat{U} \gets U^{-c} \cdot S^{\hat{v}'} \mod n$
       \ForAll{$i \in \M_H$}
         \State $\hat{U} \gets \hat{U} \cdot R_i^{\hat{m}_i} \mod n$
@@ -485,13 +489,6 @@ process, as depicted in Figure~\ref{msc:cl_prove-sign}, allows the user to prove
 that she has a signature over one or more (possibly hidden) messages without
 revealing the actual signature to the verifier.
 
-\begin{figure}[b]
-  \centering
-  \includegraphics[scale=.45]{mscs/cl_prove-sign_simple}
-  \caption{Protocol for proving knowledge of a signature.}
-  \label{msc:cl_prove-sign}
-\end{figure}
-
 To hide the Camenisch-Lysyanskaya signature $(A, e, v)$ and prevent linkability
 based on the signature values $A$, $e$, and $v$ the signature is randomised,
 using Algorithm~\ref{alg:CL-randomise}. First a randomisation value $r$ is
@@ -522,6 +519,13 @@ adjusted such that the signature remains valid, that is, it still satisfies
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[scale=.45]{mscs/cl_prove-sign_simple}
+  \caption{Protocol for proving knowledge of a signature.}
+  \label{msc:cl_prove-sign}
+\end{figure}
 
 This randomisation operation only effectively randomises the $A$ value of the
 signature. Hence it is required to hide the $e$ and $v'$ values using a
@@ -647,15 +651,14 @@ attribute indices.\index{attribute!index set} Hence, the sets of message indices
 become $\{m_i\}_{i \in \M_H} = \{s\}$ and $\M = \M_H \cup \mathcal{A}$. As a result of the
 issuance protocol the user obtains a signature $(A, e, v)$ over these values
 which completes the credential.
-
 \clearpage
+
 \begin{figure}[ht]
   \centering
   \includegraphics[scale=.45]{images/idemix-credential}
   \caption{A visual representation of an Identity Mixer credential.}
   \label{fig:idemix-credential}
 \end{figure}
-
 \noindent To summarise, an Identity Mixer credential, as depicted in
 Figure~\ref{fig:idemix-credential}, consists of:
 \begin{itemize}
@@ -799,7 +802,8 @@ computed using addition with carry, and multiplications using grade-school
 multiplication. This adds a number of extra operations, but it is worth the
 memory gain which results in improved performance.
 
-Finally, we translated most parts of the cryptographic code to MEL assembly
+Finally, we translated most parts of the cryptographic C code to MULTOS 
+assembly code
 which allowed us to optimise the use of stack and reduce the amount of memory
 operations during calculations. This was required since the provided C-functions
 moved the values from the stack to the variable locations, while they are needed
@@ -816,9 +820,8 @@ For these performance tests we've used, where possible, the same test vectors as
 with the U-Prove implementation in order to get comparable results (see
 Chapter~\ref{chp:discussion} for a detailed comparison). Furthermore, our
 implementation uses a modulus size of 1024~bits, which provides a minimal level
-of security, but an acceptable performance. Given this size of the modulus, and
-hence the size of all group elements, we can support at most 5 attributes per
-credential in our implementation.
+of security, but an acceptable performance. Given the amount of RAM on the card and this size of the modulus, and hence the size of all group elements, we can
+support at most 5 attributes per credential in our implementation.
 
 For issuance, we measured the running time of the protocol and determined how
 much time was actually spent on computations and which part was used to transfer
@@ -826,7 +829,8 @@ and store the values (marked as overhead; see Figure~\ref{fig:issuance}). From
 these results we can conclude that the number of attributes included in a
 credential has only a minimal effect on the computations. An increase in the
 number of attributes does, however, result in an increase of the overhead of
-approximately 100 milliseconds per attribute.
+approximately 100 milliseconds per attribute. This is caused by the additional 
+data that has to be transfered and stored on the card.
 
 \begin{figure}[t]
   \centering
@@ -861,11 +865,12 @@ sense and five is the largest number of attributes that we can currently keep in
 memory while not using EEPROM\index{EEPROM} for computations during the transaction. By
 comparing these graphs, it is clear that each attribute that is disclosed
 reduces the computation time with roughly 100 milliseconds. Also, the scenario
-in which all attributes results in similar computation times, with only slightly
+in which all attributes are disclosed results in similar computation times, 
+with only slightly
 increased overhead for the large number of attributes that have to be sent to
 the terminal.
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics{images/idemix-2attr.mps}
@@ -905,5 +910,19 @@ implementation provides a significant performance improvement over these
 implementations. For example, Sterckx et al. need 4.2 seconds to hide only the
 secret key while our implementation can hide the secret key and two attributes
 of a single credential in 1.1 seconds.
+
+Finally, we take a look at the memory requirements for our implementation. To 
+store a credential with two attributes 1.4KB of EEPROM is required. Each 
+additional attribute for this credential requires another 160~bytes. This means
+that a card can contain approximately 30 credentials (when we store five 
+attributes per credential). The large size of the credential values also has an
+impact on the amount of memory required to perform the computations. For the 
+verification protocol this amounts to 1.9KB of memory and 1.5KB for the issuance
+protocol. We ended up using the APDU buffer as scratch area in order to perform
+all calculations in RAM. However, recent research~\cite{PiedraHV2014} shows 
+that these memory requirements can be reduced at the expense of an increased 
+running time. This allows the implementation to be extended with additional 
+functionality whereas this is not possible in the current implementation 
+described in this chapter.
 
 \index{Identity Mixer|)}

@@ -725,8 +725,22 @@ Overall, these good results strongly justify the idea to use U-Prove standalone
 on a smart card rather than to use Microsoft's device-protected token approach,
 which has no obvious functional or performance advantages over our approach.
 
-The only limitations of our implementation are imposed by the limited resources
-of the MULTOS\index{MULTOS} smart card. We had to limit the prime modulus size to 1024 bits,
+Our implementation requires 1KB to store a credential containing two attributes.
+For each additional attribute another 148~bytes of storage are required. This is
+of course more than the 148~bytes necessary for the device-protected approach,
+but this allows for full independence of the terminal. It does, however, become an issue if many credentials have to be stored in order to achieve 
+unlinkability, since a card can typically only hold 50 of such credentials.
+
+When we consider the run-time memory requirements of our implementation the 
+main restrictions become clear. For a credential with 2 attributes 540~bytes of
+RAM are required for the session variables. An additional 40~bytes are required
+for each additional attribute in a credential. These values are based on a 
+modulus of 1024 bits and attribute values of 160 bits (the SHA-1 hashed 
+representation of the actual attribute values).
+
+Based on these results we can conclude that the limitations of our 
+implementation are imposed by the limited resources of the MULTOS\index{MULTOS}
+smart card. We had to limit the prime modulus size to 1024 bits, 
 use only SHA-1 hashing, and because of the available RAM (less than 1kB) on the
 card we could only allow for the maximum of 5 attributes, each one up to 255
 bytes in size. Otherwise our implementation is fully flexible and provides full
@@ -734,3 +748,10 @@ U-Prove functionality, \emph{including} the smart card features described in
 Section~\ref{sec:UP-smartcard}. However, it is not uncommon for modern smart
 cards to support up to 2048 bits for modulus size and 2 kilobytes of RAM, only
 no such MULTOS\index{MULTOS} cards were available to us.
+
+An alternative would be to build a U-Prove implementation using elliptic curve 
+cryptography, as this is supported by the technology. This would drastically 
+reduce the communication overhead as well as the memory requirements. 
+Unfortunately, as mentioned in the previous chapter, support for elliptic 
+curves on smart cards is limited, which prevents the development of an 
+efficient elliptic curve-based implementation for now.
