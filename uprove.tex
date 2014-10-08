@@ -27,7 +27,7 @@ Our implementation, which we describe in Section~\ref{sec:UP-smartcard}, not
 only has a much better performance but is also, except from some minimal
 limitations, compatible with the development kits released by Microsoft.
 
-\section{Schnorr Signature Scheme}\index{signature!Schnorr|see{Schnorr siganture}}
+\section{Schnorr Signature Scheme}\index{signature!Schnorr|see{Schnorr signature}}
 
 The Schnorr\index{Schnorr signature} signature scheme~\cite{Schnorr1989,Schnorr1991} relies on the
 Schnorr\index{Schnorr identification protocol} identification protocol~\cite{Schnorr1989} which is a special instance
@@ -741,7 +741,7 @@ representation of the actual attribute values).
 Based on these results we can conclude that the limitations of our 
 implementation are imposed by the limited resources of the MULTOS\index{MULTOS}
 smart card. We had to limit the prime modulus size to 1024 bits, 
-use only SHA-1 hashing, and because of the available RAM (less than 1kB) on the
+use only SHA-1 hashing, and because of the available RAM (less than 1KB) on the
 card we could only allow for the maximum of 5 attributes, each one up to 255
 bytes in size. Otherwise our implementation is fully flexible and provides full
 U-Prove functionality, \emph{including} the smart card features described in

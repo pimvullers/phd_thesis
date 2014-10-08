@@ -104,7 +104,7 @@ are~\cite{AlparJacobs2013}:
     \textsf{name}, \textsf{gender}, \textbf{date of birth}, and \textsf{social
     security number} attributes.
   \item A \textbf{student} credential, containing for example the 
-    \textsf{student number}, \textsf{field of study}, \textsf{enrollment year} 
+    \textsf{student number}, \textsf{field of study}, \textsf{enrolment year} 
     and \textsf{university/college} attributes.
   \item A \textbf{festival} credential, containing for example the \textsf{festival name} and \textsf{date/time} attributes.
 \end{itemize}
@@ -203,7 +203,7 @@ through the following two cryptographic properties.
 \begin{itemize}
   \item \emph{Issuer unlinkability}\index{unlinkability!issuer}
     \index{issuer unlinkability|see{unlinkability!issuer}} ensures that any
-    information that the issuer gathers during the issuing proedure cannot be 
+    information that the issuer gathers during the issuing procedure cannot be 
     used to link a verification of the credential to its issuance.
   \item \emph{Multi-show unlinkability}\index{unlinkability!multi-show}
     \index{multi-show unlinkability|see{unlinkability, multi-show}} guarantees
@@ -293,7 +293,7 @@ scheme~\cite{BrickellCC04} which has been adopted in the Trusted Platform Module
 specification~\cite{TPM_1.2} as the method for remote authentication
 \index{authentication!remote} of a hardware module.
 
-In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented Identity Mixer
+In 2009 Bichsel et~al.~\cite{BichselCGS2009} implemented Identity Mixer
 \index{Identity Mixer} on a Java Card\index{Java Card} whereas Sterckx et
 al.~\cite{Sterckx09} did the same for direct anonymous attestation\index{direct
 anonymous attestation}. They provide the first proper implementations of
@@ -384,10 +384,10 @@ contents are preserved in non-volatile
 memory\index{non-volatile memory} (EEPROM\index{EEPROM}), making it available 
 across sessions. Access to the volatile memory\index{volatile memory} 
 (RAM\index{RAM}) is provided through the Java Card API, which defines methods 
-that allow you to create transient data storage at runtime.
+that allow you to create transient data storage at run-time.
 
 In a Java Card environment a few rules should be taken into account to prevent
-wasting memory at runtime. Arrays and primitive types should be allocated at
+wasting memory at run-time. Arrays and primitive types should be allocated at
 object creation time, and object creation should be minimised in favour of
 object reuse. All arrays and objects that an applet needs during its lifetime 
 should be created all in one go, when an applet is installed, such that no 

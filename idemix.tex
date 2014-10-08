@@ -700,8 +700,8 @@ different one.
 \index{smart card}
 
 We are not the first to develop an implementation of the Identity Mixer on a 
-smart card. In 2009 Bichsel et al.~\cite{BichselCGS2009} implemented a minimal
-Identity Mixer system on a Java Card\index{Java Card} whereas Sterckx et al.~\cite{Sterckx09}
+smart card. In 2009 Bichsel etal.~\cite{BichselCGS2009} implemented a minimal
+Identity Mixer system on a Java Card\index{Java Card} whereas Sterckx etal.~\cite{Sterckx09}
 did the same for direct anonymous attestation. They provide the first
 implementations of this technology on smart cards. The major drawback of these
 implementations is the running time of several seconds which is still too much
@@ -766,7 +766,7 @@ description to API calls. The only API restriction we came across was that the
 the modulus size. In our case this only involves exponentiations with base $S$
 (see details in Section~\ref{sec:CL-scheme}). Hence we added a function
 \texttt{SpecialModularExponentiation} which implements the same method as used
-by Bichsel et al.~\cite{BichselCGS2009}, that is, splitting one exponentiation
+by Bichsel etal.~\cite{BichselCGS2009}, that is, splitting one exponentiation
 up into two\footnote{This method actually requires three exponentiations, but
 we can precompute one exponentiation during initialisation, since we only need
 this method for the base $S$.} exponentiations and one multiplication.
@@ -808,7 +808,7 @@ which allowed us to optimise the use of stack and reduce the amount of memory
 operations during calculations. This was required since the provided C-functions
 moved the values from the stack to the variable locations, while they are needed
 again in the next operation. By doing this we could reduce the amount of memory
-required for intermediate values which in the end allowed us to get all
+required for intermediate values which in the end allowed us to getall
 necessary variables in RAM.\index{RAM}
 
 \section{Performance Results\label{sec:IM-performance}}
@@ -830,7 +830,7 @@ these results we can conclude that the number of attributes included in a
 credential has only a minimal effect on the computations. An increase in the
 number of attributes does, however, result in an increase of the overhead of
 approximately 100 milliseconds per attribute. This is caused by the additional 
-data that has to be transfered and stored on the card.
+data that has to be transferred and stored on the card.
 
 \begin{figure}[t]
   \centering
@@ -843,7 +843,7 @@ data that has to be transfered and stored on the card.
   \label{fig:issuance}
 \end{figure}
 
-Sterckx et al.~\cite{Sterckx09} implement the direct anonymous attestation\index{direct anonymous attestation}
+Sterckx etal.~\cite{Sterckx09} implement the direct anonymous attestation\index{direct anonymous attestation}
 protocol, which is derived from the Identity Mixer protocols, on a Java~Card\index{Java Card}.
 With a 1024~bits modulus they achieve a running time of 2.4~seconds of which
 19\% is overhead, which gives a computation time of approximately 1.9~seconds.
@@ -851,7 +851,7 @@ This is good, and in line with the results we got, but unfortunately the direct
 anonymous attestation\index{direct anonymous attestation} protocol does not support any attributes as it is just
 targeted at anonymous authentication\index{authentication!anonymous} and hence only uses a secret key.
 
-Bichsel et al.~\cite{BichselCGS2009} from IBM Research Z\"urch also implemented
+Bichsel etal.~\cite{BichselCGS2009} from IBM Research Z\"urich also implemented
 a variant of the direct anonymous attestation\index{direct anonymous attestation} protocol on a Java~Card\index{Java Card}. They
 report a running time of 7.4~seconds for a modulus size of 1280~bits, which is
 larger than the 1024~bits we used. It is unclear, however, which transaction
@@ -903,11 +903,11 @@ the terminal.
   \label{fig:proving}
 \end{figure}
 
-Comparing our work with the implementations by Sterckx et al.~\cite{Sterckx09}
-and Bichsel et al.~\cite{BichselCGS2009} makes no real sense since they do not
+Comparing our work with the implementations by Sterckx et~al.~\cite{Sterckx09}
+and Bichsel et~al.~\cite{BichselCGS2009} makes no real sense since they do not
 offer selective disclosure of attributes. It is, however, clear that our
 implementation provides a significant performance improvement over these
-implementations. For example, Sterckx et al. need 4.2 seconds to hide only the
+implementations. For example, Sterckx etal. need 4.2 seconds to hide only the
 secret key while our implementation can hide the secret key and two attributes
 of a single credential in 1.1 seconds.
 
