@@ -228,7 +228,7 @@ Figure~\ref{fig:uprove-credential}, consists of:
 \section{Credential Issuance}\label{sec:UP-issuance}
 \index{U-Prove!issuance|(}
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
   \includegraphics[scale=.45]{mscs/uprove-issuance}
   \caption{Protocol for U-Prove credential issuance.}
@@ -308,6 +308,8 @@ from the user according to Algorithm~\ref{alg:UP-issuance-sign}.
   \end{algorithmic}
 \end{algorithm}
 
+\pagebreak
+
 Finally, in Algorithm~\ref{alg:UP-issuance-finish}, the user computes $r'$, the
 last element of the token signature $(z', c', r')$. Using this value she can
 also verify whether the values received from the issuer are correct:
@@ -348,9 +350,10 @@ also verify whether the values received from the issuer are correct:
 \end{algorithm}
 \index{U-Prove!issuance|)}
 
+\pagebreak
 \section{Credential Verification}\label{sec:UP-verification}
 \index{U-Prove!verification|(}
-\begin{figure}[ht]
+\begin{figure}[b]
   \centering
   \includegraphics[scale=.45]{mscs/uprove-verification}
   \caption{Protocol for U-Prove credential verification.}
